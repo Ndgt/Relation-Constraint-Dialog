@@ -1,4 +1,4 @@
-[README - English](/README.md) | [DeepWiki]()
+[README - English](/README.md) | [DeepWiki](https://deepwiki.com/Ndgt/Relation-Constraint-Dialog)
 
 # Relation Constraint Dialog
 MotionBuilder の Relation Constraint において手軽にオブジェクト配置ができる、検索ダイアログを提供するプラグインです。
