@@ -94,12 +94,13 @@ bool MainWindowFilter::eventFilter(QObject *obj, QEvent *pEvent)
             if (window_title == "Navigator" || window_title == "Constraints")
             {
                 // Debug to the console
-                FBTrace("\n--- Relation Constraint Dialog ---\n");
+                FBTrace("\n--- Relation Constraint Dialog ---\n\n");
                 FBTrace(" - Child Navigator Window creation detected.\n");
 
                 app->topLevelWidgets()[i]->installEventFilter(getNavigatorConstraintsFilter());
 
                 FBTrace(" - Navigator Constraint Filter was successfully installed.\n");
+                FBTrace("\n--- Setup Completed.\n\n");
 
                 // Do not mark this event as "Filtered" - Do not return true to let event continue
             }
