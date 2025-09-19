@@ -5,18 +5,16 @@
 This MotionBuilder plugin provides a convenient search dialog for quickly creating objects in the Relation Constraint.
 
 <p align = "center">
-<img src="docs-assets/demo.gif"><br>
+<img src="docs/images-readme/demo.gif"><br>
 </p>
 
 <br>
 
 
 ## Platform
-- **MotionBuilder :  2020 or above**
+- **MotionBuilder: 2020 ~ 2026**
 
-- **OS : Windows** 
-
-    (**Note**: Linux support is currently under development and will be added in a future release.)
+- **OS: Windows**
 
 <br>
 
@@ -52,6 +50,14 @@ Instead, please use this plugin only for:
 
     (**Note**: You may need administrator privileges to copy files to the `plugins` folder.)
 
+<br>
+
+## Documentation
+
+See the DeepWiki page for detailed documentation: [DeepWiki](https://deepwiki.com/Ndgt/Relation-Constraint-Dialog)
+
+You can build the documentation locally using [Doxygen](https://www.doxygen.nl/) if you have it installed. Run `doxygen` in the [docs/Doxygen](/docs/Doxygen/) folder, and refer to the generated `index.html` in the `html` folder.
+
 
 <br>
 
@@ -62,19 +68,19 @@ Instead, please use this plugin only for:
     (**Note**: This control only works if the target Relation Constraint is **selected** in the Navigator, and the **mouse pointer is hovering over** its pane.)
 
     <p align = "center">
-    <img src="docs-assets/usage_show.gif" width=80%><br>
+    <img src="docs/images-readme/usage_show.gif" width=80%><br>
     </p>
 
 - **Up/Down** – Navigate the suggest list
 
     <p align = "center">
-    <img src="docs-assets/usage_select.gif" width=80%><br>
+    <img src="docs/images-readme/usage_select.gif" width=80%><br>
     </p>
 
 - **Enter / Click** – Confirm selection and create object
 
     <p align = "center">
-    <img src="docs-assets/usage_finalize.gif" width=80%><br>
+    <img src="docs/images-readme/usage_finalize.gif" width=80%><br>
     </p>
 
 - **Esc / Click outside** – Cancel and close dialog
@@ -95,19 +101,32 @@ Instead, please use this plugin only for:
 2. **Qt - qtbase(Required)**, **qttools**(Optional)
 
     This plugin depends on **qtbase** (specifically QtCore, QtGui, and QtWidgets modules), and utilizes the **qttools** module to design the UI using [Qt Widgets Designer](https://doc.qt.io/qt-6/qtdesigner-manual.html).
-    - Qt 6.5.3:  MotionBuilder 2025 ~
+    - Qt 6.5.3:  MotionBuilder 2025, 2026
     - Qt 5.15.2 : MotionBuilder 2022 ~ 2024
     - Qt 5.12.5 : MotionBuilder 2020
 
-<br>
 
-3. **Perl** (for Windows)
-    
-    Perl, which is required for configuring the Qt source, can be installed with the following command:
+    **Perl** is required for configuring the Qt source. Install with the following command:
 
     ```cmd
     winget install StrawberryPerl.StrawberryPerl
     ```
+
+<br>
+
+3. **Detours**
+
+    This project uses [Microsoft Detours](https://github.com/microsoft/Detours) to hook OpenGL functions.
+    
+    Set environment variable with `vcvarsall.bat` (see [Building Qt from Git](#building-qt-from-git) step 1), then clone and build Detours:
+
+    ```
+    git clone https://github.com/microsoft/Detours.git
+    cd Detours/src
+    git checkout v4.0.1
+    nmake
+    ```
+    Header files will be located in `Detours/include`, and the library files will be in `Detours/lib.X64`. 
 
 <br>
 
@@ -137,7 +156,7 @@ Click version number to see the official resources.
 <br>
 
 ### Building Qt from Git
-1. Open a terminal and set the Visual Studio environment variables (for Windows).
+1. Open a terminal and set the Visual Studio environment variables
 
     Use **`vcvarsall.bat`**, which is installed by default at  
     `C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build`.
@@ -189,7 +208,7 @@ Click version number to see the official resources.
     cmake --install .
     ```
 
-    By default, the built Qt source will be installed to: `C:/Qt/Qt-<version>` (on Windows)
+    By default, the built Qt source will be installed to: `C:/Qt/Qt-<version>`
 
 <br>
 
@@ -202,7 +221,7 @@ C:/Qt/Qt-<version>/bin/designer.exe SearchDialog.ui
 ```
 
 <p align = "center">
-<img src="docs-assets/qt_widgets_designer.png"><br>
+<img src="docs/images-readme/qt_widgets_designer.png"><br>
 </p>
 <br>
 
@@ -220,8 +239,7 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 ### Building Plugin
 1. Open the terminal **as an administrator**.
 
-    On Windows, refer to [Building Qt from Git](#building-qt-from-git) to run `vcvarsall.bat` and set the Visual Studio environment variables.
-
+    See [Building Qt from Git](#building-qt-from-git) step 1 to set the Visual Studio environment variables.
 
 <br>
 
@@ -229,7 +247,7 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
     ```cmd
     git clone https://github.com/Ndgt/Relation-Constraint-Dialog.git
-    cd Relation-Constraint-Dialog
+    cd Relation-Constraint-Dialog/src
     ```
 
 <br>
@@ -238,9 +256,10 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
     ```CMake
     # === Environment-specific user configuration ===
-    set(PRODUCT_VERSION 2024)
+    set(PRODUCT_VERSION 2026)
     set(MOBU_ROOT "C:/Program Files/Autodesk/MotionBuilder ${PRODUCT_VERSION}")
-    set(CMAKE_PREFIX_PATH "C:/Qt/Qt-5.15.2")
+    set(QT_SOURCE_SEARCH_PATH "C:/Qt/6.5.3/msvc2019_64")
+    set(DETOURS_ROOT "C:/Detours")
     ```
 
 <br>
@@ -252,18 +271,24 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
     cmake --build build
     ```
 
-    This command will copy the plugin to the default folder `MotionBuilder <version>/bin/x64/plugins`.
+    The built plugin `.dll` file will be copied to the default folder `MotionBuilder <version>/bin/x64/plugins`.
 
 <br>
 <br>
 
 ## Dependencies
 
-This project uses the Qt framework (Community Edition) via dynamic linking. The Qt components used in this project are licensed under the GNU Lesser General Public License version 3 (LGPLv3).
+- This project uses the Qt framework (Community Edition) via dynamic linking. 
+    
+    The Qt components used in this project are licensed under the GNU Lesser General Public License version 3 (LGPLv3). The LGPLv3 license text is included in this repository ([LICENSES/Qt/lgpl-3.0.txt](/LICENSES/Qt/lgpl-3.0.txt)). You can also view the official license text [here](https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
-The LGPLv3 license text is included in this repository (`LICENSES/lgpl-3.0.txt`). You can also view the official license text [here](https://www.gnu.org/licenses/lgpl-3.0.en.html).
+    For more information about Qt licensing, visit the [Qt Company licensing page](https://www.qt.io/qt-licensing).
 
-For more information about Qt licensing, visit the [Qt Company licensing page](https://www.qt.io/qt-licensing).
+<br>
+
+- This project also uses [Microsoft Detours](https://github.com/microsoft/Detours).
+
+     Detours is licensed under the MIT License. The MIT license text is included in this repository ([LICENSES/Detours/MIT.txt](/LICENSES/Detours/LICENSE.txt))
 
 <br>
 
@@ -272,4 +297,4 @@ For more information about Qt licensing, visit the [Qt Company licensing page](h
 This project is licensed under the BSD 3-Clause License.
 See the [LICENSE](/LICENSE) file for full details.
 
-Please note that while this project is BSD-licensed, the use of Qt is subject to LGPLv3. Redistribution of the binary must comply with the terms of both licenses.
+Please note that while this project is BSD-licensed, the use of Qt is subject to LGPLv3 and Microsoft Detours is subject to the MIT License. Redistribution of the binary must comply with the terms of these licenses.
