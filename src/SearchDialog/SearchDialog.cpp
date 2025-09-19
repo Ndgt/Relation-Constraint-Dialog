@@ -105,8 +105,11 @@ void SearchDialog::finalize()
 
             if (mSelectedConstraint.Ok())
             {
+                QByteArray typeNameBytes = operatorTypeName.toUtf8();
+                QByteArray nameBytes = operatorName.toUtf8();
+
                 // Create Relation Object
-                FBBox *box_operator = mSelectedConstraint->CreateFunctionBox(qUtf8Printable(operatorTypeName), qUtf8Printable(operatorName));
+                FBBox *box_operator = mSelectedConstraint->CreateFunctionBox(typeNameBytes.constData(), nameBytes.constData());
                 if (box_operator)
                     mSelectedConstraint->SetBoxPosition(box_operator, mRelationPosition.x(), mRelationPosition.y());
             }
@@ -120,11 +123,13 @@ void SearchDialog::finalize()
     else
     {
         // Get Scene model with selected item name
-        FBModel *selectedItemModel = FBFindModelByLabelName(qUtf8Printable(selectedItemText));
+        QByteArray selectedItemBytes = selectedItemText.toUtf8();
+        FBModel *selectedItemModel = FBFindModelByLabelName(selectedItemBytes.constData());
         if (!selectedItemModel)
         {
             QString errorStr = "[Error] Model \"" + selectedItemText + "\" is not found in the scene.";
-            FBMessageBox("Relation Constraint Dialog", qUtf8Printable(errorStr), "OK");
+            QByteArray errorStrBytes = errorStr.toUtf8();
+            FBMessageBox("Relation Constraint Dialog", errorStrBytes.constData(), "OK");
 
             // Close Dialog
             accept();
