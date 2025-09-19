@@ -38,7 +38,7 @@ void endHook();
 
 /**
  * @brief Detour function for OpenGL glBindFramebuffer
- * @details Detects binding of the specifig framebuffer to identify relation view rendering context.
+ * @details Detects binding of the specific framebuffer to identify relation view rendering context.
  * @param target The target parameter passed to glBindFramebuffer
  * @param framebuffer The framebuffer parameter passed to glBindFramebuffer
  * @note Set gIsRelationViewRendering and gIsDataResetRequired flags when the framebuffer ID

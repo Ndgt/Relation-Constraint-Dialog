@@ -28,7 +28,7 @@ bool installNavigatorConstraintFilters(QMainWindow *mainwindow = nullptr);
  * @class MainWindowFilter
  * @brief Custom event filter for the main window
  * @details This filter is responsible for detecting when navigator windows are fully constructed,
- *          and installs the ConstraintsNavigatorFilter on them. It is also resposible for intercepting
+ *          and installs the ConstraintsNavigatorFilter on them. It is also responsible for intercepting
  *          Tab key presses to open the SearchDialog, and A key presses to reproduce the default 'framing' boxes function
  *          when the mouse cursor is over the relation view.
  */

@@ -96,5 +96,5 @@ private:
     Ui::Dialog *ui;                                              //!< Pointer to the Widget Container class generated from the .ui file
     QPoint mCursorPosition;                                      //!< The cursor position where the dialog should appear
     QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
-    HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currenlty selected constraint object
+    HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currently selected constraint object
 };
