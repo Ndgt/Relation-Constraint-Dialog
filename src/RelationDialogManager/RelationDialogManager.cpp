@@ -216,7 +216,7 @@ void RelationDialogManager::setRelationViewState(QPoint topLeftPos, double scale
 
 bool RelationDialogManager::installRelationOpenGLWidgetFilter(QList<QDockWidget *> dockwidgets)
 {
-    bool lSuccess = false;
+    bool success = false;
 
     for (QDockWidget *dockwidget : dockwidgets)
     {
@@ -225,13 +225,13 @@ bool RelationDialogManager::installRelationOpenGLWidgetFilter(QList<QDockWidget 
             continue;
 
         glWidget->installEventFilter(&RelationOpenGLWidgetFilter::getInstance());
-        lSuccess = true;
+        success = true;
 
         // Reset install request flag
         installRequired = false;
     }
 
-    if (lSuccess)
+    if (success)
     {
         DIALOG_DEBUG_MESSAGE("RelationOpenGLWidgetFilter installation completed successfully.");
         DIALOG_DEBUG_END_SUCCESS;
