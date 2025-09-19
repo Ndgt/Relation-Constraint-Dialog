@@ -124,12 +124,12 @@ void RelationDialogManager::onRelationSelected(HISender pSender, HKEvent pEvent)
                 mLastSelectedRelationConstraint = relation;
         }
 
-        DIALOG_DEBUG_MESSAGE("Installing RelationOpenGLWidgetFilter...");
+        DIALOG_DEBUG_MESSAGE("Installing RelationOpenGLWidgetFilter requested.");
 
         // Request installation of the event filter in the next UI idle event
         installRequired = true;
 
-        // DIALOG_DEBUG_END_ will be called in installRelationOpenGLWidgetFilter()
+        DIALOG_DEBUG_END_NOTFAILURE;
     }
 }
 
@@ -230,6 +230,8 @@ bool RelationDialogManager::installRelationOpenGLWidgetFilter(QList<QDockWidget 
         // Reset install request flag
         installRequired = false;
     }
+
+    DIALOG_DEBUG_START;
 
     if (success)
     {
