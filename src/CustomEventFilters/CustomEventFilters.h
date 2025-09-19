@@ -7,7 +7,6 @@
 #include <QtCore/QPoint>
 #include <QtCore/QtConfig>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
 
 #if QT_VERSION_MAJOR >= 6
 #include <QtOpenGLWidgets/QOpenGLWidget>
@@ -16,13 +15,12 @@
 #endif
 
 /**
- * @brief Install custom event filters on the navigator windows
- * @param mainwindow The main application window. If nullptr, it will be retrieved automatically
+ * @brief Install the ConstraintsNavigatorFilter on all existing navigator windows (both floating and docked)
  * @return true if at least one navigator window was found and filter installed, false otherwise
  * @note This function uses DIALOG_DEBUD_MESSAGE to log its operations, so ensure that DIALOG_DEBUG_START is called before this function
  *       and DIALOG_DEBUG_END_SUCCESS/FAILURE/NOTFAILURE is called after this function to properly log the debug messages.
  */
-bool installNavigatorConstraintFilters(QMainWindow *mainwindow = nullptr);
+bool installNavigatorConstraintFilters();
 
 /**
  * @class MainWindowFilter

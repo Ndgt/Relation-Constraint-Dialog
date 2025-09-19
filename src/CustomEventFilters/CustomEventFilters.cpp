@@ -8,25 +8,24 @@
 
 #include <fbsdk/fbsdk.h>
 
+#include <QtCore/QSet>
 #include <QtCore/QTimer>
 #include <QtGui/QCursor>
 #include <QtGui/QKeyEvent>
 #include <QtGui/qopenglext.h> // GL_DRAW_FRAMEBUFFER_BINDING
 #include <QtWidgets/QDockWidget>
+#include <QtWidgets/QMainWindow>
 
 #include <windows.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
-bool installNavigatorConstraintFilters(QMainWindow *mainwindow)
+bool installNavigatorConstraintFilters()
 {
-    if (!mainwindow)
-        mainwindow = getMobuMainWindow();
-
     // Gather all constraint navigators (both floating and docked)
     QList<QDockWidget *> allNavigators;
     allNavigators.append(getFloatingConstraintNavigators());
-    allNavigators.append(getDockedConstraintNavigators(mainwindow));
+    allNavigators.append(getDockedConstraintNavigators());
 
     if (allNavigators.isEmpty())
     {
@@ -34,8 +33,11 @@ bool installNavigatorConstraintFilters(QMainWindow *mainwindow)
         return false;
     }
 
+    // Use QSet to avoid duplicate entries
+    QSet<QDockWidget *> uniqueNavigators(allNavigators.begin(), allNavigators.end());
+
     // Install NavigatorConstraint Filters
-    for (QDockWidget *navigator : allNavigators)
+    for (QDockWidget *navigator : uniqueNavigators)
     {
         QByteArray windowTitle = navigator->windowTitle().toUtf8();
         DIALOG_DEBUG_MESSAGE("Found Constraints Navigator: '%s'", windowTitle.constData());
@@ -190,7 +192,7 @@ bool MainWindowFilter::eventFilter(QObject *obj, QEvent *pEvent)
         DIALOG_DEBUG_START;
         DIALOG_DEBUG_MESSAGE("Child Widget creation detected in MainWindow.");
 
-        if (installNavigatorConstraintFilters(mainwindow))
+        if (installNavigatorConstraintFilters())
         {
             // Notify RelationDialogManager to install the RelationOpenGLWidgetFilter
             RelationDialogManager::getInstance().setFilterInstallRequired();

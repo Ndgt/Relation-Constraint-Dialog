@@ -2,6 +2,7 @@
 #include "RelationDialogManager.h"
 #include "Utility.h"
 
+#include <QtCore/QSet>
 #include <QtWidgets/QMainWindow>
 
 #if QT_VERSION_MAJOR >= 6
@@ -214,7 +215,10 @@ bool RelationDialogManager::installRelationOpenGLWidgetFilter(QList<QDockWidget 
 {
     bool success = false;
 
-    for (QDockWidget *dockwidget : dockwidgets)
+    // Use QSet to avoid duplicate entries
+    QSet<QDockWidget *> uniqueDockWidgets(dockwidgets.begin(), dockwidgets.end());
+
+    for (QDockWidget *dockwidget : uniqueDockWidgets)
     {
         QOpenGLWidget *glWidget = dockwidget->findChild<QOpenGLWidget *>();
         if (!glWidget)

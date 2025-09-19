@@ -47,8 +47,8 @@ bool FBLibrary::LibReady()
     mainwindow->installEventFilter(mainwindowFilter);
     DIALOG_DEBUG_MESSAGE("MainWindow filter successfully installed.");
 
-    // Install the Constraint Navigator's event filter(s)
-    if (!installNavigatorConstraintFilters(mainwindow))
+    // Install the Constraint Navigator's event filters
+    if (!installNavigatorConstraintFilters())
     {
         DIALOG_DEBUG_END_FAILURE;
         return false;
