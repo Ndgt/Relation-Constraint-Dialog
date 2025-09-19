@@ -10,13 +10,13 @@ QList<QDockWidget *> getFloatingConstraintNavigators()
 
     // Iterate over top-level widgets to detect "Navigator" or "Constraints" dock widget
     QApplication *app = qobject_cast<QApplication *>(QApplication::instance());
-    for (int i = 0; i < app->topLevelWidgets().count(); i++)
+    for (QWidget *widget : app->topLevelWidgets())
     {
         // In case Filtered Navigator, the window title will be "Constraints"
-        QString windowTitle = app->topLevelWidgets()[i]->windowTitle();
+        QString windowTitle = widget->windowTitle();
         if (windowTitle == "Navigator" || windowTitle == "Constraints")
         {
-            if (QDockWidget *dockwidget = qobject_cast<QDockWidget *>(app->topLevelWidgets()[i]))
+            if (QDockWidget *dockwidget = qobject_cast<QDockWidget *>(widget))
                 foundNavigators.append(dockwidget);
         }
     }
@@ -54,8 +54,7 @@ QMainWindow *getMobuMainWindow()
         return nullptr;
 
     // Iterate over top-level widgets to detect mainwindow
-    const QList<QWidget *> topLevelWidgets = app->topLevelWidgets();
-    for (QWidget *widget : topLevelWidgets)
+    for (QWidget *widget : app->topLevelWidgets())
     {
         // Check if the widget is a QMainWindow
         QMainWindow *mainwindow = qobject_cast<QMainWindow *>(widget);
