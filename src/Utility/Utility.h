@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QtCore/QList>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QMainWindow>
 
@@ -41,18 +42,18 @@
 #define DIALOG_DEBUG_END_NOTFAILURE FBTrace("--- \n\n")
 
 /**
- * @brief Gets the docked Constraint Navigator QDockWidget
+ * @brief Gets the list of all docked Constraint Navigator QDockWidgets
  * @param mainwindow Pointer to the QMainWindow where the docked widget is located
- * @return Pointer to the QDockWidget if found, otherwise nullptr
+ * @return List of pointers to QDockWidgets if found, otherwise an empty list
  * @note If mainwindow is nullptr, the function will attempt to find the main window automatically
  */
-QDockWidget *getDockedConstraintNavigator(QMainWindow *mainwindow = nullptr);
+QList<QDockWidget *> getDockedConstraintNavigators(QMainWindow *mainwindow = nullptr);
 
 /**
- * @brief Gets the floating Constraint Navigator QDockWidget
- * @return Pointer to the QDockWidget if found, otherwise nullptr
+ * @brief Gets the list of all floating Constraint Navigator QDockWidgets
+ * @return List of pointers to floating QDockWidgets if found, otherwise an empty list
  */
-QDockWidget *getFloatingConstraintNavigator();
+QList<QDockWidget *> getFloatingConstraintNavigators();
 
 /**
  * @brief Retrieves the main QMainWindow instance of the application

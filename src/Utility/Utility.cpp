@@ -1,13 +1,13 @@
 #include "Utility.h"
 
-#include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
 
-// TODO: Should consider multiple floating navigators
-QDockWidget *getFloatingConstraintNavigator()
+QList<QDockWidget *> getFloatingConstraintNavigators()
 {
+    QList<QDockWidget *> foundNavigators;
+
     // Iterate over top-level widgets to detect "Navigator" or "Constraints" dock widget
     QApplication *app = qobject_cast<QApplication *>(QApplication::instance());
     for (int i = 0; i < app->topLevelWidgets().count(); i++)
@@ -15,14 +15,19 @@ QDockWidget *getFloatingConstraintNavigator()
         // In case Filtered Navigator, the window title will be "Constraints"
         QString windowTitle = app->topLevelWidgets()[i]->windowTitle();
         if (windowTitle == "Navigator" || windowTitle == "Constraints")
-            return qobject_cast<QDockWidget *>(app->topLevelWidgets()[i]);
+        {
+            if (QDockWidget *dockwidget = qobject_cast<QDockWidget *>(app->topLevelWidgets()[i]))
+                foundNavigators.append(dockwidget);
+        }
     }
 
-    return nullptr;
+    return foundNavigators;
 }
 
-QDockWidget *getDockedConstraintNavigator(QMainWindow *mainwindow)
+QList<QDockWidget *> getDockedConstraintNavigators(QMainWindow *mainwindow)
 {
+    QList<QDockWidget *> foundNavigators;
+
     if (!mainwindow)
         mainwindow = getMobuMainWindow();
 
@@ -34,11 +39,11 @@ QDockWidget *getDockedConstraintNavigator(QMainWindow *mainwindow)
         {
             QString windowTitle = dockwidget->windowTitle();
             if (windowTitle == "Navigator" || windowTitle == "Constraints")
-                return dockwidget;
+                foundNavigators.append(dockwidget);
         }
     }
 
-    return nullptr;
+    return foundNavigators;
 }
 
 QMainWindow *getMobuMainWindow()

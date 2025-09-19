@@ -23,26 +23,23 @@ bool installNavigatorConstraintFilters(QMainWindow *mainwindow)
     if (!mainwindow)
         mainwindow = getMobuMainWindow();
 
-    QDockWidget *floatingNavigator = getFloatingConstraintNavigator();
-    QDockWidget *dockedNavigator = getDockedConstraintNavigator(mainwindow);
+    // Gather all constraint navigators (both floating and docked)
+    QList<QDockWidget *> allNavigators;
+    allNavigators.append(getFloatingConstraintNavigators());
+    allNavigators.append(getDockedConstraintNavigators(mainwindow));
 
-    if (!floatingNavigator && !dockedNavigator)
+    if (allNavigators.isEmpty())
     {
         DIALOG_DEBUG_MESSAGE("No Constraints Navigator found at this time.");
         return false;
     }
 
     // Install NavigatorConstraint Filters
-    if (floatingNavigator)
+    for (QDockWidget *navigator : allNavigators)
     {
-        DIALOG_DEBUG_MESSAGE("Found floating Constraints Navigator");
-        floatingNavigator->installEventFilter(&ConstraintsNavigatorFilter::getInstance());
-        DIALOG_DEBUG_MESSAGE("Constraints Navigator Filter successfully installed.");
-    }
-    if (dockedNavigator)
-    {
-        DIALOG_DEBUG_MESSAGE("Found docked Constraints Navigator");
-        dockedNavigator->installEventFilter(&ConstraintsNavigatorFilter::getInstance());
+        QByteArray windowTitle = navigator->windowTitle().toUtf8();
+        DIALOG_DEBUG_MESSAGE("Found Constraints Navigator: '%s'", windowTitle.constData());
+        navigator->installEventFilter(&ConstraintsNavigatorFilter::getInstance());
         DIALOG_DEBUG_MESSAGE("Constraints Navigator Filter successfully installed.");
     }
 
@@ -200,7 +197,7 @@ bool MainWindowFilter::eventFilter(QObject *obj, QEvent *pEvent)
             DIALOG_DEBUG_END_SUCCESS;
         }
         else
-            DIALOG_DEBUG_END_FAILURE;
+            DIALOG_DEBUG_END_NOTFAILURE;
 
         // Avoid this event to be processed further
         pEvent->accept();
@@ -215,14 +212,20 @@ bool MainWindowFilter::eventFilter(QObject *obj, QEvent *pEvent)
 
         QOpenGLWidget *widget = nullptr;
 
-        QDockWidget *floatingNavigator = getFloatingConstraintNavigator();
-        if (floatingNavigator)
-            widget = floatingNavigator->findChild<QOpenGLWidget *>();
-        else
+        // Gather all constraint navigators (both floating and docked)
+        QList<QDockWidget *> allNavigators;
+        allNavigators.append(getFloatingConstraintNavigators());
+        allNavigators.append(getDockedConstraintNavigators(mainwindow));
+
+        // Find the QOpenGLWidget under the mouse cursor
+        for (QDockWidget *navigator : allNavigators)
         {
-            QDockWidget *dockedNavigator = getDockedConstraintNavigator(mainwindow);
-            if (dockedNavigator)
-                widget = dockedNavigator->findChild<QOpenGLWidget *>();
+            QOpenGLWidget *currentWidget = navigator->findChild<QOpenGLWidget *>();
+            if (currentWidget && currentWidget->underMouse())
+            {
+                widget = currentWidget;
+                break;
+            }
         }
 
         if (keyEvent->key() == Qt::Key_Tab && !keyEvent->isAutoRepeat())
@@ -235,7 +238,7 @@ bool MainWindowFilter::eventFilter(QObject *obj, QEvent *pEvent)
         }
         else if (keyEvent->key() == Qt::Key_A && !keyEvent->isAutoRepeat())
         {
-            if (!widget || !widget->underMouse())
+            if (!widget)
                 return false;
 
             // Emit signal after a short delay to wait for relation view to be completely changed

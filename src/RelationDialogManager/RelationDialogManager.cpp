@@ -140,13 +140,9 @@ void RelationDialogManager::onUIIdle(HISender pSender, HKEvent pEvent)
     // Look for the constraint navigators
     QList<QDockWidget *> dockwidgets;
 
-    QDockWidget *dockedNavigator = getDockedConstraintNavigator();
-    if (dockedNavigator)
-        dockwidgets.append(dockedNavigator);
-
-    QDockWidget *floatingNavigator = getFloatingConstraintNavigator();
-    if (floatingNavigator)
-        dockwidgets.append(floatingNavigator);
+    // Gather both docked and floating constraint navigators
+    dockwidgets.append(getDockedConstraintNavigators());
+    dockwidgets.append(getFloatingConstraintNavigators());
 
     if (dockwidgets.size() == 0)
         return;
