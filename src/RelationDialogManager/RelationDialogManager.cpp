@@ -242,5 +242,5 @@ bool RelationDialogManager::installRelationOpenGLWidgetFilter(QList<QDockWidget 
         DIALOG_DEBUG_END_NOTFAILURE;
     }
 
-    return lSuccess;
+    return success;
 }
