@@ -1,84 +1,100 @@
-#ifndef SEARCH_DIALOG_H
-#define SEARCH_DIALOG_H
+#pragma once
 
 #include "ui_SearchDialog.h"
 
-#include <string>
-
-#include <QtCore/QEvent>
-#include <QtCore/QObject>
-#include <QtCore/QPoint>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtGui/QShowEvent>
-#include <QtWidgets/QAbstractButton>
-#include <QtWidgets/QDialog>
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListWidget>
-#include <QtWidgets/QListWidgetItem>
-#include <QtWidgets/QRadioButton>
-#include <QtWidgets/QWidget>
-
 #include <fbsdk/fbsdk.h>
 
-// Main Dialog class in the Relation Constraint
-class SearchDialog : public QDialog, private Ui_Dialog
+#include <QtCore/QPoint>
+#include <QtCore/QString>
+#include <QtGui/QShowEvent>
+#include <QtWidgets/QAbstractButton>
+#include <QtWidgets/QListWidgetItem>
+#include <QtWidgets/QWidget>
+
+/**
+ * @class SearchDialog
+ * @brief Dialog for searching and selecting FBConstraintRelation objects
+ */
+class SearchDialog : public QDialog
 {
     Q_OBJECT
+
 public:
-    // Constructor taking parent widget and cursor position for dialog placement
-    explicit SearchDialog(QWidget *pParent = nullptr, QPoint cursor_pos = QPoint());
+    /**
+     * @brief Constructor
+     * @details Sets up the UI elements and connects the necessary signals and slots.
+     * @param cursorPosition The cursor position where the dialog should appear
+     * @param relationPosition The position where the new relation object should be created
+     * @param selectedConstraint The currently selected FBConstraintRelation object
+     */
+    explicit SearchDialog(const QPoint &cursorPosition, const QPoint &relationPosition, FBConstraintRelation *selectedConstraint);
+
+    /**
+     * @brief Destructor
+     * @details Deletes the pointer to the Widget Container class generated from the .ui file.
+     */
+    ~SearchDialog() { delete ui; }
 
 protected:
-    // Override showEvent to reposition and initialize UI content
+    /**
+     * @brief Initialize suggestion list and reposition dialog
+     * @details This function also set the topmost item in the suggestion list as the current item.
+     * @param event The show event
+     */
     void showEvent(QShowEvent *event) override;
 
-public slots:
-    // Qt Slot: Update suggestion list
-    void onTextChanged(const QString &text);
-
-    // Qt Slot: Create relation objects when dialog item clicked
-    void onItemClicked(QListWidgetItem *item);
-
-    // Qt Slot: Reset suggestion list on Find Option change
-    void onButtonToggled(QAbstractButton *_button, bool _checked);
-
-    // Qt Slot: Finalize Dialog selection and create relation objects
+private slots:
+    /**
+     * @brief Finalize the dialog selection and create relation objects
+     */
     void finalize();
 
-public:
-    // Find the currently selected FBConstraintRelation in the scene
-    // Returns nullptr if no valid relation is selected.
-    FBConstraintRelation *getCurrentSelectedRelation();
+    // Qt Slot: Reset suggestion list on Find Option change
 
-    // UI element getters for external access by lineEdit
-    QRadioButton *getOperatorRadioButton() { return radioButton_Operator; }
-    QRadioButton *getModelRadioButton() { return radioButton_Model; }
-    QListWidget *getListWidget() { return listWidget; }
+    /**
+     * @brief Handle radio button group toggled event
+     * @details This slot calls onTextChanged to refresh the suggestion list based on the current text input.
+     * @param button The button that was toggled (not used)
+     * @param checked The new checked state of the button (not used)
+     */
+    void onRadioButtonGroupToggled(QAbstractButton *button, bool checked);
+
+    /**
+     * @brief Handle item clicked event in the suggestion list
+     * @details This slot sets the clicked item as the current item and calls finalize to create the relation object.
+     * @param item The item that was clicked
+     */
+    void onItemClicked(QListWidgetItem *item);
+
+    /**
+     * @brief Handle return key pressed event in the line edit
+     * @details This slot calls finalize to create the relation object based on the current input.
+     */
+    void onLineEditKeyReturnPressed();
+
+    /**
+     * @brief Handle tab key pressed event in the line edit
+     * @details This slot toggles between the operator and model radio buttons.
+     */
+    void onLineEditKeyTabPressed();
+
+    /**
+     * @brief Handle up/down arrow key pressed event in the line edit
+     * @details This slot changes the current item in the suggestion list based on the arrow key pressed.
+     * @param key The key code of the pressed key (Qt::Key_Up or Qt::Key_Down)
+     */
+    void onLineEditKeyUpDownPressed(int key);
+
+    /**
+     * @brief Handle text changed event in the line edit
+     * @details This slot refreshes the suggestion list based on the current text input and find option.
+     * @param text The current text in the line edit
+     */
+    void onTextChanged(const QString &text);
 
 private:
-    QPoint m_CursorPosition;
-    FBConstraintRelation *m_SelectedConstraint = nullptr;
+    Ui::Dialog *ui;                                              //!< Pointer to the Widget Container class generated from the .ui file
+    QPoint mCursorPosition;                                      //!< The cursor position where the dialog should appear
+    QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
+    HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currenlty selected constraint object
 };
-
-/*
- * Event filter for lineEdit in the dialog defines all key control
- *   - Tab - Switch find option
- *   - Up/Down - Dialog item selection
- *   - Enter - Finalize item selection and create relation object
- */
-class LineEditFilter : public QObject
-{
-    Q_OBJECT
-public:
-    LineEditFilter(SearchDialog *parent = nullptr);
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
-
-private:
-    // Reference to the parent SearchDialog
-    SearchDialog *dialog = nullptr;
-};
-
-#endif // SEARCH_DIALOG_H

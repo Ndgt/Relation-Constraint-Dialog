@@ -1,2 +1,4 @@
-/build
-/.vscode
+.vscode
+build
+docs/Doxygen/html
+docs/Doxygen/latex

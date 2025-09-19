@@ -81,12 +81,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_Operator">
+         <widget class="QRadioButton" name="radioButtonOperator">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="styleSheet">
-           <string notr="true">QRadioButton::indicator
+           <string notr="true">QRadioButton
+{
+	margin-right: 8px;
+}
+
+QRadioButton::indicator
 {
 	width: 15px;
 	height: 15px;
@@ -104,12 +109,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_Model">
+         <widget class="QRadioButton" name="radioButtonModel">
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
           <property name="styleSheet">
-           <string notr="true">QRadioButton::indicator
+           <string notr="true">QRadioButton
+{
+	margin-right: 8px;
+}
+
+QRadioButton::indicator
 {
 	width: 15px;
 	height: 15px;
@@ -132,7 +142,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="CustomLineEdit" name="lineEdit">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -161,6 +171,12 @@
         <property name="contextMenuPolicy">
          <enum>Qt::NoContextMenu</enum>
         </property>
+        <property name="styleSheet">
+         <string notr="true">QAbstractItemView::item
+{
+	min-height: 18px;
+}</string>
+        </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
@@ -174,6 +190,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CustomLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
  <buttongroups>
