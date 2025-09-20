@@ -1,8 +1,19 @@
 #pragma once
 
+#include <string>
+
 #include <QtCore/QList>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QMainWindow>
+
+#include <fbsdk/fbsdk.h>
+
+#if PRODUCT_VERSION == 2020
+// Since Mobu SDK sets the C4946 warning as an error,
+// "error C4946: reinterpret_cast used between related classes: 'QMapNodeBase' and 'QMapNode<Key, T>'"
+// will be triggered when we use Qt 5.12.5 and MSVC 2017. So we disable this warning here.
+#pragma warning(disable : 4946)
+#endif
 
 /**
  * @def DIALOG_DEBUG_START
@@ -61,3 +72,18 @@ QList<QDockWidget *> getFloatingConstraintNavigators();
  * @note This function is a workaround for MotionBuilder 2020, as 'FBGetMainWindow' is available only from MotionBuilder 2022 onwards.
  */
 QMainWindow *getMobuMainWindow();
+
+/**
+ * @brief Finds a FBConstraintRelation by its name in the current scene
+ * @param name The name of the FBConstraintRelation to find
+ * @return Pointer to the FBConstraintRelation if found, otherwise nullptr
+ */
+FBConstraintRelation *getConstraintRelationFromName(std::string name);
+
+/**
+ * @brief Checks if adding a macro to a relation would create a recursive loop
+ * @param currentRelationName The name of the current FBConstraintRelation
+ * @param macroCandidateName The name of the macro FBConstraintRelation to be added
+ * @return true if adding the macro would create a recursion, false otherwise
+ */
+bool checkMacroRecursivity(std::string currentRelationName, std::string macroCandidateName);
