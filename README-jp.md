@@ -14,7 +14,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 ## 環境
 - **MotionBuilder: 2020 ~ 2026**
 
-    **注意**: MotionBuilder 2020 は非推奨（詳細は [MotionBuilder 2020 でのビルドに関する注意](#motionbuilder-2020-でのビルドに関する注意) を参照）
+    **注意**: MotionBuilder 2020 での使用は非推奨（詳細は [MotionBuilder 2020 でのビルドに関する注意](#motionbuilder-2020-でのビルドに関する注意) を参照）
 
 - **OS: Windows**
 

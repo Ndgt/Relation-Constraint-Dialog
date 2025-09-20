@@ -13,7 +13,7 @@ This MotionBuilder plugin provides a convenient search dialog for quickly creati
 ## Platform
 - **MotionBuilder: 2020 ~ 2026**
 
-    **Note**: MotionBuilder 2020 is not recommended (See [Notification about Building plugin with MotionBuilder 2020](#notification-about-building-plugin-with-motionbuilder-2020) for details.)
+    **Note**:  Use with MotionBuilder 2020 is not recommended (See [Notification about Building plugin with MotionBuilder 2020](#notification-about-building-plugin-with-motionbuilder-2020) for details).
 
 - **OS: Windows**
 
