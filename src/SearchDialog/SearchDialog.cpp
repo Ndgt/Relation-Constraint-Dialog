@@ -97,11 +97,12 @@ void SearchDialog::finalize()
     if (ui->radioButtonOperator->isChecked())
     {
         // Parse "<Operator Type> - <Operator Name>" format
-        QStringList parts = selectedItemText.split(" - ");
-        if (parts.size() == 2)
+        const static QString separator = " - ";
+        int index = selectedItemText.indexOf(separator);
+        if (index != -1)
         {
-            QString operatorTypeName = parts[0];
-            QString operatorName = parts[1];
+            QString operatorTypeName = selectedItemText.left(index);
+            QString operatorName = selectedItemText.mid(index + separator.length());
 
             if (mSelectedConstraint.Ok())
             {
