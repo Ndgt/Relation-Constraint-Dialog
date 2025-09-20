@@ -2,6 +2,7 @@
 #include "RelationDialogManager.h"
 #include "SearchDialog.h"
 #include "SuggestionProvider.h"
+#include "Utility.h"
 
 #include <QtCore/QRect>
 #include <QtCore/QStringList>
@@ -103,6 +104,23 @@ void SearchDialog::finalize()
         {
             QString operatorTypeName = selectedItemText.left(index);
             QString operatorName = selectedItemText.mid(index + separator.length());
+
+            if (operatorTypeName == "My Macros")
+            {
+                // Check for macro recursivity
+                if (checkMacroRecursivity(std::string(mSelectedConstraint->Name.AsString()), std::string(operatorName.toStdString())))
+                {
+                    QString errorStr = "[Error] Macro \"" + operatorName + "\" cannot be added due to recursivity.";
+                    QByteArray errorStrBytes = errorStr.toUtf8();
+                    FBMessageBox("Relation Constraint Dialog", errorStrBytes.constData(), "OK");
+
+                    // Close Dialog
+                    accept();
+
+                    // Do not create the macro box
+                    return;
+                }
+            }
 
             if (mSelectedConstraint.Ok())
             {

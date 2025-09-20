@@ -14,6 +14,13 @@
 
 #include <fbsdk/fbsdk.h>
 
+#if PRODUCT_VERSION == 2020
+// Since Mobu SDK sets the C4946 warning as an error,
+// "error C4946: reinterpret_cast used between related classes: 'QMapNodeBase' and 'QMapNode<Key, T>'"
+// will be triggered when we use Qt 5.12.5 and MSVC 2017. So we disable this warning here.
+#pragma warning(disable : 4946)
+#endif
+
 /**
  * @brief Install the ConstraintsNavigatorFilter on all existing navigator windows (both floating and docked)
  * @return true if at least one navigator window was found and filter installed, false otherwise
