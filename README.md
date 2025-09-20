@@ -65,7 +65,7 @@ You can build the documentation locally using [Doxygen](https://www.doxygen.nl/)
 
 - **Tab** – Open search dialog / Toggle "Find Option"
 
-    (**Note**: This control only works if the target Relation Constraint is **selected** in the Navigator, and the **mouse pointer is hovering over** its pane.)
+    (**Note**: This control only works if **the mouse pointer is hovering over the relation view**.)
 
     <p align = "center">
     <img src="docs/images-readme/usage_show.gif" width=80%><br>
@@ -108,7 +108,7 @@ You can build the documentation locally using [Doxygen](https://www.doxygen.nl/)
 
     **Perl** is required for configuring the Qt source. Install with the following command:
 
-    ```cmd
+    ```
     winget install StrawberryPerl.StrawberryPerl
     ```
 
@@ -161,7 +161,7 @@ Click version number to see the official resources.
     Use **`vcvarsall.bat`**, which is installed by default at  
     `C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build`.
 
-    ```cmd
+    ```
     path/to/vcvarsall.bat x64 [-vcvars_ver=<version>]
     ```
 
@@ -173,7 +173,7 @@ Click version number to see the official resources.
 
 2. Get Source and checkout to the target tag (e.g. `v5.15.2`)
 
-    ```cmd
+    ```
     git clone https://github.com/qt/qt5.git
     cd qt5
     git checkout v<version>  # Replace <version> with your target version
@@ -186,7 +186,7 @@ Click version number to see the official resources.
 
 3. Configure Source
 
-    ```cmd
+    ```
     cd ..
     mkdir build
     cd build
@@ -197,13 +197,13 @@ Click version number to see the official resources.
 
 4. Build and Install
 
-    ```cmd
+    ```
     nmake
     nmake install
     ```
 
     In case Qt 6.5.3:
-    ```cmd
+    ```
     cmake --build . --parallel
     cmake --install .
     ```
@@ -215,9 +215,9 @@ Click version number to see the official resources.
 ### Customizing UI
 Open `src/SearchDialog/SearchDialog.ui` with Qt Widgets Designer.
 
-```cmd
+```
 cd src/SearchDialog
-C:/Qt/Qt-<version>/bin/designer.exe SearchDialog.ui
+path/to/Qt/bin/designer.exe SearchDialog.ui
 ```
 
 <p align = "center">
@@ -227,8 +227,8 @@ C:/Qt/Qt-<version>/bin/designer.exe SearchDialog.ui
 
 After you've finished editing the UI, use **uic** (User Interface Compiler) to convert the `.ui` file to the header file `.h`.
 
-```cmd
-C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
+```
+path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 ```
 
 > [!Note]
@@ -245,7 +245,7 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
 2. Clone this repository
 
-    ```cmd
+    ```
     git clone https://github.com/Ndgt/Relation-Constraint-Dialog.git
     cd Relation-Constraint-Dialog/src
     ```

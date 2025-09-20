@@ -66,7 +66,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 ## 使い方
 - **Tab キー** - 検索ダイアログの表示 / 検索オプションの切り替え
 
-    （**注意**: Relation Constraint が**選択状態**になっていて、かつ Relation Constraint の**ペイン上にカーソルがある**場合に表示されます）
+    （**注意**: **Relation View 上にマウスカーソルがある**場合のみ表示されます）
 
     <p align = "center">
     <img src="docs/images-readme/usage_show.gif" width=80%><br>
@@ -109,7 +109,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
     Qt のソースの設定の際に必要になる **Perl** は、以下のコマンドでインストールできます。
 
-    ```cmd
+    ```
     winget install StrawberryPerl.StrawberryPerl
     ```
 
@@ -161,7 +161,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
     **`vcvarsall.bat`** を使用してください。デフォルトでは `C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build` にインストールされています。
 
-    ```cmd
+    ```
     path/to/vcvarsall.bat x64 [-vcvars_ver=<version>]
     ```
     また、VS2019なら `-vcvars_ver=14.29`を、VS2017なら `-vcvars_ver=14.16` オプションを使用します。<br>
@@ -171,7 +171,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 2. ソースを取得し、目的のバージョンのタグ（例: `v5.15.2`）に移動
 
-    ```cmd
+    ```
     git clone https://github.com/qt/qt5.git
     cd qt5
     git checkout v<version>  # <version> を目的のバージョン番号に換えてください
@@ -184,7 +184,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 3. ソースの設定
 
-    ```cmd
+    ```
     cd ..
     mkdir build
     cd build
@@ -195,13 +195,13 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 4. ビルドおよびインストール
 
-    ```cmd
+    ```
     nmake
     nmake install
     ```
 
     Qt 6.5.3 の場合:
-    ```cmd
+    ```
     cmake --build . --parallel
     cmake --install .
     ```
@@ -212,9 +212,9 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 ### UIのカスタマイズ
 `src/SearchDialog/SearchDialog.ui` を Qt Widgets Designer で開きます。
-```cmd
+```
 cd src/SearchDialog
-C:/Qt/Qt-<version>/bin/designer.exe SearchDialog.ui
+path/to/Qt/bin/designer.exe SearchDialog.ui
 ```
 
 <p align = "center">
@@ -224,8 +224,8 @@ C:/Qt/Qt-<version>/bin/designer.exe SearchDialog.ui
 
 UIの編集を終えたら、**uic** (User Interface Compiler) を用いて `.ui` ファイルをヘッダファイル `.h` に変換します。
 
-```cmd
-C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
+```
+path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 ```
 
 > [!Note]
@@ -242,7 +242,7 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
 2. このリポジトリをクローン
 
-    ```cmd
+    ```
     git clone https://github.com/Ndgt/Relation-Constraint-Dialog.git
     cd Relation-Constraint-Dialog/src
     ```
