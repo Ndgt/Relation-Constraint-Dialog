@@ -2,7 +2,7 @@
 
 #include <string>
 
-void SuggestionProvider::collectOperatorNamesForDisplay()
+void SuggestionProvider::collectDefaultOperatorNamesForDisplay()
 {
     QStringList operatorNames;
 
@@ -30,14 +30,20 @@ void SuggestionProvider::collectOperatorNamesForDisplay()
             if (!operatorName)
                 continue;
 
+            std::string operatorTypeName = operatorGroupName.substr(parentGroupPrefix.length());
+
+            // Skip invalid or not default operator types (e.g., macro relations)
+            if (operatorTypeName.empty() || operatorTypeName == "My Macros")
+                continue;
+
             // Create display name formatted as "<Operator Type> - <Operator Name>"
-            std::string displayName = operatorGroupName.substr(parentGroupPrefix.length()) + " - " + std::string(operatorName);
+            std::string displayName = operatorTypeName + " - " + std::string(operatorName);
 
             operatorNames << QString::fromStdString(displayName);
         }
     }
 
-    mOperatorSuggestions = operatorNames;
+    mDefaultOperatorSuggestions = operatorNames;
 }
 
 void SuggestionProvider::collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet)
@@ -79,4 +85,47 @@ QStringList SuggestionProvider::getModelSuggestions()
     modelNames.sort(Qt::CaseInsensitive);
 
     return modelNames;
+}
+
+QStringList SuggestionProvider::getOperatorSuggestions(FBConstraintRelation *relation)
+{
+    // Combine standard operators and macro relations
+    QStringList allOperators = mDefaultOperatorSuggestions;
+    allOperators.append(collectMyMacrosForDisplay(relation));
+    allOperators.sort(Qt::CaseInsensitive);
+    return allOperators;
+}
+
+QStringList SuggestionProvider::collectMyMacrosForDisplay(FBConstraintRelation *relation)
+{
+    QStringList macroNames;
+
+    if (!relation)
+        return macroNames;
+
+    for (int i = 0; i < FBSystem::TheOne().Scene->Constraints.GetCount(); ++i)
+    {
+        FBConstraint *constraint = FBSystem::TheOne().Scene->Constraints[i];
+
+        // Check if constraint is valid and of type FBConstraintRelation
+        if (FBIS(constraint, FBConstraintRelation) == false)
+            continue;
+
+        FBConstraintRelation *relationConstraint = (FBConstraintRelation *)constraint;
+
+        // We cannnot create a macro relation operator in itself
+        if (relationConstraint == relation)
+            continue;
+
+        // Create display name formatted as "My Macros - <Macro Name>"
+        QString displayName = "My Macros - " + QString::fromUtf8(relationConstraint->Name.AsString());
+
+        // Avoid duplicates
+        if (macroNames.contains(displayName))
+            continue;
+
+        macroNames << displayName;
+    }
+
+    return macroNames;
 }

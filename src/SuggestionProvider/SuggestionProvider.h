@@ -22,9 +22,10 @@ public:
 
     /**
      * @brief Get collected operator names
+     * @param relation Pointer to the FBConstraintRelation which is target of the SearchDialog
      * @return List of operator name suggestions
      */
-    QStringList getOperatorSuggestions() { return mOperatorSuggestions; }
+    QStringList getOperatorSuggestions(FBConstraintRelation *relation);
 
     /**
      * @brief Get the singleton instance of SuggestionProvider
@@ -41,7 +42,7 @@ private:
      * @brief Singleton constructor
      * @details Collects operator names for display upon initialization.
      */
-    SuggestionProvider() { collectOperatorNamesForDisplay(); }
+    SuggestionProvider() { collectDefaultOperatorNamesForDisplay(); }
 
     /// @cond
     SuggestionProvider(const SuggestionProvider &) = delete;
@@ -56,12 +57,19 @@ private:
     void collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet);
 
     /**
-     * @brief Collect all relation operator names for display
+     * @brief Collect all default relation operator names for display
      * @details The names are formatted as "<Operator Type> - <Operator Name>".
-     * @note This function is called during initialization to populate the operator suggestions list.
+     * @note The built-in operator and user's plugin operators are collected, and macro relations are excluded.
      */
-    void collectOperatorNamesForDisplay();
+    void collectDefaultOperatorNamesForDisplay();
+
+    /**
+     * @brief Collect user-defined macros and add them to the operator suggestions list
+     * @param relation Pointer to the FBConstraintRelation which will use the macro relations
+     * @return List of macro relation names for display
+     */
+    QStringList collectMyMacrosForDisplay(FBConstraintRelation *relation);
 
 private:
-    QStringList mOperatorSuggestions; //!< List of collected operator name suggestions
+    QStringList mDefaultOperatorSuggestions; //!< List of default operator name suggestions
 };

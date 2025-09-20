@@ -69,7 +69,7 @@ void SearchDialog::showEvent(QShowEvent *event)
     move(openPosition);
 
     // Populate list with operator suggestions
-    QStringList allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions();
+    QStringList allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(mSelectedConstraint);
     ui->listWidget->addItems(allSuggestions);
 
     // Set the topmost item as the current item
@@ -223,7 +223,7 @@ void SearchDialog::onTextChanged(const QString &text)
 
     // Get suggestion name list
     if (ui->radioButtonOperator->isChecked())
-        allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions();
+        allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(mSelectedConstraint);
     else
         allSuggestions = SuggestionProvider::getInstance().getModelSuggestions();
 
