@@ -4,11 +4,11 @@
 #include <mutex>
 #include <unordered_map>
 
-#include <fbsdk/fbsdk.h>
-
 #include <QtCore/QList>
 #include <QtCore/QPoint>
 #include <QtWidgets/QDockWidget>
+
+#include <fbsdk/fbsdk.h>
 
 /**
  * @class RelationDialogManager

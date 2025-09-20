@@ -2,14 +2,14 @@
 
 #include "ui_SearchDialog.h"
 
-#include <fbsdk/fbsdk.h>
-
 #include <QtCore/QPoint>
 #include <QtCore/QString>
 #include <QtGui/QShowEvent>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QWidget>
+
+#include <fbsdk/fbsdk.h>
 
 /**
  * @class SearchDialog

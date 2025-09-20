@@ -4,9 +4,9 @@
 #include "RelationDialogManager.h"
 #include "Utility.h"
 
-#include <fbsdk/fbsdk.h>
-
 #include <QtWidgets/QMainWindow>
+
+#include <fbsdk/fbsdk.h>
 
 FBLibraryDeclare(RelationConstraintDialog)
 {

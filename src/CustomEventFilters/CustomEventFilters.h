@@ -1,7 +1,5 @@
 #pragma once
 
-#include <fbsdk/fbsdk.h>
-
 #include <QtCore/QEvent>
 #include <QtCore/QObject>
 #include <QtCore/QPoint>
@@ -13,6 +11,8 @@
 #else
 #include <QtWidgets/QOpenGLWidget>
 #endif
+
+#include <fbsdk/fbsdk.h>
 
 /**
  * @brief Install the ConstraintsNavigatorFilter on all existing navigator windows (both floating and docked)

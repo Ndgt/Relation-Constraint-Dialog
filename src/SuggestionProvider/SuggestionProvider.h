@@ -1,10 +1,10 @@
 #pragma once
 
-#include <fbsdk/fbsdk.h>
-
 #include <QtCore/QSet>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+
+#include <fbsdk/fbsdk.h>
 
 /**
  * @class SuggestionProvider

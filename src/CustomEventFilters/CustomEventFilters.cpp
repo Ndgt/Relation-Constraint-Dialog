@@ -6,8 +6,6 @@
 
 #include <array>
 
-#include <fbsdk/fbsdk.h>
-
 #include <QtCore/QSet>
 #include <QtCore/QTimer>
 #include <QtGui/QCursor>
