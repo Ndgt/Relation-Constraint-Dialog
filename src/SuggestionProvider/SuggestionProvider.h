@@ -1,44 +1,75 @@
-#ifndef SUGGESTION_PROVIDER_H
-#define SUGGESTION_PROVIDER_H
-
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-#include <QtCore/QSet>
+#pragma once
 
 #include <fbsdk/fbsdk.h>
 
-// Singleton class that collects and provides suggestion data for SearchDialog
+#include <QtCore/QSet>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+
+/**
+ * @class SuggestionProvider
+ * @brief Singleton class that collects and provides suggestion data for SearchDialog
+ */
 class SuggestionProvider
 {
 public:
-    // Returns the singleton instance of the class
-    static SuggestionProvider &instance()
+    /**
+     * @brief Get collected model LongNames in the scene
+     * @return List of LongName suggestions
+     * @note The list is sorted as ascending, case-insensitive.
+     */
+    QStringList getModelSuggestions();
+
+    /**
+     * @brief Get collected operator names
+     * @param relation Pointer to the FBConstraintRelation which is target of the SearchDialog
+     * @return List of operator name suggestions
+     */
+    QStringList getOperatorSuggestions(FBConstraintRelation *relation);
+
+    /**
+     * @brief Get the singleton instance of SuggestionProvider
+     * @return Reference to the singleton instance
+     */
+    static SuggestionProvider &getInstance()
     {
         static SuggestionProvider instance;
         return instance;
     }
 
-    // Collect suggest data
-    void collectOperatorNames();
-    void collectModelNamesRecursive(FBModel *model, QStringList &nameList, QSet<QString> &nameSet);
-
-    // Get suggest data
-    QStringList getOperatorSuggestions();
-    QStringList getModelSuggestions();
-
 private:
-    // Private constructor to enforce singleton pattern
-    SuggestionProvider() = default;
+    /**
+     * @brief Singleton constructor
+     * @details Collects operator names for display upon initialization.
+     */
+    SuggestionProvider() { collectDefaultOperatorNamesForDisplay(); }
 
-    // Disable copy constructor
+    /// @cond
     SuggestionProvider(const SuggestionProvider &) = delete;
-
-    // Disable assignment operator
     SuggestionProvider &operator=(const SuggestionProvider &) = delete;
+    /// @endcond
+
+    /**
+     * @brief Helper function recursively collect model LongNames starting from the given model
+     * @param model Pointer to the starting FBModel
+     * @param nameSet Set to store unique model LongNames
+     */
+    void collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet);
+
+    /**
+     * @brief Collect all default relation operator names for display
+     * @details The names are formatted as "<Operator Type> - <Operator Name>".
+     * @note The built-in operator and user's plugin operators are collected, and macro relations are excluded.
+     */
+    void collectDefaultOperatorNamesForDisplay();
+
+    /**
+     * @brief Collect user-defined macros and add them to the operator suggestions list
+     * @param relation Pointer to the FBConstraintRelation which will use the macro relations
+     * @return List of macro relation names for display
+     */
+    QStringList collectMyMacrosForDisplay(FBConstraintRelation *relation);
 
 private:
-    // List of collected operator name suggestions
-    QStringList m_operatorSuggestions;
+    QStringList mDefaultOperatorSuggestions; //!< List of default operator name suggestions
 };
-
-#endif // SUGGESTION_PROVIDER_H

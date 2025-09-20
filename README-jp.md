@@ -4,8 +4,19 @@
 MotionBuilder の Relation Constraint において手軽にオブジェクト配置ができる、検索ダイアログを提供するプラグインです。
 
 <p align = "center">
-<img src="docs-assets/demo.gif"><br>
+<img src="docs/images-readme/demo.gif"><br>
 </p>
+
+
+<br>
+<br>
+
+## 環境
+- **MotionBuilder: 2020 ~ 2026**
+
+    **注意**: MotionBuilder 2020 での使用は非推奨（詳細は [MotionBuilder 2020 でのビルドに関する注意](#motionbuilder-2020-でのビルドに関する注意) を参照）
+
+- **OS: Windows**
 
 <br>
 <br>
@@ -26,15 +37,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 念のため、**本番環境ではインストールしたプラグインを `plugins`フォルダから除去してください**。
 
 
-<br>
-<br>
 
-## 環境
-- **MotionBuilder: 2020 以降**
-
-- **OS: Windows**
-
-    （備考: Linux版のプラグインは現在開発中で、今後のリリースで追加する予定です）
 
 <br>
 <br>
@@ -43,7 +46,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 1. [Releases](https://github.com/Ndgt/Relation-Constraint-Dialog/releases) ページから最新版をダウンロード
 
-2. ダウンロードしたアーカイブを展開
+2. ダウンロードした zip ファイルを展開
 
 3. 使用している MotionBuilder のバージョンを確認<br>
 
@@ -56,28 +59,42 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 <br>
 <br>
 
+## ドキュメント
+詳細なドキュメントは DeepWiki ページをご覧ください: [DeepWiki](https://deepwiki.com/Ndgt/Relation-Constraint-Dialog)
+
+[Doxygen](https://www.doxygen.nl/) をインストールしている場合、ローカルでドキュメントをビルドできます。[docs/Doxygen](/docs/Doxygen/) フォルダで `doxygen` を実行し、生成された `html` フォルダ内の `index.html` を参照してください。
+
+<br>
+<br>
+
 ## 使い方
 - **Tab キー** - 検索ダイアログの表示 / 検索オプションの切り替え
 
-    （**注意**: Relation Constraint が**選択状態**になっていて、かつ Relation Constraint の**ペイン上にカーソルがある**場合に表示されます）
+    （**注意**: **Relation View 上にマウスカーソルがある**場合のみ表示されます）
 
     <p align = "center">
-    <img src="docs-assets/usage_show.gif" width=80%><br>
+    <img src="docs/images-readme/usage_show.gif" width=80%><br>
     </p>
 
 - **上下 キー** - Operator やモデル、またモデルについての Sender/Receiver の選択
 
     <p align = "center">
-    <img src="docs-assets/usage_select.gif" width=80%><br>
+    <img src="docs/images-readme/usage_select.gif" width=80%><br>
     </p>
 
 - **Enter キー / クリック** - Operator やモデルの選択の確定、オブジェクト作成
 
     <p align = "center">
-    <img src="docs-assets/usage_finalize.gif" width=80%><br>
+    <img src="docs/images-readme/usage_finalize.gif" width=80%><br>
     </p>
 
 - **Esc キー / ダイアログ外部クリック** - オブジェクト作成をせずダイアログを終了
+
+<br>
+
+> [!TIP]
+> もし Relation View 上でオブジェクトが期待した位置（マウスカーソルの位置）に作成されない場合は、**Relation View 上にマウスカーソルがある状態で A キーを押してください**。<br>
+> このプラグインは Relation View 上のマウス操作を監視し、オブジェクトを作成する位置を計算します。そのため、View が「フリーズ」していた場合（マウスでドラッグしたがビューが動かなかった場合）、誤った位置に計算されることがあります。
 
 <br>
 <br>
@@ -99,15 +116,28 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
     - Qt 5.15.2 : MotionBuilder 2022 ~ 2024
     - Qt 5.12.5 : MotionBuilder 2020
 
-<br>
 
-3. **Perl** (Windows の場合)
-    
-    Qt のソースの設定の際に必要になる Perl は、以下のコマンドでインストールできます。
+    Qt のソースの設定の際に必要になる **Perl** は、以下のコマンドでインストールできます。
 
-    ```cmd
+    ```
     winget install StrawberryPerl.StrawberryPerl
     ```
+
+<br>
+
+3. **Detours**
+
+    このプラグインは、OpenGL の関数をフックするために [Microsoft Detours](https://github.com/microsoft/Detours) を使用します。
+
+    [Git からの Qt のビルド](#git-からの-qt-のビルド) の手順1 と同様に `vcvarsall.bat` を実行して Visual Studio のビルド環境を設定した後、Detours をクローンしてビルドします。
+
+    ```
+    git clone https://github.com/microsoft/Detours.git
+    cd Detours/src
+    git checkout v4.0.1
+    nmake
+    ```
+    ビルドされたヘッダーとライブラリは、`Detours/include` および `Detours/lib.X64` に配置されます。
 
 <br>
 
@@ -137,11 +167,11 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 
 ### Git からの Qt のビルド
-1. ターミナルを起動し、Visual Studio のビルド環境を設定 (Windows の場合)
+1. ターミナルを起動し、Visual Studio のビルド環境を設定
 
     **`vcvarsall.bat`** を使用してください。デフォルトでは `C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build` にインストールされています。
 
-    ```cmd
+    ```
     path/to/vcvarsall.bat x64 [-vcvars_ver=<version>]
     ```
     また、VS2019なら `-vcvars_ver=14.29`を、VS2017なら `-vcvars_ver=14.16` オプションを使用します。<br>
@@ -151,7 +181,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 2. ソースを取得し、目的のバージョンのタグ（例: `v5.15.2`）に移動
 
-    ```cmd
+    ```
     git clone https://github.com/qt/qt5.git
     cd qt5
     git checkout v<version>  # <version> を目的のバージョン番号に換えてください
@@ -164,7 +194,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 3. ソースの設定
 
-    ```cmd
+    ```
     cd ..
     mkdir build
     cd build
@@ -175,13 +205,13 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 4. ビルドおよびインストール
 
-    ```cmd
+    ```
     nmake
     nmake install
     ```
 
     Qt 6.5.3 の場合:
-    ```cmd
+    ```
     cmake --build . --parallel
     cmake --install .
     ```
@@ -192,20 +222,20 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 ### UIのカスタマイズ
 `src/SearchDialog/SearchDialog.ui` を Qt Widgets Designer で開きます。
-```cmd
+```
 cd src/SearchDialog
-C:/Qt/Qt-<version>/bin/designer.exe SearchDialog.ui
+path/to/Qt/bin/designer.exe SearchDialog.ui
 ```
 
 <p align = "center">
-<img src="docs-assets/qt_widgets_designer.png"><br>
+<img src="docs/images-readme/qt_widgets_designer.png"><br>
 </p>
 <br>
 
 UIの編集を終えたら、**uic** (User Interface Compiler) を用いて `.ui` ファイルをヘッダファイル `.h` に変換します。
 
-```cmd
-C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
+```
+path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 ```
 
 > [!Note]
@@ -216,15 +246,15 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 ### プラグインのビルド
 1. **管理者権限で** ターミナルを起動
     
-    Windows の場合、[Git からの Qt のビルド](#git-からの-qt-のビルド) と同様に `vcvarsall.bat` を実行して、Visual Studio のビルド環境を設定してください。
+    [Git からの Qt のビルド](#git-からの-qt-のビルド) と同様に `vcvarsall.bat` を実行して、Visual Studio のビルド環境を設定してください。
 
 <br>
 
 2. このリポジトリをクローン
 
-    ```cmd
+    ```
     git clone https://github.com/Ndgt/Relation-Constraint-Dialog.git
-    cd Relation-Constraint-Dialog
+    cd Relation-Constraint-Dialog/src
     ```
 
 <br>
@@ -233,9 +263,10 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
     ```CMake
     # === Environment-specific user configuration ===
-    set(PRODUCT_VERSION 2024)
+    set(PRODUCT_VERSION 2026)
     set(MOBU_ROOT "C:/Program Files/Autodesk/MotionBuilder ${PRODUCT_VERSION}")
-    set(CMAKE_PREFIX_PATH "C:/Qt/Qt-5.15.2")
+    set(QT_SOURCE_SEARCH_PATH "C:/Qt/6.5.3/msvc2019_64")
+    set(DETOURS_ROOT "C:/Detours")
     ```
 
 <br>
@@ -251,16 +282,38 @@ C:/Qt/Qt-<version>/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
     このコマンドにより、ビルドされたプラグインが既定のフォルダ `MotionBuilder <version>/bin/x64/plugins` にコピーされます。
 
 <br>
+
+### MotionBuilder 2020 でのビルドに関する注意
+Visual Studio 2017 を使用して MotionBuilder 2020 用にプラグインをビルドする際、キャストの制限により、以下のような `C4946` 警告が発生する場合があります。
+
+```
+error C4946: reinterpret_cast が関連クラスの間で使用されました : 'QMapNodeBase' と 'QMapNode<Key,T>'
+```
+
+この警告を回避するため、[リリースしたプラグイン](https://github.com/Ndgt/Relation-Constraint-Dialog/releases) のうち MotionBuilder 2020 向けのものは、代わりに **Visual Studio 2019 でビルドしています**。
+
+ただ、MotionBuilder 2020 SDK での C++ 開発環境として公式が定めているのは Visual Studio 2017 のみです。したがって、Visual Studio 2019 でビルドされた MotionBuilder 2020 向けのプラグインは、SDK との互換性の問題により正しく動作しない可能性があります。
+
+
+<br>
 <br>
 
 ## 依存関係
 
-このプロジェクトは Qt フレームワーク（Community Edition）をダイナミックリンクで使用します。プロジェクトにおいて使用している Qt のコンポーネントは、GNU Lesser General Public License バージョン3（LGPLv3）のもとでライセンスされています。
+- このプロジェクトは Qt フレームワーク（Community Edition）をダイナミックリンクで使用します。
+
+    プロジェクトにおいて使用している Qt のコンポーネントは、GNU Lesser General Public License バージョン3（LGPLv3）のもとでライセンスされています。
 
 
-ライセンスドキュメントは、このリポジトリに含めています（`LICENSES/lgpl-3.0.txt`）。公式のライセンス条文は[こちら](https://www.gnu.org/licenses/lgpl-3.0.en.html)で確認できます。
+    ライセンスドキュメントは、このリポジトリに含めています（[LICENSES/Qt/lgpl-3.0.txt](/LICENSES/Qt/lgpl-3.0.txt)）。また、公式のライセンス条文は[こちら](https://www.gnu.org/licenses/lgpl-3.0.en.html)で確認できます。
 
-Qt のライセンスに関する詳細は、[Qt Companyのライセンスページ](https://www.qt.io/ja-jp/qt-licensing) をご覧ください。
+    Qt のライセンスに関する詳細は、[Qt Companyのライセンスページ](https://www.qt.io/ja-jp/qt-licensing) をご覧ください。
+
+<br>
+
+- このプロジェクトはまた、[Microsoft Detours](https://github.com/microsoft/Detours) を使用しています。
+
+    Detours は MIT License のもとでライセンスされています。MIT ライセンスの条文は、このリポジトリに含めています（[LICENSES/Detours/MIT.txt](/LICENSES/Detours/LICENSE.txt)）。
 
 <br>
 
@@ -268,4 +321,4 @@ Qt のライセンスに関する詳細は、[Qt Companyのライセンスペー
 
 このプロジェクトは BSD 3-Clause License のもとでライセンスされています。詳細は [LICENSE](/LICENSE) ファイルをご覧ください。
 
-このプロジェクト自体はBSDライセンスですが、Qt の使用は LGPLv3 に従います。バイナリの再配布は、両方のライセンスの条項を遵守する必要があります。
+このプロジェクト自体はBSD 3-Clause License のもとでライセンスされていますが、Qt の使用は LGPLv3 に、Detours の使用は MIT ライセンスに従います。バイナリの再配布は、これらのライセンスの条項を遵守する必要があります。
