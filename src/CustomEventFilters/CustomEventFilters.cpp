@@ -41,7 +41,12 @@ bool installNavigatorConstraintFilters()
     }
 
     // Use QSet to avoid duplicate entries
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR == 12
+    // QSet constructor accepts two iterators is not available in Qt 5.12.5
+    QSet<QDockWidget *> uniqueNavigators = QSet<QDockWidget *>::fromList(allNavigators);
+#else
     QSet<QDockWidget *> uniqueNavigators(allNavigators.begin(), allNavigators.end());
+#endif
 
     // Install NavigatorConstraint Filters
     for (QDockWidget *navigator : uniqueNavigators)

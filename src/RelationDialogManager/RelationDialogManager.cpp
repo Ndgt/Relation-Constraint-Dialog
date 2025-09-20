@@ -3,6 +3,7 @@
 #include "Utility.h"
 
 #include <QtCore/QSet>
+#include <QtCore/QtConfig>
 #include <QtWidgets/QMainWindow>
 
 #if QT_VERSION_MAJOR >= 6
@@ -215,8 +216,13 @@ bool RelationDialogManager::installRelationOpenGLWidgetFilter(QList<QDockWidget 
 {
     bool success = false;
 
-    // Use QSet to avoid duplicate entries
+// Use QSet to avoid duplicate entries
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR == 12
+    // QSet constructor accepts two iterators is not available in Qt 5.12.5
+    QSet<QDockWidget *> uniqueDockWidgets = QSet<QDockWidget *>::fromList(dockwidgets);
+#else
     QSet<QDockWidget *> uniqueDockWidgets(dockwidgets.begin(), dockwidgets.end());
+#endif
 
     for (QDockWidget *dockwidget : uniqueDockWidgets)
     {
