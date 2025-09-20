@@ -14,8 +14,6 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 ## 環境
 - **MotionBuilder: 2020 ~ 2026**
 
-    **注意**: MotionBuilder 2020 での使用は非推奨（詳細は [MotionBuilder 2020 でのビルドに関する注意](#motionbuilder-2020-でのビルドに関する注意) を参照）
-
 - **OS: Windows**
 
 <br>
@@ -280,19 +278,6 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
 
     このコマンドにより、ビルドされたプラグインが既定のフォルダ `MotionBuilder <version>/bin/x64/plugins` にコピーされます。
-
-<br>
-
-### MotionBuilder 2020 でのビルドに関する注意
-Visual Studio 2017 を使用して MotionBuilder 2020 用にプラグインをビルドする際、キャストの制限により、以下のような `C4946` 警告が発生する場合があります。
-
-```
-error C4946: reinterpret_cast が関連クラスの間で使用されました : 'QMapNodeBase' と 'QMapNode<Key,T>'
-```
-
-この警告を回避するため、[リリースしたプラグイン](https://github.com/Ndgt/Relation-Constraint-Dialog/releases) のうち MotionBuilder 2020 向けのものは、代わりに **Visual Studio 2019 でビルドしています**。
-
-ただ、MotionBuilder 2020 SDK での C++ 開発環境として公式が定めているのは Visual Studio 2017 のみです。したがって、Visual Studio 2019 でビルドされた MotionBuilder 2020 向けのプラグインは、SDK との互換性の問題により正しく動作しない可能性があります。
 
 
 <br>

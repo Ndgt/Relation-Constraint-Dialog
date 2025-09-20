@@ -13,8 +13,6 @@ This MotionBuilder plugin provides a convenient search dialog for quickly creati
 ## Platform
 - **MotionBuilder: 2020 ~ 2026**
 
-    **Note**:  Use with MotionBuilder 2020 is not recommended (See [Notification about Building plugin with MotionBuilder 2020](#notification-about-building-plugin-with-motionbuilder-2020) for details).
-
 - **OS: Windows**
 
 <br>
@@ -279,20 +277,6 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
     ```
 
     The built plugin `.dll` file will be copied to the default folder `MotionBuilder <version>/bin/x64/plugins`.
-
-<br>
-
-### Notification about Building plugin with MotionBuilder 2020
-
-If you use Visual Studio 2017 to build the plugin for MotionBuilder 2020, you may encounter the following warning `C4946` due to the limitations of casting:
-
-```
-error C4946: reinterpret_cast used between related classes : 'QMapNodeBase' and 'QMapNode<Key, T>'
-```
-
-To avoid this warning, the [released plugin](https://github.com/Ndgt/Relation-Constraint-Dialog/releases) for MotionBuilder 2020 **is built with Visual Studio 2019 instead**.
-
-But note that the development environment for C++ in the MotionBuilder 2020 SDK is officially specified as Visual Studio 2017 only. Therefore, the plugin for MotionBuilder 2020 built with Visual Studio 2019 may not work correctly due to compatibility issues with the SDK.
 
 <br>
 <br>
