@@ -309,7 +309,7 @@ But note that the development environment for C++ in the MotionBuilder 2020 SDK 
 
 - This project also uses [Microsoft Detours](https://github.com/microsoft/Detours).
 
-     Detours is licensed under the MIT License. The MIT license text is included in this repository ([LICENSES/Detours/MIT.txt](/LICENSES/Detours/LICENSE.txt))
+     Detours is licensed under the MIT License. The MIT license text is included in this repository ([LICENSES/Detours/LICENSE.txt](/LICENSES/Detours/LICENSE.txt))
 
 <br>
 

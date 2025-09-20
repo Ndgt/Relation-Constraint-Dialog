@@ -313,7 +313,7 @@ error C4946: reinterpret_cast が関連クラスの間で使用されました :
 
 - このプロジェクトはまた、[Microsoft Detours](https://github.com/microsoft/Detours) を使用しています。
 
-    Detours は MIT License のもとでライセンスされています。MIT ライセンスの条文は、このリポジトリに含めています（[LICENSES/Detours/MIT.txt](/LICENSES/Detours/LICENSE.txt)）。
+    Detours は MIT License のもとでライセンスされています。MIT ライセンスの条文は、このリポジトリに含めています（[LICENSES/Detours/LICENSE.txt](/LICENSES/Detours/LICENSE.txt)）。
 
 <br>
 
