@@ -20,6 +20,13 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
+/**
+ * @brief The spacing between grid lines in the relation view
+ * @note This value is constant, even when the relation view is scaled.
+ * @note Use the ratio 'relationViewGridSpacing / defaultGLGridSpacing' to convert from GL coordinates to Relation View coordinates.
+ */
+constexpr double relationViewGridSpacing = 40.0;
+
 bool installNavigatorConstraintFilters()
 {
     // Gather all constraint navigators (both floating and docked)
@@ -104,7 +111,7 @@ static bool unprojectGLWidgetToRelationView(QOpenGLWidget *widget, const QPoint 
     if (gluUnProject(localCursorPos.x(), viewport[3] - localCursorPos.y(), 0.0, modelview, projection, viewport,
                      &relationViewPosX, &relationViewPosY, &_relationViewPosZ))
     {
-        double scaleGLToRelation = 40.0 / 34.0 * scaleFactor;
+        double scaleGLToRelation = relationViewGridSpacing / defaultGLGridSpacing * scaleFactor;
         double relationViewPosScaledX = std::round(relationViewPosX * scaleGLToRelation);
         double relationViewPosScaledY = std::round(relationViewPosY * scaleGLToRelation);
 
@@ -130,7 +137,7 @@ static bool consumeTabKeyShortcutOverrideEvent(QOpenGLWidget *widget, QKeyEvent 
     if (widget && keyEvent && widget->underMouse())
     {
         QPoint localCursorPos = widget->mapFromGlobal(QCursor::pos());
-        double scaleFactor = 34.0 / getHookedLastGridSpacing(widget);
+        double scaleFactor = defaultGLGridSpacing / getHookedLastGridSpacing(widget);
         QPoint relationViewPosTemp;
 
         if (!unprojectGLWidgetToRelationView(widget, localCursorPos, relationViewPosTemp, scaleFactor))
@@ -324,7 +331,7 @@ bool RelationOpenGLWidgetFilter::eventFilter(QObject *obj, QEvent *pEvent)
     // Detect Drag End with Left Mouse Button release
     if (pEvent->type() == QEvent::MouseButtonRelease && mIsDragging)
     {
-        double scaleFactor = 34.0 / getHookedLastGridSpacing(qobject_cast<QOpenGLWidget *>(obj));
+        double scaleFactor = defaultGLGridSpacing / getHookedLastGridSpacing(qobject_cast<QOpenGLWidget *>(obj));
 
         if (mCurrentDragMode == DragMode::Translate)
         {
@@ -411,7 +418,7 @@ void RelationOpenGLWidgetFilter::onKeyAPressed(QOpenGLWidget *widget)
     {
         QPoint viewportCenter = widget->rect().center();
         QPoint viewportCenterInRelationView;
-        double scaleFactor = 34.0 / getHookedLastGridSpacing(widget);
+        double scaleFactor = defaultGLGridSpacing / getHookedLastGridSpacing(widget);
 
         if (unprojectGLWidgetToRelationView(widget, viewportCenter, viewportCenterInRelationView, scaleFactor))
         {
@@ -420,8 +427,8 @@ void RelationOpenGLWidgetFilter::onKeyAPressed(QOpenGLWidget *widget)
 
             // Calculate the center vector from the top-left corner of the bounding box
             QPoint centerFromTopLeft(
-                ((boxMinTopLeftMaxRightBottom[0] + boxMinTopLeftMaxRightBottom[2]) / 2.0 - boxMinTopLeftMaxRightBottom[0]) * 40.0 / 34.0 * scaleFactor,
-                ((boxMinTopLeftMaxRightBottom[1] + boxMinTopLeftMaxRightBottom[3]) / 2.0 - boxMinTopLeftMaxRightBottom[1]) * 40.0 / 34.0 * scaleFactor);
+                ((boxMinTopLeftMaxRightBottom[0] + boxMinTopLeftMaxRightBottom[2]) / 2.0 - boxMinTopLeftMaxRightBottom[0]) * relationViewGridSpacing / defaultGLGridSpacing * scaleFactor,
+                ((boxMinTopLeftMaxRightBottom[1] + boxMinTopLeftMaxRightBottom[3]) / 2.0 - boxMinTopLeftMaxRightBottom[1]) * relationViewGridSpacing / defaultGLGridSpacing * scaleFactor);
 
             // Get previous top-left position of the relation view
             QPoint topLeft;

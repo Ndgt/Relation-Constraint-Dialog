@@ -58,7 +58,7 @@ static std::atomic<bool> gIsSpacingCalculationRequired = false; //!< Flag to ind
 static std::unordered_map<GLint, std::array<double, 4>> gBoxRectRange;  //!< Array to store the bounding rectangle of rendered boxes in the relation view
 static GLint gCurrentRelationViewFramebuffer;                           //!< The framebuffer used by the relation view
 static std::unordered_map<GLint, std::vector<double>> gGridLineXCoords; //!< Vector to store captured x-coordinates of grid lines
-static std::unordered_map<GLint, double> gLastGridSpacing;              //!< The last calculated grid spacing(default to 34.0)
+static std::unordered_map<GLint, double> gLastGridSpacing;              //!< The last calculated grid spacing
 
 double getLastGridSpacing(GLint framebuffer)
 {
@@ -67,7 +67,7 @@ double getLastGridSpacing(GLint framebuffer)
     if (gLastGridSpacing.find(framebuffer) != gLastGridSpacing.end())
         return gLastGridSpacing[framebuffer];
     else
-        return 34.0; // Default grid spacing
+        return defaultGLGridSpacing; // Default grid spacing
 }
 
 std::array<double, 4> getBoxRectRange(GLint framebuffer)
@@ -77,7 +77,7 @@ std::array<double, 4> getBoxRectRange(GLint framebuffer)
     if (gBoxRectRange.find(framebuffer) != gBoxRectRange.end())
         return gBoxRectRange[framebuffer];
     else
-        return {99900, 99900, -99900, -99900}; // Default box rectangle range
+        return defaultBoxRectRange; // Default box rectangle range
 }
 
 bool startHook()
@@ -144,9 +144,9 @@ void WINAPI glBeginCustom(GLenum mode)
 
         // Reset internal data for new capture
         if (gLastGridSpacing.find(gCurrentRelationViewFramebuffer) != gLastGridSpacing.end())
-            gLastGridSpacing[gCurrentRelationViewFramebuffer] = 34.0;
+            gLastGridSpacing[gCurrentRelationViewFramebuffer] = defaultGLGridSpacing;
         else
-            gLastGridSpacing.insert({gCurrentRelationViewFramebuffer, 34.0});
+            gLastGridSpacing.insert({gCurrentRelationViewFramebuffer, defaultGLGridSpacing});
 
         if (gGridLineXCoords.find(gCurrentRelationViewFramebuffer) != gGridLineXCoords.end())
             gGridLineXCoords[gCurrentRelationViewFramebuffer].clear();
@@ -154,9 +154,9 @@ void WINAPI glBeginCustom(GLenum mode)
             gGridLineXCoords.insert({gCurrentRelationViewFramebuffer, std::vector<double>()});
 
         if (gBoxRectRange.find(gCurrentRelationViewFramebuffer) != gBoxRectRange.end())
-            gBoxRectRange[gCurrentRelationViewFramebuffer] = {99900, 99900, -99900, -99900};
+            gBoxRectRange[gCurrentRelationViewFramebuffer] = defaultBoxRectRange;
         else
-            gBoxRectRange.insert({gCurrentRelationViewFramebuffer, {99900, 99900, -99900, -99900}});
+            gBoxRectRange.insert({gCurrentRelationViewFramebuffer, defaultBoxRectRange});
 
         // Start capturing grid line coordinates
         gIsCapturingGridLines = true;
@@ -222,11 +222,11 @@ void WINAPI glRectfCustom(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
     if (gLastGridSpacing.find(gCurrentRelationViewFramebuffer) != gLastGridSpacing.end())
         currentGridSpacing = gLastGridSpacing[gCurrentRelationViewFramebuffer];
     else
-        currentGridSpacing = 34.0;
+        currentGridSpacing = defaultGLGridSpacing;
 
     // Ignore when not in relation view rendering and small rectangles(connectors, not boxes itself)
-    // The value 17.7 seems to be the width(height) of the connector part of a box when grid spacing is default 34.0
-    if ((x2 - x1) <= 17.7 / 34.0 * currentGridSpacing + e)
+    // The value 17.7 seems to be the width(height) of the connector part of a box when grid spacing is default defaultGLGridSpacing
+    if ((x2 - x1) <= 17.7 / defaultGLGridSpacing * currentGridSpacing + e)
     {
         glRectfTrue(x1, y1, x2, y2);
         return;
@@ -235,7 +235,7 @@ void WINAPI glRectfCustom(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2)
     std::lock_guard<std::mutex> boxLock(gBoxRangeArrayMutex);
 
     if (gBoxRectRange.find(gCurrentRelationViewFramebuffer) == gBoxRectRange.end())
-        gBoxRectRange.insert({gCurrentRelationViewFramebuffer, {99900, 99900, -99900, -99900}});
+        gBoxRectRange.insert({gCurrentRelationViewFramebuffer, defaultBoxRectRange});
     else
     {
         if (x1 < gBoxRectRange[gCurrentRelationViewFramebuffer][0])

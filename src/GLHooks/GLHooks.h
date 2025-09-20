@@ -6,20 +6,31 @@
 #include <gl/GL.h>
 
 /**
+ * @brief Default grid spacing value in OpenGL coordinate system
+ */
+constexpr double defaultGLGridSpacing = 34.0;
+
+/**
+ * @brief The default bounding rectangle for boxes in the relation view.
+ * @note The format is {minLeft, minTop, maxRight, maxBottom}.
+ *       The initial values are inverted (min > max) so that the first comparison will always succeed
+ *       and set the initial range correctly.
+ */
+constexpr std::array<double, 4> defaultBoxRectRange = {99900.0, 99900.0, -99900.0, -99900.0};
+
+/**
  * @brief Called by the plugin to get the last calculated grid spacing of rendered relation view's grid lines
  * @param framebuffer The framebuffer used by the relation view
- * @return The last calculated grid spacing. 34.0 if framebuffer is not found
+ * @return The last calculated grid spacing. 34.0(default grid spacing) is returned if framebuffer is not found
  */
 double getLastGridSpacing(GLint framebuffer);
 
 /**
  * @brief Called by the plugin to get the bounding rectangle of rendered boxes in the relation view
  * @param framebuffer The framebuffer used by the relation view
- * @return An array containing {minLeft, minTop, maxRight, maxBottom}. The default value is returned if framebuffer is not found
+ * @return An array containing {minLeft, minTop, maxRight, maxBottom}. defaultBoxRectRange is returned if framebuffer is not found
  * @note It seems that around 100000 is the limit for 'framing' function with 'A' hotkey in the relation view to work properly.
- * @note The default value is {99900, 99900, -99900, -99900}, which will be compared and updated
- *       in the glRectfCustom function when boxes are rendered. The range is only considered.
- *       as the range of rectangle coordinates, not other shapes such as connectors and texts.
+ * @note The range is only considered as the range of rectangle coordinates, not other shapes such as connectors and texts.
  */
 std::array<double, 4> getBoxRectRange(GLint framebuffer);
 
