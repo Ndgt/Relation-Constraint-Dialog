@@ -205,7 +205,9 @@ bool MainWindowFilter::eventFilter(QObject *obj, QEvent *pEvent)
         if (installNavigatorConstraintFilters())
         {
             // Notify RelationDialogManager to install the RelationOpenGLWidgetFilter
-            RelationDialogManager::getInstance().setFilterInstallRequired();
+            // Use a short delay to ensure the relation view is fully initialized
+            QTimer::singleShot(50, []()
+                               { RelationDialogManager::getInstance().setFilterInstallRequired(); });
             DIALOG_DEBUG_END_SUCCESS;
         }
         else
