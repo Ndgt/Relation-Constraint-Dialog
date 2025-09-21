@@ -285,7 +285,7 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
 - This project uses the Qt framework (Community Edition) via dynamic linking. 
     
-    The Qt components used in this project are licensed under the GNU Lesser General Public License version 3 (LGPLv3). The LGPLv3 license text is included in this repository ([LICENSES/Qt/lgpl-3.0.txt](/LICENSES/Qt/lgpl-3.0.txt)). You can also view the official license text [here](https://www.gnu.org/licenses/lgpl-3.0.en.html).
+    The Qt components used in this project are licensed under the GNU Lesser General Public License version 3 (LGPLv3). The LGPLv3 license text is included in this repository ([LICENSES/Qt/lgpl-3.0.txt](/LICENSES/Qt/lgpl-3.0.txt)). You can also view the original license text on the GNU website [here](https://www.gnu.org/licenses/lgpl-3.0.en.html).
 
     For more information about Qt licensing, visit the [Qt Company licensing page](https://www.qt.io/qt-licensing).
 

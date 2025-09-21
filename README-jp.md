@@ -289,8 +289,7 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
     プロジェクトにおいて使用している Qt のコンポーネントは、GNU Lesser General Public License バージョン3（LGPLv3）のもとでライセンスされています。
 
-
-    ライセンスドキュメントは、このリポジトリに含めています（[LICENSES/Qt/lgpl-3.0.txt](/LICENSES/Qt/lgpl-3.0.txt)）。また、公式のライセンス条文は[こちら](https://www.gnu.org/licenses/lgpl-3.0.en.html)で確認できます。
+    ライセンスドキュメントは、このリポジトリに含めています（[LICENSES/Qt/lgpl-3.0.txt](/LICENSES/Qt/lgpl-3.0.txt)）。また、GNU の[ウェブサイト](https://www.gnu.org/licenses/lgpl-3.0.en.html)でライセンスの原文を閲覧することもできます。
 
     Qt のライセンスに関する詳細は、[Qt Companyのライセンスページ](https://www.qt.io/ja-jp/qt-licensing) をご覧ください。
 
