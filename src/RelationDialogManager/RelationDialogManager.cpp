@@ -51,9 +51,16 @@ void RelationDialogManager::eventConnectionSetup()
     FBSystem::TheOne().OnUIIdle.Add(this, (FBCallback)&RelationDialogManager::onUIIdle);
     FBSystem::TheOne().OnConnectionStateNotify.Add(this, (FBCallback)&RelationDialogManager::onRelationSelected);
     FBSystem::TheOne().OnConnectionNotify.Add(this, (FBCallback)&RelationDialogManager::onRelationDeleted);
+    FBApplication::TheOne().OnFileOpenCompleted.Add(this, (FBCallback)&RelationDialogManager::onMergeCompleted);
     FBApplication::TheOne().OnFileExit.Add(this, (FBCallback)&RelationDialogManager::onShutDown);
 
     eventConnectionSetupFinished = true;
+}
+
+void RelationDialogManager::onMergeCompleted(HISender pSender, HKEvent pEvent)
+{
+    // Request installation of the event filter in the next UI idle event
+    installRequired = true;
 }
 
 void RelationDialogManager::onRelationDeleted(HISender pSender, HKEvent pEvent)
@@ -159,6 +166,7 @@ void RelationDialogManager::onShutDown(HISender pSender, HKEvent pEvent)
     FBSystem::TheOne().OnUIIdle.Remove(this, (FBCallback)&RelationDialogManager::onUIIdle);
     FBSystem::TheOne().OnConnectionStateNotify.Remove(this, (FBCallback)&RelationDialogManager::onRelationSelected);
     FBSystem::TheOne().OnConnectionNotify.Remove(this, (FBCallback)&RelationDialogManager::onRelationDeleted);
+    FBApplication::TheOne().OnFileOpenCompleted.Remove(this, (FBCallback)&RelationDialogManager::onMergeCompleted);
 
     // Clear internal data
     std::lock_guard<std::mutex> lock(mRelationMutex);

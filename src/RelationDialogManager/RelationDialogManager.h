@@ -74,6 +74,19 @@ public:
     QPoint getRelationViewTopLeftPos() const;
 
     /**
+     * @brief Callback to be connected to FBApplication::OnFileOpenCompleted event
+     * @details Monitors for file merge operation completion and install RelationOpenGLWidgetFilter
+     * @param pSender The sender of the event
+     * @param pEvent The event data
+     * @note The content of the navigator window seems to be cleared when a file is merged,
+     *       so we need to reinstall the event filter after a merge operation.
+     * @note Since this callback is connected to OnFileOpenCompleted event, it will also be called
+     *       when a new file is opened. However, in that case the relation view seems to not be displayed,
+     *       so attempting to install the event filter would do nothing at that time.
+     */
+    void onMergeCompleted(HISender pSender, HKEvent pEvent);
+
+    /**
      * @brief Callback to be connected to FBSystem::OnConnectionNotify event
      * @details Monitors for deletion of relation constraints and removes their stored state.
      * @param pSender The sender of the event
