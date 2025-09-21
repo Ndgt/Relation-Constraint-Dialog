@@ -2,105 +2,130 @@
 
 #include <string>
 
-using namespace std;
-
-// Collect operator names from groups under "Boxes/Functions/"
-void SuggestionProvider::collectOperatorNames()
+void SuggestionProvider::collectDefaultOperatorNamesForDisplay()
 {
     QStringList operatorNames;
-    const string parentPrefix = "Boxes/Functions/";
+
+    // Operator functions are grouped under "Boxes/Functions/"
+    // e.g., "Boxes/Functions/Vector"
+    const std::string parentGroupPrefix = "Boxes/Functions/";
 
     const int groupCount = FBObject_GetGroupCount();
-
     for (int groupIndex = 0; groupIndex < groupCount; ++groupIndex)
     {
-        const char *groupNameStr = FBObject_GetGroupName(groupIndex);
-        if (!groupNameStr)
+        const char *operatorGroupNameCStr = FBObject_GetGroupName(groupIndex);
+        if (!operatorGroupNameCStr)
             continue;
 
-        string groupName(groupNameStr);
+        std::string operatorGroupName(operatorGroupNameCStr);
 
-        // Look for groups whose names start with "Boxes/Functions/"
-        if (groupName.rfind(parentPrefix, 0) == 0)
+        // Check if the group name starts with the desired prefix
+        if (operatorGroupName.rfind(parentGroupPrefix, 0) != 0)
+            continue;
+
+        int entryCount = FBObject_GetEntryCount(groupIndex);
+        for (int entryIndex = 0; entryIndex < entryCount; ++entryIndex)
         {
-            // Extract the subgroup name by removing the parent prefix
-            string subGroup = groupName.substr(parentPrefix.length());
+            const char *operatorName = FBObject_GetEntryName(groupIndex, entryIndex);
+            if (!operatorName)
+                continue;
 
-            // Only consider direct subgroups (exclude nested ones with '/')
-            if (subGroup.find('/') == string::npos && !subGroup.empty())
-            {
-                int entryCount = FBObject_GetEntryCount(groupIndex);
-                for (int entryIndex = 0; entryIndex < entryCount; ++entryIndex)
-                {
-                    // Get Entry Name
-                    const char *entryName = FBObject_GetEntryName(groupIndex, entryIndex);
-                    if (!entryName)
-                    {
-                        continue;
-                    }
+            std::string operatorTypeName = operatorGroupName.substr(parentGroupPrefix.length());
 
-                    // Create item text for list in the dialog
-                    // Format: "<Relation GroupName> - <EntryName>"
-                    std::string fullName = subGroup + " - " + string(entryName);
-                    QString displayName = QString::fromUtf8(fullName.c_str(), fullName.length());
+            // Skip invalid or not default operator types (e.g., macro relations)
+            if (operatorTypeName.empty() || operatorTypeName == "My Macros")
+                continue;
 
-                    operatorNames << displayName;
-                }
-            }
+            // Create display name formatted as "<Operator Type> - <Operator Name>"
+            std::string displayName = operatorTypeName + " - " + std::string(operatorName);
+
+            operatorNames << QString::fromStdString(displayName);
         }
     }
 
-    // Store the collected operator suggestions
-    m_operatorSuggestions = operatorNames;
+    mDefaultOperatorSuggestions = operatorNames;
 }
 
-// Recursively traverse the scene model hierarchy and collect model names
-void SuggestionProvider::collectModelNamesRecursive(FBModel *model, QStringList &nameList, QSet<QString> &nameSet)
+void SuggestionProvider::collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet)
 {
     if (!model)
         return;
 
-    // Get model's LongName(with namespace)
+    // Get model's LongName (name with namespace)
     const char *modelLongName = model->LongName;
     QString name = QString::fromUtf8(modelLongName);
 
     // Avoid duplicates using a set
-    if (!nameSet.contains(name))
-    {
-        nameList << name;
-        nameSet.insert(name);
-    }
+    nameSet.insert(name);
 
     // Recurse into children
     for (int i = 0; i < model->Children.GetCount(); ++i)
     {
-        collectModelNamesRecursive(model->Children[i], nameList, nameSet);
+        collectModelLongNamesRecursive(model->Children[i], nameSet);
     }
 }
 
-// Return the previously collected operator name suggestions
-QStringList SuggestionProvider::getOperatorSuggestions()
-{
-    return m_operatorSuggestions;
-}
-
-// Collect and return model name suggestions
 QStringList SuggestionProvider::getModelSuggestions()
 {
-    QStringList modelNames;
-    QSet<QString> nameSet;
-
     // Get the Scene root model
     FBModel *root = FBSystem().Scene->RootModel;
+    if (!root)
+        return QStringList();
 
-    // Start recursive traversal from root's immediate children
+    QSet<QString> nameSet;
     for (int i = 0; i < root->Children.GetCount(); ++i)
     {
-        collectModelNamesRecursive(root->Children[i], modelNames, nameSet);
+        collectModelLongNamesRecursive(root->Children[i], nameSet);
     }
 
-    // Sort model name list in ascending order
-    modelNames.sort();
+    // Get string list from the set
+    QStringList modelNames = nameSet.values();
+
+    // Sort model name list in ascending order, case-insensitive
+    modelNames.sort(Qt::CaseInsensitive);
 
     return modelNames;
+}
+
+QStringList SuggestionProvider::getOperatorSuggestions(FBConstraintRelation *relation)
+{
+    // Combine standard operators and macro relations
+    QStringList allOperators = mDefaultOperatorSuggestions;
+    allOperators.append(collectMyMacrosForDisplay(relation));
+    allOperators.sort(Qt::CaseInsensitive);
+    return allOperators;
+}
+
+QStringList SuggestionProvider::collectMyMacrosForDisplay(FBConstraintRelation *relation)
+{
+    QStringList macroNames;
+
+    if (!relation)
+        return macroNames;
+
+    for (int i = 0; i < FBSystem::TheOne().Scene->Constraints.GetCount(); ++i)
+    {
+        FBConstraint *constraint = FBSystem::TheOne().Scene->Constraints[i];
+
+        // Check if constraint is valid and of type FBConstraintRelation
+        if (FBIS(constraint, FBConstraintRelation) == false)
+            continue;
+
+        FBConstraintRelation *relationConstraint = (FBConstraintRelation *)constraint;
+
+        // We cannnot create a macro relation operator in itself
+        if (relationConstraint == relation)
+            continue;
+
+        // Create display name formatted as "My Macros - <Macro Name>"
+        QString displayName = "My Macros - " + QString::fromUtf8(relationConstraint->Name.AsString());
+
+        // Avoid duplicates
+        if (macroNames.contains(displayName))
+            continue;
+
+        macroNames << displayName;
+    }
+
+    return macroNames;
 }
