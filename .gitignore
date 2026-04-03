@@ -1,5 +1,4 @@
-.vscode/*
-!.vscode/tasks.json
+.vscode
 build
 docs/Doxygen/html
 docs/Doxygen/latex
