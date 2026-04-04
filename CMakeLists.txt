@@ -11,8 +11,8 @@ if(NOT WIN32)
     message(FATAL_ERROR "This plugin now only supports Windows.")
 endif()
 
-if(PRODUCT_VERSION LESS 2020 OR PRODUCT_VERSION GREATER_EQUAL 2027)
-    message(FATAL_ERROR "Only MotionBuilder 2020 to 2026 are supported.")
+if(PRODUCT_VERSION LESS 2022 OR PRODUCT_VERSION GREATER_EQUAL 2027)
+    message(FATAL_ERROR "Only MotionBuilder 2022 to 2026 are supported.")
 endif()
 
 # === OpenGL Setup ===

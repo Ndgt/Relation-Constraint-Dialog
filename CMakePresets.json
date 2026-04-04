@@ -97,20 +97,6 @@
         "PRODUCT_VERSION": "2022",
         "QT_SOURCE_SEARCH_PATH": "C:/Qt/5.15.2/msvc2019_64"
       }
-    },
-    {
-      "name": "MotionBuilder2020",
-      "inherits": [
-        "base"
-      ],
-      "toolset": {
-        "value": "v141"
-      },
-      "cacheVariables": {
-        "MOBU_ROOT": "C:/Program Files/Autodesk/MotionBuilder 2020",
-        "PRODUCT_VERSION": "2020",
-        "QT_SOURCE_SEARCH_PATH": "C:/Qt/Qt-5.12.5"
-      }
     }
   ],
   "buildPresets": [
@@ -162,16 +148,6 @@
     {
       "name": "2022-Release",
       "configurePreset": "MotionBuilder2022",
-      "configuration": "Release"
-    },
-    {
-      "name": "2020-RelWithDebInfo",
-      "configurePreset": "MotionBuilder2020",
-      "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "2020-Release",
-      "configurePreset": "MotionBuilder2020",
       "configuration": "Release"
     }
   ]

@@ -226,50 +226,6 @@
       ]
     },
     {
-      "label": "Build & Install for 2020 - RelWithDebInfo",
-      "type": "shell",
-      "command": "cmake",
-      "args": [
-        "--preset",
-        "MotionBuilder2020",
-        "--fresh",
-        "&",
-        "cmake",
-        "--build",
-        "--preset",
-        "2020-RelWithDebInfo",
-        "--clean-first",
-        "&",
-        "cmake",
-        "--install",
-        "build/MotionBuilder2020",
-        "--config",
-        "RelWithDebInfo"
-      ]
-    },
-    {
-      "label": "Build & Install for 2020 - Release",
-      "type": "shell",
-      "command": "cmake",
-      "args": [
-        "--preset",
-        "MotionBuilder2020",
-        "--fresh",
-        "&",
-        "cmake",
-        "--build",
-        "--preset",
-        "2020-Release",
-        "--clean-first",
-        "&",
-        "cmake",
-        "--install",
-        "build/MotionBuilder2020",
-        "--config",
-        "Release"
-      ]
-    },
-    {
       "label": "Debug with Mobu 2026",
       "type": "shell",
       "command": "motionbuilder.exe",
@@ -319,17 +275,6 @@
       "command": "motionbuilder.exe",
       "options": {
         "cwd": "C:/Program Files/Autodesk/MotionBuilder 2022/bin/x64"
-      },
-      "args": [
-        "-console"
-      ]
-    },
-    {
-      "label": "Debug with Mobu 2020",
-      "type": "shell",
-      "command": "motionbuilder.exe",
-      "options": {
-        "cwd": "C:/Program Files/Autodesk/MotionBuilder 2020/bin/x64"
       },
       "args": [
         "-console"
