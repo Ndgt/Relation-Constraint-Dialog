@@ -34,7 +34,7 @@ bool FBLibrary::LibReady()
     DIALOG_DEBUG_MESSAGE("OpenGL functions successfully hooked.");
 
     // Get the pointer to the MotionBuilder MainWindow
-    QMainWindow *mainwindow = getMobuMainWindow();
+    QMainWindow *mainwindow = FBGetMainWindow();
     if (!mainwindow)
     {
         DIALOG_DEBUG_MESSAGE("MainWindow not found.");
