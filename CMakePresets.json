@@ -29,6 +29,20 @@
       }
     },
     {
+      "name": "MotionBuilder2027",
+      "inherits": [
+        "base"
+      ],
+      "toolset": {
+        "value": "v143"
+      },
+      "cacheVariables": {
+        "MOBU_ROOT": "C:/Program Files/Autodesk/MotionBuilder 2027",
+        "PRODUCT_VERSION": "2027",
+        "QT_SOURCE_SEARCH_PATH": "C:/Qt/6.8.3/msvc2022_64"
+      }
+    },
+    {
       "name": "MotionBuilder2026",
       "inherits": [
         "base"
@@ -100,6 +114,16 @@
     }
   ],
   "buildPresets": [
+    {
+      "name": "2027-RelWithDebInfo",
+      "configurePreset": "MotionBuilder2027",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "2027-Release",
+      "configurePreset": "MotionBuilder2027",
+      "configuration": "Release"
+    },
     {
       "name": "2026-RelWithDebInfo",
       "configurePreset": "MotionBuilder2026",
