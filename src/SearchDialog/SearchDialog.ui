@@ -56,24 +56,39 @@
       <UInt>6</UInt>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="topMargin">
+       <number>11</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
          <number>0</number>
         </property>
         <property name="leftMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>3</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>35</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel
+{
+	padding-bottom: 1px;
+}</string>
+          </property>
           <property name="text">
-           <string>Find Option :</string>
+           <string>Type :</string>
           </property>
          </widget>
         </item>
@@ -136,6 +151,47 @@ QRadioButton::indicator
           </attribute>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="SettingsButton" name="buttonSettings">
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">/* Disable arrow icon */
+QPushButton::menu-indicator {
+    image: none;
+	width: 0px;
+}
+
+QPushButton
+{
+	margin: 0px;
+}</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -172,10 +228,11 @@ QRadioButton::indicator
          <string notr="true">QAbstractItemView::item
 {
 	min-height: 18px;
-}</string>
-        </property>
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAsNeeded</enum>
+}
+
+ QScrollBar:vertical {
+     width: 10px;
+ }</string>
         </property>
         <property name="horizontalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -192,6 +249,11 @@ QRadioButton::indicator
    <class>CustomLineEdit</class>
    <extends>QLineEdit</extends>
    <header>CustomLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SettingsButton</class>
+   <extends>QPushButton</extends>
+   <header>SettingsButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

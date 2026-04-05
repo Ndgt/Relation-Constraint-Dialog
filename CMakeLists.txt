@@ -48,6 +48,7 @@ add_library(${PROJECT_NAME} SHARED
     src/RelationDialogManager/RelationDialogManager.cpp
     src/SearchDialog/CustomLineEdit.cpp
     src/SearchDialog/SearchDialog.cpp
+    src/SearchDialog/SettingsButton.cpp
     src/SuggestionProvider/SuggestionProvider.cpp
     src/Utility/Utility.cpp
 )
