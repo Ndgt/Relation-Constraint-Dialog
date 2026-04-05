@@ -9,6 +9,7 @@
 #include <QtCore/QtConfig>
 #include <QtCore/QTimer>
 #include <QtGui/QPalette>
+#include <QtGui/QPainter>
 #include <QtWidgets/QMenu>
 
 #if QT_VERSION_MAJOR >= 6
@@ -34,9 +35,18 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     // Populate UI elements from ui_SearchDialog.h - generated from .ui file
     ui->setupUi(this);
 
+    Qt::WindowFlags flags;
+
     // Set the dialog style to be a popup and delete automatically on close
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(Qt::Popup);
+    flags |= Qt::Popup;
+
+    // Set addtinal attributes and styles so that the overridden paintEvent will work
+    // and the dialog will have rounded corners
+    setAttribute(Qt::WA_TranslucentBackground);
+    flags |= Qt::FramelessWindowHint;
+
+    setWindowFlags(flags);
 
     // Connect Singals & Slots
     connect(ui->lineEdit, &CustomLineEdit::keyReturnPressed, this, &SearchDialog::onLineEditKeyReturnPressed);
@@ -58,6 +68,14 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     palette.setColor(QPalette::ColorRole::PlaceholderText, QColor("#c8c8c8"));
     ui->lineEdit->setPalette(palette);
 #endif
+}
+
+void SearchDialog::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(palette().window());
+    painter.drawRoundedRect(rect(), ui->frame->property("BorderRadius").toUInt(), ui->frame->property("BorderRadius").toUInt());
 }
 
 void SearchDialog::showEvent(QShowEvent *event)
