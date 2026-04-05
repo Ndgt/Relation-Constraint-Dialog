@@ -9,5 +9,13 @@ SettingsMenu::SettingsMenu(QWidget *parent) : QMenu(parent)
 
 SettingsButton::SettingsButton(QWidget *parent) : QPushButton(parent)
 {
-    setMenu(new SettingsMenu(this));
+}
+
+void SettingsButton::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        SettingsMenu menu(this);
+        menu.exec(mapToGlobal(rect().topRight()));
+    }
 }

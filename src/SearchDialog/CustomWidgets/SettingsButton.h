@@ -3,6 +3,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
+#include <QtGui/QMouseEvent>
 
 class SettingsMenu : public QMenu
 {
@@ -18,4 +19,5 @@ class SettingsButton : public QPushButton
 
 public:
     explicit SettingsButton(QWidget *parent = nullptr);
+    void mousePressEvent(QMouseEvent *event) override;
 };
