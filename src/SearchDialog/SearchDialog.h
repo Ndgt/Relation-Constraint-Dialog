@@ -4,6 +4,7 @@
 
 #include <QtCore/QPoint>
 #include <QtCore/QString>
+#include <QtGui/QPaintEvent>
 #include <QtGui/QShowEvent>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QListWidgetItem>
@@ -36,6 +37,12 @@ public:
     ~SearchDialog() { delete ui; }
 
 protected:
+    /**
+     * @brief Custom paint event to draw the dialog with rounded corners
+     * @param event The paint event
+     */
+    void paintEvent(QPaintEvent *event) override;
+
     /**
      * @brief Initialize suggestion list and reposition dialog
      * @details This function also set the topmost item in the suggestion list as the current item.
