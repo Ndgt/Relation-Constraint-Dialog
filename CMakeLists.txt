@@ -46,9 +46,9 @@ add_library(${PROJECT_NAME} SHARED
     src/CustomEventFilters/CustomEventFilters.cpp
     src/GLHooks/GLHooks.cpp
     src/RelationDialogManager/RelationDialogManager.cpp
-    src/SearchDialog/CustomLineEdit.cpp
     src/SearchDialog/SearchDialog.cpp
-    src/SearchDialog/SettingsButton.cpp
+    src/SearchDialog/CustomWidgets/CustomLineEdit.cpp
+    src/SearchDialog/CustomWidgets/SettingsButton.cpp
     src/SuggestionProvider/SuggestionProvider.cpp
     src/Utility/Utility.cpp
 )
@@ -73,6 +73,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/GLHooks
     src/RelationDialogManager
     src/SearchDialog
+    src/SearchDialog/CustomWidgets
     src/SuggestionProvider
     src/Utility
 )

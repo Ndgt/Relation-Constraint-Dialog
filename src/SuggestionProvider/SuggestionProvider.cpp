@@ -92,7 +92,6 @@ QStringList SuggestionProvider::getOperatorSuggestions(FBConstraintRelation *rel
     // Combine standard operators and macro relations
     QStringList allOperators = mDefaultOperatorSuggestions;
     allOperators.append(collectMyMacrosForDisplay(relation));
-    allOperators.sort(Qt::CaseInsensitive);
     return allOperators;
 }
 
