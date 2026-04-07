@@ -121,4 +121,6 @@ private:
     QAction *mActionOption2;               //!< Action for Option 2 in the settings menu
     QAction *mActionHelpRelationReference; //!< Action for Online Help in the settings menu
     QAction *mActionHelpGitHub;            //!< Action for Online Help in the settings menu
+
+    QStringList mCachedModelModelSuggestions; //!< Cached model long name list
 };

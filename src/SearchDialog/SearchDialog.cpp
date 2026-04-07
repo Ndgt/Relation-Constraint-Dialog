@@ -84,6 +84,10 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     palette.setColor(QPalette::ColorRole::PlaceholderText, QColor("#c8c8c8"));
     ui->lineEdit->setPalette(palette);
 #endif
+
+    // Cache model suggestions for better performance
+    // since model list is not expected to change during the dialog lifetime
+    mCachedModelModelSuggestions = SuggestionProvider::getInstance().getModelSuggestions();
 }
 
 void SearchDialog::paintEvent(QPaintEvent *event)
@@ -278,7 +282,7 @@ void SearchDialog::onTextChanged(const QString &text)
     if (ui->radioButtonOperator->isChecked())
         allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(mSelectedConstraint);
     else
-        allSuggestions = SuggestionProvider::getInstance().getModelSuggestions();
+        allSuggestions = mCachedModelModelSuggestions;
 
     // Update dialog list with matching items
     for (const QString &suggestName : allSuggestions)
