@@ -17,8 +17,10 @@
 
 #if QT_VERSION_MAJOR >= 6
 #include <QtGui/QAction>
+#include <QtGui/QActionGroup>
 #else
 #include <QtWidgets/QAction>
+#include <QtWidgets/QActionGroup>
 #endif
 
 const QString MOBU_HELP_FALLBACK_URL = "https://help.autodesk.com/view/MOBPRO/2027/ENU/";
@@ -56,10 +58,8 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
 
     setWindowFlags(flags);
 
-    mActionOption1 = ui->buttonSettings->addAction("Option 1");
-    mActionOption2 = ui->buttonSettings->addAction("Option 2");
-    mActionHelpRelationReference = ui->buttonSettings->addAction("Releation Reference");
-    mActionHelpGitHub = ui->buttonSettings->addAction("GitHub Repository");
+    // Initialize actions for the settings menu and connect their signals to the corresponding slots
+    initializeActions();
 
     // Connect Singals & Slots
     connect(ui->lineEdit, &CustomLineEdit::keyReturnPressed, this, &SearchDialog::onLineEditKeyReturnPressed);
@@ -68,8 +68,6 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     connect(ui->lineEdit, &CustomLineEdit::textChanged, this, &SearchDialog::onTextChanged);
     connect(ui->listWidget, &QListWidget::itemClicked, this, &SearchDialog::onItemClicked);
     connect(ui->buttonSettings, &QPushButton::clicked, this, &SearchDialog::onSettingsButtonClicked);
-    connect(mActionHelpRelationReference, &QAction::triggered, this, &SearchDialog::onSettingsHelpRelationSelected);
-    connect(mActionHelpGitHub, &QAction::triggered, this, &SearchDialog::onSettingsHelpGitHubSelected);
 
     // QButtonGroup::buttonToggled signal is overloaded in Qt5
 #if QT_VERSION_MAJOR >= 6
@@ -88,6 +86,39 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     // Cache model suggestions for better performance
     // since model list is not expected to change during the dialog lifetime
     mCachedModelModelSuggestions = SuggestionProvider::getInstance().getModelSuggestions();
+}
+
+void SearchDialog::initializeActions()
+{
+    QActionGroup *operatorSettingsActionGroup = new QActionGroup(this);
+    mSettingsActionOperatorOpe = new QAction("Show hit Operator first", this);
+    mSettingsActionOperatorCat = new QAction("Show hit Category first", this);
+    mSettingsActionOperatorDef = new QAction("Show in definition order", this);
+    mSettingsActionOperatorOpe->setCheckable(true);
+    mSettingsActionOperatorCat->setCheckable(true);
+    operatorSettingsActionGroup->addAction(mSettingsActionOperatorOpe);
+    operatorSettingsActionGroup->addAction(mSettingsActionOperatorCat);
+    mSettingsActionOperatorOpe->setChecked(true); // default selection
+
+    QActionGroup *modelSettingsActionGroup = new QActionGroup(this);
+    mSettingsActionModelAll = new QAction("Search all models", this);
+    mSettingsActionModelSkeleton = new QAction("Search only skeleton models", this);
+    mSettingsActionModelAll->setCheckable(true);
+    mSettingsActionModelSkeleton->setCheckable(true);
+    modelSettingsActionGroup->addAction(mSettingsActionModelAll);
+    modelSettingsActionGroup->addAction(mSettingsActionModelSkeleton);
+    mSettingsActionModelAll->setChecked(true); // default selection
+
+    QActionGroup *helpSettingsActionGroup = new QActionGroup(this);
+    mSettingsActionHelpReference = new QAction("Relation Reference", this);
+    mSettingsActionHelpGitHub = new QAction("GitHub Repository", this);
+    helpSettingsActionGroup->addAction(mSettingsActionHelpReference);
+    helpSettingsActionGroup->addAction(mSettingsActionHelpGitHub);
+    helpSettingsActionGroup->setExclusive(false);
+
+    connect(operatorSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionOperatorTriggered);
+    connect(modelSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionModelTriggered);
+    connect(helpSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionHelpTriggered);
 }
 
 void SearchDialog::paintEvent(QPaintEvent *event)
@@ -302,56 +333,81 @@ void SearchDialog::onSettingsButtonClicked(bool checked)
     Q_UNUSED(checked);
 
     QMenu *menu = new QMenu(this);
-    QMenu *option1Menu = menu->addMenu("Option1");
-    QMenu *option2Menu = menu->addMenu("Option2");
+    QMenu *operatorOptionMenu = menu->addMenu("Operators");
+    QMenu *modelOptionMenu = menu->addMenu("Models");
     menu->addSeparator();
     QMenu *onlineHelpMenu = menu->addMenu("Online Help");
 
-    option1Menu->addAction(mActionOption1);
-    option2Menu->addAction(mActionOption2);
-    onlineHelpMenu->addAction(mActionHelpRelationReference);
-    onlineHelpMenu->addAction(mActionHelpGitHub);
+    operatorOptionMenu->addAction(mSettingsActionOperatorOpe);
+    operatorOptionMenu->addAction(mSettingsActionOperatorCat);
+    modelOptionMenu->addAction(mSettingsActionModelAll);
+    modelOptionMenu->addAction(mSettingsActionModelSkeleton);
+    onlineHelpMenu->addAction(mSettingsActionHelpReference);
+    onlineHelpMenu->addAction(mSettingsActionHelpGitHub);
 
     menu->exec(ui->buttonSettings->mapToGlobal(ui->buttonSettings->rect().topRight()));
 }
 
-void SearchDialog::onSettingsHelpRelationSelected(bool checked)
+void SearchDialog::onSettingsActionOperatorTriggered(QAction *action)
 {
-    Q_UNUSED(checked);
-
-    // Get product version
-#if defined(PRODUCT_VERSION)
-    int version = PRODUCT_VERSION;
-#else
-    // FBSystem::Version returns a value in the "xx000" format for version 20xx.
-    int version = 2000 + (FBSystem::TheOne().Version.AsInt() / 1000);
-#endif
-
-    // Construct help URL with the version and language
-    QUrl helpUrl;
-    helpUrl.setScheme("https");
-    helpUrl.setHost("help.autodesk.com");
-    helpUrl.setPath(QString("/view/MOBPRO/%1/%2/")
-                        .arg(version)
-                        .arg(MOBU_HELP_LANGUAGE));
-
-    // Set query parameter
-    QUrlQuery query;
-    query.addQueryItem("guid", RELATION_REFERENCE_HELP_GUID);
-    helpUrl.setQuery(query);
-
-    // Check if the help URL is valid, if not, fallback to a top-level help page
-    if (!helpUrl.isValid())
-        helpUrl = QUrl(MOBU_HELP_FALLBACK_URL);
-
-    // Open the help URL in the default web browser
-    QDesktopServices::openUrl(helpUrl);
+    if (action == mSettingsActionOperatorOpe)
+    {
+    }
+    else if (action == mSettingsActionOperatorCat)
+    {
+    }
+    else if (action == mSettingsActionOperatorDef)
+    {
+    }
 }
 
-void SearchDialog::onSettingsHelpGitHubSelected(bool checked)
+void SearchDialog::onSettingsActionModelTriggered(QAction *action)
 {
-    Q_UNUSED(checked);
+    if (action == mSettingsActionModelAll)
+    {
+    }
+    else if (action == mSettingsActionModelSkeleton)
+    {
+    }
+}
 
-    // Open the GitHub repository URL in the default web browser
-    QDesktopServices::openUrl(QUrl(GITHUB_REPOSITORY_URL));
+void SearchDialog::onSettingsActionHelpTriggered(QAction *action)
+{
+    if (!action)
+        return;
+
+    QUrl helpUrl;
+
+    if (action == mSettingsActionHelpReference)
+    {
+        // Get product version
+#if defined(PRODUCT_VERSION)
+        int version = PRODUCT_VERSION;
+#else
+        // FBSystem::Version returns a value in the "xx000" format for version 20xx.
+        int version = 2000 + (FBSystem::TheOne().Version.AsInt() / 1000);
+#endif
+
+        // Construct help URL with the version and language
+        QUrl helpUrl;
+        helpUrl.setScheme("https");
+        helpUrl.setHost("help.autodesk.com");
+        helpUrl.setPath(QString("/view/MOBPRO/%1/%2/").arg(version).arg(MOBU_HELP_LANGUAGE));
+
+        // Set query parameter
+        QUrlQuery query;
+        query.addQueryItem("guid", RELATION_REFERENCE_HELP_GUID);
+        helpUrl.setQuery(query);
+
+        // Check if the help URL is valid, if not, fallback to a top-level help page
+        if (!helpUrl.isValid())
+            helpUrl = QUrl(MOBU_HELP_FALLBACK_URL);
+    }
+    else if (action == mSettingsActionHelpGitHub)
+    {
+        // Set the GitHub repository URL
+        helpUrl = QUrl(GITHUB_REPOSITORY_URL);
+    }
+
+    QDesktopServices::openUrl(helpUrl);
 }

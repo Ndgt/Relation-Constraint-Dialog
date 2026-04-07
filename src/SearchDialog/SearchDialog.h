@@ -107,9 +107,12 @@ private slots:
 
     void onSettingsButtonClicked(bool checked = false);
 
-    void onSettingsHelpRelationSelected(bool checked = false);
+    void onSettingsActionOperatorTriggered(QAction *action);
+    void onSettingsActionModelTriggered(QAction *action);
+    void onSettingsActionHelpTriggered(QAction *action);
 
-    void onSettingsHelpGitHubSelected(bool checked = false);
+private:
+    void initializeActions();
 
 private:
     Ui::Dialog *ui;                                              //!< Pointer to the Widget Container class generated from the .ui file
@@ -117,10 +120,13 @@ private:
     QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
     HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currently selected constraint object
 
-    QAction *mActionOption1;               //!< Action for Option 1 in the settings menu
-    QAction *mActionOption2;               //!< Action for Option 2 in the settings menu
-    QAction *mActionHelpRelationReference; //!< Action for Online Help in the settings menu
-    QAction *mActionHelpGitHub;            //!< Action for Online Help in the settings menu
+    QAction *mSettingsActionOperatorOpe;
+    QAction *mSettingsActionOperatorCat;
+    QAction *mSettingsActionOperatorDef;
+    QAction *mSettingsActionModelAll;
+    QAction *mSettingsActionModelSkeleton;
+    QAction *mSettingsActionHelpReference;
+    QAction *mSettingsActionHelpGitHub;
 
     QStringList mCachedModelModelSuggestions; //!< Cached model long name list
 };
