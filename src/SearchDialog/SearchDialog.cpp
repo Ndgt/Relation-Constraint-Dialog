@@ -389,7 +389,6 @@ void SearchDialog::onSettingsActionHelpTriggered(QAction *action)
 #endif
 
         // Construct help URL with the version and language
-        QUrl helpUrl;
         helpUrl.setScheme("https");
         helpUrl.setHost("help.autodesk.com");
         helpUrl.setPath(QString("/view/MOBPRO/%1/%2/").arg(version).arg(MOBU_HELP_LANGUAGE));
