@@ -8,15 +8,23 @@
 #include <QtCore/QStringList>
 #include <QtCore/QtConfig>
 #include <QtCore/QTimer>
+#include <QtCore/QUrl>
+#include <QtCore/QUrlQuery>
 #include <QtGui/QPalette>
 #include <QtGui/QPainter>
 #include <QtWidgets/QMenu>
+#include <QtGui/QDesktopServices>
 
 #if QT_VERSION_MAJOR >= 6
 #include <QtGui/QAction>
 #else
 #include <QtWidgets/QAction>
 #endif
+
+const QString MOBU_HELP_FALLBACK_URL = "https://help.autodesk.com/view/MOBPRO/2027/ENU/";
+const QString MOBU_HELP_LANGUAGE = "ENU";
+const QString RELATION_REFERENCE_HELP_GUID = "GUID-C50152F9-5607-4779-A964-186B4E1A0601";
+const QString GITHUB_REPOSITORY_URL = "https://github.com/Ndgt/Relation-Constraint-Dialog";
 
 SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationPosition, FBConstraintRelation *selectedConstraint)
     : QDialog(nullptr), ui(new Ui::Dialog), mCursorPosition(cursorPosition), mRelationPosition(relationPosition), mSelectedConstraint(selectedConstraint)
@@ -48,12 +56,20 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
 
     setWindowFlags(flags);
 
+    mActionOption1 = ui->buttonSettings->addAction("Option 1");
+    mActionOption2 = ui->buttonSettings->addAction("Option 2");
+    mActionHelpRelationReference = ui->buttonSettings->addAction("Releation Reference");
+    mActionHelpGitHub = ui->buttonSettings->addAction("GitHub Repository");
+
     // Connect Singals & Slots
     connect(ui->lineEdit, &CustomLineEdit::keyReturnPressed, this, &SearchDialog::onLineEditKeyReturnPressed);
     connect(ui->lineEdit, &CustomLineEdit::keyTabPressed, this, &SearchDialog::onLineEditKeyTabPressed);
     connect(ui->lineEdit, &CustomLineEdit::keyUpDownPressed, this, &SearchDialog::onLineEditKeyUpDownPressed);
     connect(ui->lineEdit, &CustomLineEdit::textChanged, this, &SearchDialog::onTextChanged);
     connect(ui->listWidget, &QListWidget::itemClicked, this, &SearchDialog::onItemClicked);
+    connect(ui->buttonSettings, &QPushButton::clicked, this, &SearchDialog::onSettingsButtonClicked);
+    connect(mActionHelpRelationReference, &QAction::triggered, this, &SearchDialog::onSettingsHelpRelationSelected);
+    connect(mActionHelpGitHub, &QAction::triggered, this, &SearchDialog::onSettingsHelpGitHubSelected);
 
     // QButtonGroup::buttonToggled signal is overloaded in Qt5
 #if QT_VERSION_MAJOR >= 6
@@ -275,4 +291,63 @@ void SearchDialog::onTextChanged(const QString &text)
     // Set current row on the top of list
     if (ui->listWidget->count() > 0)
         ui->listWidget->setCurrentRow(0);
+}
+
+void SearchDialog::onSettingsButtonClicked(bool checked)
+{
+    Q_UNUSED(checked);
+
+    QMenu *menu = new QMenu(this);
+    QMenu *option1Menu = menu->addMenu("Option1");
+    QMenu *option2Menu = menu->addMenu("Option2");
+    menu->addSeparator();
+    QMenu *onlineHelpMenu = menu->addMenu("Online Help");
+
+    option1Menu->addAction(mActionOption1);
+    option2Menu->addAction(mActionOption2);
+    onlineHelpMenu->addAction(mActionHelpRelationReference);
+    onlineHelpMenu->addAction(mActionHelpGitHub);
+
+    menu->exec(ui->buttonSettings->mapToGlobal(ui->buttonSettings->rect().topRight()));
+}
+
+void SearchDialog::onSettingsHelpRelationSelected(bool checked)
+{
+    Q_UNUSED(checked);
+
+    // Get product version
+#if defined(PRODUCT_VERSION)
+    int version = PRODUCT_VERSION;
+#else
+    // FBSystem::Version returns a value in the "xx000" format for version 20xx.
+    int version = 2000 + (FBSystem::TheOne().Version.AsInt() / 1000);
+#endif
+
+    // Construct help URL with the version and language
+    QUrl helpUrl;
+    helpUrl.setScheme("https");
+    helpUrl.setHost("help.autodesk.com");
+    helpUrl.setPath(QString("/view/MOBPRO/%1/%2/")
+                        .arg(version)
+                        .arg(MOBU_HELP_LANGUAGE));
+
+    // Set query parameter
+    QUrlQuery query;
+    query.addQueryItem("guid", RELATION_REFERENCE_HELP_GUID);
+    helpUrl.setQuery(query);
+
+    // Check if the help URL is valid, if not, fallback to a top-level help page
+    if (!helpUrl.isValid())
+        helpUrl = QUrl(MOBU_HELP_FALLBACK_URL);
+
+    // Open the help URL in the default web browser
+    QDesktopServices::openUrl(helpUrl);
+}
+
+void SearchDialog::onSettingsHelpGitHubSelected(bool checked)
+{
+    Q_UNUSED(checked);
+
+    // Open the GitHub repository URL in the default web browser
+    QDesktopServices::openUrl(QUrl(GITHUB_REPOSITORY_URL));
 }

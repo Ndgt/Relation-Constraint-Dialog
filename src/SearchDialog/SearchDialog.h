@@ -10,6 +10,12 @@
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QWidget>
 
+#if QT_VERSION_MAJOR >= 6
+#include <QtGui/QAction>
+#else
+#include <QtWidgets/QAction>
+#endif
+
 #include <fbsdk/fbsdk.h>
 
 /**
@@ -99,9 +105,20 @@ private slots:
      */
     void onTextChanged(const QString &text);
 
+    void onSettingsButtonClicked(bool checked = false);
+
+    void onSettingsHelpRelationSelected(bool checked = false);
+
+    void onSettingsHelpGitHubSelected(bool checked = false);
+
 private:
     Ui::Dialog *ui;                                              //!< Pointer to the Widget Container class generated from the .ui file
     QPoint mCursorPosition;                                      //!< The cursor position where the dialog should appear
     QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
     HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currently selected constraint object
+
+    QAction *mActionOption1;               //!< Action for Option 1 in the settings menu
+    QAction *mActionOption2;               //!< Action for Option 2 in the settings menu
+    QAction *mActionHelpRelationReference; //!< Action for Online Help in the settings menu
+    QAction *mActionHelpGitHub;            //!< Action for Online Help in the settings menu
 };
