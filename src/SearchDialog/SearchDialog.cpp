@@ -119,6 +119,27 @@ void SearchDialog::initializeActions()
     connect(operatorSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionOperatorTriggered);
     connect(modelSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionModelTriggered);
     connect(helpSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionHelpTriggered);
+
+    // QMenu items for exclusive actions use radio button icons by default.
+    // We manually implement the exclusivity here to preserve checkmark icons.
+
+    operatorSettingsActionGroup->setExclusive(false);
+    connect(operatorSettingsActionGroup, &QActionGroup::triggered, [operatorSettingsActionGroup, this](QAction *action)
+            {
+                for (QAction* otherAction : operatorSettingsActionGroup->actions())
+                {
+                    if (otherAction != action)
+                        otherAction->setChecked(false);
+                } });
+
+    modelSettingsActionGroup->setExclusive(false);
+    connect(modelSettingsActionGroup, &QActionGroup::triggered, [modelSettingsActionGroup, this](QAction *action)
+            {
+                for (QAction* otherAction : modelSettingsActionGroup->actions())
+                {
+                    if (otherAction != action)
+                        otherAction->setChecked(false);
+                } });
 }
 
 void SearchDialog::paintEvent(QPaintEvent *event)
