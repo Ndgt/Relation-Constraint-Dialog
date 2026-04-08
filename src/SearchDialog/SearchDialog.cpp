@@ -25,7 +25,7 @@
 
 const QString MOBU_HELP_FALLBACK_URL = "https://help.autodesk.com/view/MOBPRO/2027/ENU/";
 const QString MOBU_HELP_LANGUAGE = "ENU";
-const QString RELATION_REFERENCE_HELP_GUID = "GUID-C50152F9-5607-4779-A964-186B4E1A0601";
+const QString HELP_RELATIONS_REFERENCE_GUID = "GUID-C50152F9-5607-4779-A964-186B4E1A0601";
 const QString GITHUB_REPOSITORY_URL = "https://github.com/Ndgt/Relation-Constraint-Dialog";
 
 SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationPosition, FBConstraintRelation *selectedConstraint)
@@ -110,7 +110,7 @@ void SearchDialog::initializeActions()
     mSettingsActionModelAll->setChecked(true); // default selection
 
     QActionGroup *helpSettingsActionGroup = new QActionGroup(this);
-    mSettingsActionHelpReference = new QAction("Relation Reference", this);
+    mSettingsActionHelpReference = new QAction("Relations Reference", this);
     mSettingsActionHelpGitHub = new QAction("GitHub Repository", this);
     helpSettingsActionGroup->addAction(mSettingsActionHelpReference);
     helpSettingsActionGroup->addAction(mSettingsActionHelpGitHub);
@@ -416,7 +416,7 @@ void SearchDialog::onSettingsActionHelpTriggered(QAction *action)
 
         // Set query parameter
         QUrlQuery query;
-        query.addQueryItem("guid", RELATION_REFERENCE_HELP_GUID);
+        query.addQueryItem("guid", HELP_RELATIONS_REFERENCE_GUID);
         helpUrl.setQuery(query);
 
         // Check if the help URL is valid, if not, fallback to a top-level help page
