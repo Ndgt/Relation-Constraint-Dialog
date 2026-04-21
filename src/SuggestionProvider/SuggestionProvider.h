@@ -1,10 +1,18 @@
 #pragma once
 
+#include <QtCore/QList>
 #include <QtCore/QSet>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QtCore/QStringView>
 
 #include <fbsdk/fbsdk.h>
+
+enum class OperatorSearchPriority
+{
+    CategoryFirst,
+    OperatorFirst,
+};
 
 /**
  * @class SuggestionProvider
@@ -13,19 +21,9 @@
 class SuggestionProvider
 {
 public:
-    /**
-     * @brief Get collected model LongNames in the scene
-     * @return List of LongName suggestions
-     * @note The list is sorted as ascending, case-insensitive.
-     */
-    QStringList getModelSuggestions();
+    QStringList getOperatorSuggestions(QStringView queryView) const;
 
-    /**
-     * @brief Get collected operator names
-     * @param relation Pointer to the FBConstraintRelation which is target of the SearchDialog
-     * @return List of operator name suggestions
-     */
-    QStringList getOperatorSuggestions(FBConstraintRelation *relation);
+    QStringList getModelSuggestions(QStringView queryView) const;
 
     /**
      * @brief Get the singleton instance of SuggestionProvider
@@ -37,17 +35,39 @@ public:
         return instance;
     }
 
+    void initializeModelSuggestions()
+    {
+        mSceneModelLongNames.clear();
+        collectSceneModelLongNames();
+    }
+
+    void setOperatorSearchPriority(OperatorSearchPriority priority) { mOperatorSearchPriority = priority; }
+
 private:
+    struct OperatorEntry
+    {
+        QString categoryName;
+        QString operatorName;
+    };
+
     /**
      * @brief Singleton constructor
      * @details Collects operator names for display upon initialization.
      */
-    SuggestionProvider() { collectDefaultOperatorNamesForDisplay(); }
+    SuggestionProvider() { collectDefaultOperatorEntry(); }
 
     /// @cond
     SuggestionProvider(const SuggestionProvider &) = delete;
     SuggestionProvider &operator=(const SuggestionProvider &) = delete;
     /// @endcond
+
+    void addOperatorSuggestion(QStringList &suggestions, const OperatorEntry &entry) const;
+
+    void collectDefaultOperatorEntry();
+
+    void collectMyMacrosEntry(QList<OperatorEntry> &entries) const;
+
+    void collectSceneModelLongNames();
 
     /**
      * @brief Helper function recursively collect model LongNames starting from the given model
@@ -56,20 +76,9 @@ private:
      */
     void collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet);
 
-    /**
-     * @brief Collect all default relation operator names for display
-     * @details The names are formatted as "<Operator Type> - <Operator Name>".
-     * @note The built-in operator and user's plugin operators are collected, and macro relations are excluded.
-     */
-    void collectDefaultOperatorNamesForDisplay();
-
-    /**
-     * @brief Collect user-defined macros and add them to the operator suggestions list
-     * @param relation Pointer to the FBConstraintRelation which will use the macro relations
-     * @return List of macro relation names for display
-     */
-    QStringList collectMyMacrosForDisplay(FBConstraintRelation *relation);
-
 private:
-    QStringList mDefaultOperatorSuggestions; //!< List of default operator name suggestions
+    QStringList mSceneModelLongNames;
+    QList<OperatorEntry> mDefaultOperatorEntriesBeforeMacro;
+    QList<OperatorEntry> mDefaultOperatorEntriesAfterMacro;
+    OperatorSearchPriority mOperatorSearchPriority = OperatorSearchPriority::OperatorFirst;
 };

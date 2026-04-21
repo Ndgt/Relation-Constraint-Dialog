@@ -120,13 +120,10 @@ private:
     QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
     HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currently selected constraint object
 
-    QAction *mSettingsActionOperatorOpe;
-    QAction *mSettingsActionOperatorCat;
-    QAction *mSettingsActionOperatorDef;
+    QAction *mSettingsActionOperatorOperator;
+    QAction *mSettingsActionOperatorCategory;
     QAction *mSettingsActionModelAll;
     QAction *mSettingsActionModelSkeleton;
     QAction *mSettingsActionHelpReference;
     QAction *mSettingsActionHelpGitHub;
-
-    QStringList mCachedModelModelSuggestions; //!< Cached model long name list
 };

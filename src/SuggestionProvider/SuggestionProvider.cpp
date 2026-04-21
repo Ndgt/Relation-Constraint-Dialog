@@ -2,9 +2,101 @@
 
 #include <string>
 
-void SuggestionProvider::collectDefaultOperatorNamesForDisplay()
+#include "RelationDialogManager.h"
+
+QStringList SuggestionProvider::getOperatorSuggestions(QStringView queryView) const
 {
-    QStringList operatorNames;
+    const QString query = queryView.toString().trimmed();
+
+    // Combine default operators and macros into a single list of entries
+    QList<OperatorEntry> operatorEntries;
+    operatorEntries.append(mDefaultOperatorEntriesBeforeMacro);
+    collectMyMacrosEntry(operatorEntries);
+    operatorEntries.append(mDefaultOperatorEntriesAfterMacro);
+
+    // If the query is empty, return all entries without any prioritization.
+    if (query.isEmpty())
+    {
+        QStringList out;
+
+        for (const auto &entry : operatorEntries)
+        {
+            addOperatorSuggestion(out, entry);
+        }
+
+        return out;
+    }
+
+    QList<const OperatorEntry *> entryCategoryStarts, entryCategoryContains, entryOperatorStarts, entryOperatorContains;
+
+    for (const auto &entry : operatorEntries)
+    {
+        const bool categoryStarts = entry.categoryName.startsWith(query, Qt::CaseInsensitive);
+        const bool categoryContains = !categoryStarts && entry.categoryName.contains(query, Qt::CaseInsensitive);
+        const bool operatorStarts = entry.operatorName.startsWith(query, Qt::CaseInsensitive);
+        const bool operatorContains = !operatorStarts && entry.operatorName.contains(query, Qt::CaseInsensitive);
+
+        if (mOperatorSearchPriority == OperatorSearchPriority::CategoryFirst)
+        {
+            if (categoryStarts)
+                entryCategoryStarts.push_back(&entry);
+            else if (categoryContains)
+                entryCategoryContains.push_back(&entry);
+            else if (operatorStarts)
+                entryOperatorStarts.push_back(&entry);
+            else if (operatorContains)
+                entryOperatorContains.push_back(&entry);
+        }
+        else
+        {
+            if (operatorStarts)
+                entryCategoryStarts.push_back(&entry);
+            else if (operatorContains)
+                entryCategoryContains.push_back(&entry);
+            else if (categoryStarts)
+                entryOperatorStarts.push_back(&entry);
+            else if (categoryContains)
+                entryOperatorContains.push_back(&entry);
+        }
+    }
+
+    QStringList out;
+
+    for (const auto &entry : entryCategoryStarts + entryCategoryContains + entryOperatorStarts + entryOperatorContains)
+    {
+        addOperatorSuggestion(out, *entry);
+    }
+
+    return out;
+}
+
+QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
+{
+    const QString query = queryView.toString().trimmed();
+
+    if (query.isEmpty())
+        return mSceneModelLongNames;
+
+    QStringList out;
+
+    for (const auto &name : mSceneModelLongNames)
+    {
+        if (name.contains(query, Qt::CaseInsensitive))
+            out.push_back(name);
+    }
+
+    return out;
+}
+
+void SuggestionProvider::addOperatorSuggestion(QStringList &suggestions, const OperatorEntry &entry) const
+{
+    suggestions.push_back(entry.categoryName + QStringLiteral(" - ") + entry.operatorName);
+}
+
+void SuggestionProvider::collectDefaultOperatorEntry()
+{
+    mDefaultOperatorEntriesBeforeMacro.clear();
+    mDefaultOperatorEntriesAfterMacro.clear();
 
     // Operator functions are grouped under "Boxes/Functions/"
     // e.g., "Boxes/Functions/Vector"
@@ -36,14 +128,69 @@ void SuggestionProvider::collectDefaultOperatorNamesForDisplay()
             if (operatorTypeName.empty() || operatorTypeName == "My Macros")
                 continue;
 
-            // Create display name formatted as "<Operator Type> - <Operator Name>"
-            std::string displayName = operatorTypeName + " - " + std::string(operatorName);
-
-            operatorNames << QString::fromStdString(displayName);
+            if (operatorTypeName < "My Macros")
+            {
+                mDefaultOperatorEntriesBeforeMacro.push_back(
+                    OperatorEntry{QString::fromStdString(operatorTypeName),
+                                  QString::fromUtf8(operatorName)});
+            }
+            else
+            {
+                mDefaultOperatorEntriesAfterMacro.push_back(
+                    OperatorEntry{QString::fromStdString(operatorTypeName),
+                                  QString::fromUtf8(operatorName)});
+            }
         }
     }
+}
 
-    mDefaultOperatorSuggestions = operatorNames;
+void SuggestionProvider::collectMyMacrosEntry(QList<OperatorEntry> &entries) const
+{
+    FBConstraintRelation *relation = RelationDialogManager::getInstance().getLastSelectedRelationConstraint();
+    if (!relation)
+        return;
+
+    for (int i = 0; i < FBSystem::TheOne().Scene->Constraints.GetCount(); ++i)
+    {
+        FBConstraint *constraint = FBSystem::TheOne().Scene->Constraints[i];
+
+        // Check if constraint is valid and of type FBConstraintRelation
+        if (FBIS(constraint, FBConstraintRelation) == false)
+            continue;
+
+        FBConstraintRelation *relationConstraint = (FBConstraintRelation *)constraint;
+
+        // We cannnot create a macro relation operator in itself
+        if (relationConstraint == relation)
+            continue;
+
+        entries.push_back(
+            OperatorEntry{"My Macros",
+                          QString::fromUtf8(relationConstraint->Name.AsString())});
+    }
+}
+
+void SuggestionProvider::collectSceneModelLongNames()
+{
+    if (!mSceneModelLongNames.isEmpty())
+        mSceneModelLongNames.clear();
+
+    // Get the Scene root model
+    FBModel *root = FBSystem().Scene->RootModel;
+    if (!root)
+        return;
+
+    QSet<QString> nameSet;
+    for (int i = 0; i < root->Children.GetCount(); ++i)
+    {
+        collectModelLongNamesRecursive(root->Children[i], nameSet);
+    }
+
+    // Set string list from the name set
+    mSceneModelLongNames = nameSet.values();
+
+    // Sort model name list in ascending order, case-insensitive
+    mSceneModelLongNames.sort(Qt::CaseInsensitive);
 }
 
 void SuggestionProvider::collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet)
@@ -63,68 +210,4 @@ void SuggestionProvider::collectModelLongNamesRecursive(FBModel *model, QSet<QSt
     {
         collectModelLongNamesRecursive(model->Children[i], nameSet);
     }
-}
-
-QStringList SuggestionProvider::getModelSuggestions()
-{
-    // Get the Scene root model
-    FBModel *root = FBSystem().Scene->RootModel;
-    if (!root)
-        return QStringList();
-
-    QSet<QString> nameSet;
-    for (int i = 0; i < root->Children.GetCount(); ++i)
-    {
-        collectModelLongNamesRecursive(root->Children[i], nameSet);
-    }
-
-    // Get string list from the set
-    QStringList modelNames = nameSet.values();
-
-    // Sort model name list in ascending order, case-insensitive
-    modelNames.sort(Qt::CaseInsensitive);
-
-    return modelNames;
-}
-
-QStringList SuggestionProvider::getOperatorSuggestions(FBConstraintRelation *relation)
-{
-    // Combine standard operators and macro relations
-    QStringList allOperators = mDefaultOperatorSuggestions;
-    allOperators.append(collectMyMacrosForDisplay(relation));
-    return allOperators;
-}
-
-QStringList SuggestionProvider::collectMyMacrosForDisplay(FBConstraintRelation *relation)
-{
-    QStringList macroNames;
-
-    if (!relation)
-        return macroNames;
-
-    for (int i = 0; i < FBSystem::TheOne().Scene->Constraints.GetCount(); ++i)
-    {
-        FBConstraint *constraint = FBSystem::TheOne().Scene->Constraints[i];
-
-        // Check if constraint is valid and of type FBConstraintRelation
-        if (FBIS(constraint, FBConstraintRelation) == false)
-            continue;
-
-        FBConstraintRelation *relationConstraint = (FBConstraintRelation *)constraint;
-
-        // We cannnot create a macro relation operator in itself
-        if (relationConstraint == relation)
-            continue;
-
-        // Create display name formatted as "My Macros - <Macro Name>"
-        QString displayName = "My Macros - " + QString::fromUtf8(relationConstraint->Name.AsString());
-
-        // Avoid duplicates
-        if (macroNames.contains(displayName))
-            continue;
-
-        macroNames << displayName;
-    }
-
-    return macroNames;
 }

@@ -83,37 +83,41 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     ui->lineEdit->setPalette(palette);
 #endif
 
-    // Cache model suggestions for better performance
-    // since model list is not expected to change during the dialog lifetime
-    mCachedModelModelSuggestions = SuggestionProvider::getInstance().getModelSuggestions();
+    // Let the SuggestionProvider collect current scene model long names for suggestions
+    SuggestionProvider::getInstance().initializeModelSuggestions();
 }
 
 void SearchDialog::initializeActions()
 {
     QActionGroup *operatorSettingsActionGroup = new QActionGroup(this);
-    mSettingsActionOperatorOpe = new QAction("Show hit Operator first", this);
-    mSettingsActionOperatorCat = new QAction("Show hit Category first", this);
-    mSettingsActionOperatorDef = new QAction("Show in definition order", this);
-    mSettingsActionOperatorOpe->setCheckable(true);
-    mSettingsActionOperatorCat->setCheckable(true);
-    operatorSettingsActionGroup->addAction(mSettingsActionOperatorOpe);
-    operatorSettingsActionGroup->addAction(mSettingsActionOperatorCat);
-    mSettingsActionOperatorOpe->setChecked(true); // default selection
+
+    mSettingsActionOperatorCategory = new QAction("Show hit Category first", this);
+    operatorSettingsActionGroup->addAction(mSettingsActionOperatorCategory);
+    mSettingsActionOperatorCategory->setCheckable(true);
+    mSettingsActionOperatorOperator = new QAction("Show hit Operator first", this);
+    operatorSettingsActionGroup->addAction(mSettingsActionOperatorOperator);
+    mSettingsActionOperatorOperator->setCheckable(true);
+
+    mSettingsActionOperatorOperator->setChecked(true); // default selection
 
     QActionGroup *modelSettingsActionGroup = new QActionGroup(this);
+
     mSettingsActionModelAll = new QAction("Search all models", this);
-    mSettingsActionModelSkeleton = new QAction("Search only skeleton models", this);
     mSettingsActionModelAll->setCheckable(true);
-    mSettingsActionModelSkeleton->setCheckable(true);
     modelSettingsActionGroup->addAction(mSettingsActionModelAll);
+    mSettingsActionModelSkeleton = new QAction("Search only skeleton models", this);
+    mSettingsActionModelSkeleton->setCheckable(true);
     modelSettingsActionGroup->addAction(mSettingsActionModelSkeleton);
+
     mSettingsActionModelAll->setChecked(true); // default selection
 
     QActionGroup *helpSettingsActionGroup = new QActionGroup(this);
+
     mSettingsActionHelpReference = new QAction("Relations Reference", this);
-    mSettingsActionHelpGitHub = new QAction("GitHub Repository", this);
     helpSettingsActionGroup->addAction(mSettingsActionHelpReference);
+    mSettingsActionHelpGitHub = new QAction("GitHub Repository", this);
     helpSettingsActionGroup->addAction(mSettingsActionHelpGitHub);
+
     helpSettingsActionGroup->setExclusive(false);
 
     connect(operatorSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionOperatorTriggered);
@@ -160,7 +164,7 @@ void SearchDialog::showEvent(QShowEvent *event)
     move(openPosition);
 
     // Populate list with operator suggestions
-    QStringList allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(mSelectedConstraint);
+    QStringList allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(QString());
     ui->listWidget->addItems(allSuggestions);
 
     // Set the topmost item as the current item
@@ -332,17 +336,11 @@ void SearchDialog::onTextChanged(const QString &text)
 
     // Get suggestion name list
     if (ui->radioButtonOperator->isChecked())
-        allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(mSelectedConstraint);
+        allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(text);
     else
-        allSuggestions = mCachedModelModelSuggestions;
+        allSuggestions = SuggestionProvider::getInstance().getModelSuggestions(text);
 
-    // Update dialog list with matching items
-    for (const QString &suggestName : allSuggestions)
-    {
-        // Not consider by case-sensitive
-        if (suggestName.contains(text, Qt::CaseInsensitive))
-            ui->listWidget->addItem(suggestName);
-    }
+    ui->listWidget->addItems(allSuggestions);
 
     // Set current row on the top of list
     if (ui->listWidget->count() > 0)
@@ -359,8 +357,8 @@ void SearchDialog::onSettingsButtonClicked(bool checked)
     menu->addSeparator();
     QMenu *onlineHelpMenu = menu->addMenu("Online Help");
 
-    operatorOptionMenu->addAction(mSettingsActionOperatorOpe);
-    operatorOptionMenu->addAction(mSettingsActionOperatorCat);
+    operatorOptionMenu->addAction(mSettingsActionOperatorOperator);
+    operatorOptionMenu->addAction(mSettingsActionOperatorCategory);
     modelOptionMenu->addAction(mSettingsActionModelAll);
     modelOptionMenu->addAction(mSettingsActionModelSkeleton);
     onlineHelpMenu->addAction(mSettingsActionHelpReference);
@@ -371,14 +369,21 @@ void SearchDialog::onSettingsButtonClicked(bool checked)
 
 void SearchDialog::onSettingsActionOperatorTriggered(QAction *action)
 {
-    if (action == mSettingsActionOperatorOpe)
+    if (action == mSettingsActionOperatorOperator)
     {
+        SuggestionProvider::getInstance().setOperatorSearchPriority(OperatorSearchPriority::OperatorFirst);
+
+        // MEMO: This should be modified
+        // Refresh suggestions to apply the new search priority
+        onTextChanged(ui->lineEdit->text());
     }
-    else if (action == mSettingsActionOperatorCat)
+    else if (action == mSettingsActionOperatorCategory)
     {
-    }
-    else if (action == mSettingsActionOperatorDef)
-    {
+        SuggestionProvider::getInstance().setOperatorSearchPriority(OperatorSearchPriority::CategoryFirst);
+
+        // MEMO: This should be modified
+        // Refresh suggestions to apply the new search priority
+        onTextChanged(ui->lineEdit->text());
     }
 }
 
