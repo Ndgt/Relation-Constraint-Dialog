@@ -41,7 +41,15 @@ public:
         collectSceneModelLongNames();
     }
 
-    void setOperatorSearchPriority(OperatorSearchPriority priority) { mOperatorSearchPriority = priority; }
+    OperatorSearchPriority getOperatorSearchPriority() const
+    {
+        return mOperatorSearchPriority;
+    }
+
+    void setOperatorSearchPriority(OperatorSearchPriority priority)
+    {
+        mOperatorSearchPriority = priority;
+    }
 
 private:
     struct OperatorEntry

@@ -98,8 +98,6 @@ void SearchDialog::initializeActions()
     operatorSettingsActionGroup->addAction(mSettingsActionOperatorOperator);
     mSettingsActionOperatorOperator->setCheckable(true);
 
-    mSettingsActionOperatorOperator->setChecked(true); // default selection
-
     QActionGroup *modelSettingsActionGroup = new QActionGroup(this);
 
     mSettingsActionModelAll = new QAction("Search all models", this);
@@ -108,6 +106,13 @@ void SearchDialog::initializeActions()
     mSettingsActionModelSkeleton = new QAction("Search only skeleton models", this);
     mSettingsActionModelSkeleton->setCheckable(true);
     modelSettingsActionGroup->addAction(mSettingsActionModelSkeleton);
+
+    // Restore search options from SuggestionProvider
+    OperatorSearchPriority currentSearchPriority = SuggestionProvider::getInstance().getOperatorSearchPriority();
+    if (currentSearchPriority == OperatorSearchPriority::CategoryFirst)
+        mSettingsActionOperatorCategory->setChecked(true);
+    else
+        mSettingsActionOperatorOperator->setChecked(true);
 
     mSettingsActionModelAll->setChecked(true); // default selection
 
