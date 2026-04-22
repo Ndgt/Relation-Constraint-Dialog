@@ -175,22 +175,24 @@ void SuggestionProvider::collectSceneModelLongNames()
     if (!mSceneModelLongNames.isEmpty())
         mSceneModelLongNames.clear();
 
-    // Get the Scene root model
-    FBModel *root = FBSystem().Scene->RootModel;
-    if (!root)
-        return;
+    FBModelList modelList;
+    FBFindModelsOfType(modelList, FBModel::TypeInfo, FBSystem::TheOne().Scene->RootModel);
 
-    QSet<QString> nameSet;
-    for (int i = 0; i < root->Children.GetCount(); ++i)
+    for (int i = 0; i < modelList.GetCount(); ++i)
     {
-        collectModelLongNamesRecursive(root->Children[i], nameSet);
+        FBModel *model = modelList[i];
+        if (!model)
+            continue;
+
+        // Models collected by FBFindModelsOfType contains the parent model
+        // which specified in the third argument of the function
+        // We only want to collect the children models, so we skip the scene root model
+        if (model != FBSystem::TheOne().Scene->RootModel)
+        {
+            const char *modelLongName = model->LongName;
+            mSceneModelLongNames.push_back(QString::fromUtf8(modelLongName));
+        }
     }
-
-    // Set string list from the name set
-    mSceneModelLongNames = nameSet.values();
-
-    // Sort model name list in ascending order, case-insensitive
-    mSceneModelLongNames.sort(Qt::CaseInsensitive);
 }
 
 void SuggestionProvider::collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet)
