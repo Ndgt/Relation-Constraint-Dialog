@@ -74,15 +74,27 @@ QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
 {
     const QString query = queryView.toString().trimmed();
 
-    if (query.isEmpty())
-        return mSceneModelLongNames;
-
     QStringList out;
 
-    for (const auto &name : mSceneModelLongNames)
+    for (const auto &entry : mModelEntries)
     {
-        if (name.contains(query, Qt::CaseInsensitive))
-            out.push_back(name);
+        // Create long name list for display and filtering
+        const QString longName = entry.nameSpace.isEmpty() ? entry.name : entry.nameSpace + ":" + entry.name;
+
+        // First we check if the query is contained in the long name
+        if (!query.isEmpty() && !longName.contains(query, Qt::CaseInsensitive))
+            continue;
+
+        // MEMO: Then, apply model search filter here
+        if (mModelSearchFilter == ModelSearchFilter::All)
+        {
+            out.push_back(longName);
+        }
+        else if (mModelSearchFilter == ModelSearchFilter::SkeletonOnly)
+        {
+            if (entry.typeId == FBModelSkeleton::TypeInfo)
+                out.push_back(longName);
+        }
     }
 
     return out;
@@ -170,10 +182,10 @@ void SuggestionProvider::collectMyMacrosEntry(QList<OperatorEntry> &entries) con
     }
 }
 
-void SuggestionProvider::collectSceneModelLongNames()
+void SuggestionProvider::collectModelEntry()
 {
-    if (!mSceneModelLongNames.isEmpty())
-        mSceneModelLongNames.clear();
+    if (!mModelEntries.isEmpty())
+        mModelEntries.clear();
 
     FBModelList modelList;
     FBFindModelsOfType(modelList, FBModel::TypeInfo, FBSystem::TheOne().Scene->RootModel);
@@ -181,35 +193,19 @@ void SuggestionProvider::collectSceneModelLongNames()
     for (int i = 0; i < modelList.GetCount(); ++i)
     {
         FBModel *model = modelList[i];
-        if (!model)
-            continue;
 
         // Models collected by FBFindModelsOfType contains the parent model
         // which specified in the third argument of the function
         // We only want to collect the children models, so we skip the scene root model
-        if (model != FBSystem::TheOne().Scene->RootModel)
-        {
-            const char *modelLongName = model->LongName;
-            mSceneModelLongNames.push_back(QString::fromUtf8(modelLongName));
-        }
-    }
-}
+        if (!model || model == FBSystem::TheOne().Scene->RootModel)
+            continue;
 
-void SuggestionProvider::collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet)
-{
-    if (!model)
-        return;
+        FBNamespace *nameSpace = model->GetOwnerNamespace();
+        QString nameSpaceStr = nameSpace ? QString::fromUtf8(nameSpace->Name.AsString()) : QString();
 
-    // Get model's LongName (name with namespace)
-    const char *modelLongName = model->LongName;
-    QString name = QString::fromUtf8(modelLongName);
-
-    // Avoid duplicates using a set
-    nameSet.insert(name);
-
-    // Recurse into children
-    for (int i = 0; i < model->Children.GetCount(); ++i)
-    {
-        collectModelLongNamesRecursive(model->Children[i], nameSet);
+        mModelEntries.push_back(
+            ModelEntry{nameSpaceStr,
+                       QString::fromUtf8(model->Name.AsString()),
+                       model->GetTypeId()});
     }
 }

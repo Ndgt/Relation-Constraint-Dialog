@@ -114,7 +114,11 @@ void SearchDialog::initializeActions()
     else
         mSettingsActionOperatorOperator->setChecked(true);
 
-    mSettingsActionModelAll->setChecked(true); // default selection
+    ModelSearchFilter currentModelSearchFilter = SuggestionProvider::getInstance().getModelSearchFilter();
+    if (currentModelSearchFilter == ModelSearchFilter::All)
+        mSettingsActionModelAll->setChecked(true);
+    else
+        mSettingsActionModelSkeleton->setChecked(true);
 
     QActionGroup *helpSettingsActionGroup = new QActionGroup(this);
 
@@ -139,6 +143,11 @@ void SearchDialog::initializeActions()
                 {
                     if (otherAction != action)
                         otherAction->setChecked(false);
+                    else
+                    {
+                        // Fallback when checked action is clicked again
+                        action->setChecked(true);
+                    }
                 } });
 
     modelSettingsActionGroup->setExclusive(false);
@@ -148,6 +157,11 @@ void SearchDialog::initializeActions()
                 {
                     if (otherAction != action)
                         otherAction->setChecked(false);
+                    else
+                    {
+                        // Fallback when checked action is clicked again
+                        action->setChecked(true);
+                    }
                 } });
 }
 
@@ -396,9 +410,19 @@ void SearchDialog::onSettingsActionModelTriggered(QAction *action)
 {
     if (action == mSettingsActionModelAll)
     {
+        SuggestionProvider::getInstance().setModelSearchFilter(ModelSearchFilter::All);
+
+        // MEMO: This should be modified
+        // Refresh suggestions to apply the new search filter
+        onTextChanged(ui->lineEdit->text());
     }
     else if (action == mSettingsActionModelSkeleton)
     {
+        SuggestionProvider::getInstance().setModelSearchFilter(ModelSearchFilter::SkeletonOnly);
+
+        // MEMO: This should be modified
+        // Refresh suggestions to apply the new search filter
+        onTextChanged(ui->lineEdit->text());
     }
 }
 

@@ -11,7 +11,13 @@
 enum class OperatorSearchPriority
 {
     CategoryFirst,
-    OperatorFirst,
+    OperatorFirst
+};
+
+enum class ModelSearchFilter
+{
+    All,
+    SkeletonOnly
 };
 
 /**
@@ -37,8 +43,8 @@ public:
 
     void initializeModelSuggestions()
     {
-        mSceneModelLongNames.clear();
-        collectSceneModelLongNames();
+        mModelEntries.clear();
+        collectModelEntry();
     }
 
     OperatorSearchPriority getOperatorSearchPriority() const
@@ -51,11 +57,28 @@ public:
         mOperatorSearchPriority = priority;
     }
 
+    ModelSearchFilter getModelSearchFilter() const
+    {
+        return mModelSearchFilter;
+    }
+
+    void setModelSearchFilter(ModelSearchFilter filter)
+    {
+        mModelSearchFilter = filter;
+    }
+
 private:
     struct OperatorEntry
     {
         QString categoryName;
         QString operatorName;
+    };
+
+    struct ModelEntry
+    {
+        QString nameSpace;
+        QString name;
+        int typeId = -1; // FBComponent::GetTypeId() value
     };
 
     /**
@@ -75,18 +98,13 @@ private:
 
     void collectMyMacrosEntry(QList<OperatorEntry> &entries) const;
 
-    void collectSceneModelLongNames();
-
-    /**
-     * @brief Helper function recursively collect model LongNames starting from the given model
-     * @param model Pointer to the starting FBModel
-     * @param nameSet Set to store unique model LongNames
-     */
-    void collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet);
+    void collectModelEntry();
 
 private:
-    QStringList mSceneModelLongNames;
     QList<OperatorEntry> mDefaultOperatorEntriesBeforeMacro;
     QList<OperatorEntry> mDefaultOperatorEntriesAfterMacro;
+    QList<ModelEntry> mModelEntries;
+
     OperatorSearchPriority mOperatorSearchPriority = OperatorSearchPriority::OperatorFirst;
+    ModelSearchFilter mModelSearchFilter = ModelSearchFilter::All;
 };
