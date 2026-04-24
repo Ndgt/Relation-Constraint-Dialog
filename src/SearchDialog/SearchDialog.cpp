@@ -1,5 +1,6 @@
 #include "CustomLineEdit.h"
 #include "RelationDialogManager.h"
+#include "PreferencesDialog.h"
 #include "SearchDialog.h"
 #include "SuggestionProvider.h"
 #include "Utility.h"
@@ -129,9 +130,12 @@ void SearchDialog::initializeActions()
 
     helpSettingsActionGroup->setExclusive(false);
 
+    mSettingsActionPreferences = new QAction("Preferences...", this);
+
     connect(operatorSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionOperatorTriggered);
     connect(modelSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionModelTriggered);
     connect(helpSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionHelpTriggered);
+    connect(mSettingsActionPreferences, &QAction::triggered, this, &SearchDialog::onSettingsActionPreferencesTriggered);
 
     // QMenu items for exclusive actions use radio button icons by default.
     // We manually implement the exclusivity here to preserve checkmark icons.
@@ -375,6 +379,7 @@ void SearchDialog::onSettingsButtonClicked(bool checked)
     QMenu *modelOptionMenu = menu->addMenu("Models");
     menu->addSeparator();
     QMenu *onlineHelpMenu = menu->addMenu("Online Help");
+    menu->addAction(mSettingsActionPreferences);
 
     operatorOptionMenu->addAction(mSettingsActionOperatorOperator);
     operatorOptionMenu->addAction(mSettingsActionOperatorCategory);
@@ -464,4 +469,18 @@ void SearchDialog::onSettingsActionHelpTriggered(QAction *action)
     }
 
     QDesktopServices::openUrl(helpUrl);
+}
+
+void SearchDialog::onSettingsActionPreferencesTriggered(bool checked)
+{
+    Q_UNUSED(checked);
+
+    // Get main window
+    QWidget *mainWindow = FBGetMainWindow();
+    if (!mainWindow)
+        return;
+
+    // Open Preferences Dialog
+    PreferencesDialog *preferencesDialog = new PreferencesDialog(mainWindow);
+    preferencesDialog->show();
 }

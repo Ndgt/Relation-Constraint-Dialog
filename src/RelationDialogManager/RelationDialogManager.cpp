@@ -12,12 +12,66 @@
 #include <QtWidgets/QOpenGLWidget>
 #endif
 
+#include <Windows.h>
+
 FBRegisterCustomManager(RelationDialogManager);
 FBCustomManagerImplementation(RelationDialogManager);
+
+FBString GetDLLFullPath()
+{
+    char lPath[MAX_PATH] = {0};
+    HMODULE hModule = NULL;
+
+    GetModuleHandleExA(
+        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        (LPCSTR)&GetDLLFullPath, &hModule);
+
+    if (hModule != NULL)
+        GetModuleFileNameA(hModule, lPath, MAX_PATH);
+
+    return FBString(lPath);
+}
 
 bool RelationDialogManager::FBCreate()
 {
     mInstance = this;
+
+    std::string configFileName = "RelationConstraintDialogConfig.ini";
+
+    FBString dllPath = GetDLLFullPath();
+    std::filesystem::path path(dllPath.operator const char *());
+
+    if (std::filesystem::exists(path))
+    {
+        mConfigFilePath = path.parent_path() / configFileName;
+        return true;
+    }
+    else
+    {
+        const FBStringList &pluginPathList = FBSystem::TheOne().GetPluginPath();
+        for (int i = 0; i < pluginPathList.GetCount(); ++i)
+        {
+            const char *pluginDirPath = pluginPathList.GetAt(i);
+            for (const auto &entry : std::filesystem::directory_iterator(pluginDirPath))
+            {
+                if (entry.path().extension() != ".dll")
+                    continue;
+
+                std::string dllPrefix = "RelationConstraintDialog";
+
+                if (entry.path().filename().string().find(dllPrefix) == 0)
+                {
+                    mConfigFilePath = entry.path().parent_path() / configFileName;
+                    return true;
+                }
+            }
+        }
+    }
+
+    // fall back to the config file directory if the DLL path cannot be found
+    std::filesystem::path systemConfigPath(FBSystem::TheOne().ConfigPath.AsString());
+    mConfigFilePath = systemConfigPath / configFileName;
+
     return true;
 }
 

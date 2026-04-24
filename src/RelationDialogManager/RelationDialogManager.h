@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <filesystem>
 #include <mutex>
 #include <unordered_map>
 
@@ -127,6 +128,8 @@ public:
      */
     void setRelationViewState(QPoint topLeftPos, double scaleFactor);
 
+    std::filesystem::path getConfigFilePath() const { return mConfigFilePath; }
+
 private:
     /// @cond
     RelationDialogManager(const RelationDialogManager &) = delete;
@@ -160,4 +163,6 @@ private:
 
     /// Map to store the view state (position and scale) for each relation constraint
     std::unordered_map<FBConstraintRelation *, RelationViewState> mRelationViewStates;
+
+    std::filesystem::path mConfigFilePath;
 };

@@ -110,6 +110,7 @@ private slots:
     void onSettingsActionOperatorTriggered(QAction *action);
     void onSettingsActionModelTriggered(QAction *action);
     void onSettingsActionHelpTriggered(QAction *action);
+    void onSettingsActionPreferencesTriggered(bool checked = false);
 
 private:
     void initializeActions();
@@ -126,4 +127,5 @@ private:
     QAction *mSettingsActionModelSkeleton;
     QAction *mSettingsActionHelpReference;
     QAction *mSettingsActionHelpGitHub;
+    QAction *mSettingsActionPreferences;
 };
