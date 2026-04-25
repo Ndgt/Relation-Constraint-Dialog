@@ -50,9 +50,9 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QRadioButton" name="radioButtonCategory">
+       <widget class="QRadioButton" name="radioButtonOperator">
         <property name="text">
-         <string>Show Hit Category First</string>
+         <string>Show Hit Operator First</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -60,9 +60,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButtonOperator">
+       <widget class="QRadioButton" name="radioButtonCategory">
         <property name="text">
-         <string>Show Hit Operator First</string>
+         <string>Show Hit Category First</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
