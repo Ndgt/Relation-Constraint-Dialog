@@ -12,7 +12,9 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 <br>
 
 ## 環境
-- **MotionBuilder: 2020 ~ 2026**
+- **MotionBuilder: 2022 ~ 2027**
+
+    **注意**: v3.0 から MotionBuilder 2020 はサポート対象外となりました。
 
 - **OS: Windows**
 
@@ -34,9 +36,6 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 念のため、**本番環境ではインストールしたプラグインを `plugins`フォルダから除去してください**。
 
-
-
-
 <br>
 <br>
 
@@ -48,9 +47,9 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 3. 使用している MotionBuilder のバージョンを確認<br>
 
-   （例：MotionBuilder 2026 を使用している場合は `...-MB2026.dll` ）
+   （例：MotionBuilder 2027 を使用している場合は `...-MB2027.dll` ）
 
-4. 対応する `.dll` ファイルを既定のプラグインフォルダ（`MotionBuilder <version>/bin/x64/plugins`）にコピー
+4. 対応する `.dll` ファイルと `RelationConstraintDialogConfig.ini` を既定のプラグインフォルダ（`MotionBuilder <version>/bin/x64/plugins`）にコピー
 
     （**注意**: `plugins` フォルダへのコピーの際、管理者権限が必要になる場合があります。）
 
@@ -60,12 +59,13 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 ## ドキュメント
 詳細なドキュメントは DeepWiki ページをご覧ください: [DeepWiki](https://deepwiki.com/Ndgt/Relation-Constraint-Dialog)
 
-[Doxygen](https://www.doxygen.nl/) をインストールしている場合、ローカルでドキュメントをビルドできます。[docs/Doxygen](/docs/Doxygen/) フォルダで `doxygen` を実行し、生成された `html` フォルダ内の `index.html` を参照してください。
+[Doxygen](https://www.doxygen.nl/) をインストールしている場合、ローカルでドキュメントをビルドできます。`doxygen <path/to/docs/Doxygen/Doxyfile>` を実行し、生成された `html` フォルダ内の `index.html` を参照してください。
 
 <br>
 <br>
 
 ## 使い方
+### ダイアログ操作
 - **Tab キー** - 検索ダイアログの表示 / 検索オプションの切り替え
 
     （**注意**: **Relation View 上にマウスカーソルがある**場合のみ表示されます）
@@ -74,7 +74,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
     <img src="docs/images-readme/usage_show.gif" width=80%><br>
     </p>
 
-- **上下 キー** - Operator やモデル、またモデルについての Sender/Receiver の選択
+- **上下 キー** - 候補リストの移動
 
     <p align = "center">
     <img src="docs/images-readme/usage_select.gif" width=80%><br>
@@ -95,6 +95,56 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 > このプラグインは Relation View 上のマウス操作を監視し、オブジェクトを作成する位置を計算します。そのため、View が「フリーズ」していた場合（マウスでドラッグしたがビューが動かなかった場合）、誤った位置に計算されることがあります。
 
 <br>
+
+### ダイアログ設定
+
+v3.0 から、検索ダイアログに設定ボタン（ `...` ）が追加され、検索ダイアログの動作のカスタマイズやオンラインヘルプの表示ができるようになりました。
+
+- **Preferences**
+
+    設定ボタンを押し、『Preferences...』を選択すると Preferences ダイアログが開きます。
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences.png"><br>
+    </p>
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences_dialog.png"><br>
+    </p>
+
+    Preferences ダイアログでは、以下の設定を編集できます。
+
+    - **Show Hit Operator First**（デフォルト） / **Show Hit Category First**
+
+        Operator 名を優先して検索するか、Category 名を優先して検索するかを設定します。<br>
+        『Show Hit Category First』を有効にして「q」と入力した場合、検索結果では「q」で始まる Category（例: "Quaternion"）が検索結果の上位に表示されます。一方『"Show Hit Operator First』を有効にしている場合は「q」で始まる Operator（例: "Converters - Quaternion To Axis Angle"）が上位に表示されます。
+
+    - **Do not search in namespaces**（デフォルト: OFF）
+
+        モデル検索時に namespace を無視するかどうかを設定します。有効にした場合、検索にはモデル名のみが使用され、namespace 名は無視されます。
+
+    - **Model Search Filter**（デフォルト: すべてのフィルタが有効）
+
+        検索結果に含めるモデルの種類を選択できます。たとえば "Skeletons" を無効にすると、`FBModelSkeleton`型のモデルは検索結果から除外されます。
+
+<br>
+
+> [!NOTE]
+> これらの設定は、プラグインの `.dll` ファイルと同じディレクトリにある `RelationConstraintDialogConfig.ini` ファイルに保存されます。このファイルを手動で編集して設定を変更することもできます。
+
+<br>
+
+- **Online Help**
+
+    以下のオンラインリソースが利用可能です。
+
+    - Relations Reference: Relation Operator の [公式ヘルプ](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601)
+    - GitHub Repository: このリポジトリ
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_online_help.png"><br>
+    </p>
+
 <br>
 
 ## 開発
@@ -103,39 +153,29 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
     - MSVC v143 - VS 2022 C++ x64/x86 ビルドツール : MotionBuilder 2024 ~
     - MSVC v142 - VS 2019 C++ x64/x86 ビルドツール : MotionBuilder 2022, 2023
-    - MSVC v141 - VS 2017 C++ x64/x86 ビルドツール : MotionBuilder 2020
 
 <br>
 
 2. **Qt - qtbase(必須)**, **qttools**(任意)
 
     このプラグインは **qtbase**（特に QtCore, QtGui, QtWidgets モジュール） を使用して開発されています。また、[Qt Widgets Designer](https://doc.qt.io/qt-6/qtdesigner-manual.html) によるUI作成のため **qttools** モジュールを利用しています。
-    - Qt 6.5.3:  MotionBuilder 2025 ~
+    - Qt 6.8.3: MotionBuilder 2027
+    - Qt 6.5.3: MotionBuilder 2025, 2026
     - Qt 5.15.2 : MotionBuilder 2022 ~ 2024
-    - Qt 5.12.5 : MotionBuilder 2020
 
 
-    Qt のソースの設定の際に必要になる **Perl** は、以下のコマンドでインストールできます。
-
-    ```
-    winget install StrawberryPerl.StrawberryPerl
-    ```
+    まず [Qt Group Web サイト](https://www.qt.io/) で Qt Account を作成し、Qt Maintenance Tool をダウンロードしてください。その後、Maintenance Tool を使用して必要な Qt コンポーネント（Open Source 版）をインストールします。
 
 <br>
 
-3. **Detours**
+3. **vcpkg**
 
-    このプラグインは、OpenGL の関数をフックするために [Microsoft Detours](https://github.com/microsoft/Detours) を使用します。
-
-    [Git からの Qt のビルド](#git-からの-qt-のビルド) の手順1 と同様に `vcvarsall.bat` を実行して Visual Studio のビルド環境を設定した後、Detours をクローンしてビルドします。
+    このプロジェクトでは、プロジェクト設定と依存関係管理に vcpkg を使用しています。以下のコマンドで vcpkg をセットアップしてください。
 
     ```
-    git clone https://github.com/microsoft/Detours.git
-    cd Detours/src
-    git checkout v4.0.1
-    nmake
+    git clone https://github.com/microsoft/vcpkg.git
+    cd vcpkg; .\bootstrap-vcpkg.bat
     ```
-    ビルドされたヘッダーとライブラリは、`Detours/include` および `Detours/lib.X64` に配置されます。
 
 <br>
 
@@ -147,9 +187,9 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
     | Qt バージョン  | Visual Studio バージョン |
     |---------------|-------------------------|
+    | Qt [6.8.3](https://doc.qt.io/qt-6.8/supported-platforms.html) | Visual Studio 2022 |
     | Qt [6.5.3](https://doc.qt.io/qt-6.5/supported-platforms.html) | Visual Studio 2019 or 2022| 
     |  Qt [5.15.2](https://doc-snapshots.qt.io/qt5-5.15/supported-platforms.html) | Visual Studio 2019 |
-    | Qt [5.12.5](https://wiki.qt.io/Qt_5.12_Tools_and_Versions) | Visual Studio 2017 | 
 
 <br>
 
@@ -157,80 +197,21 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
     | MotionBuilder バージョン | Visual Studio バージョン |
     |-------------------------|-------------------------|
-    | [2024](https://help.autodesk.com/view/MOBPRO/2024/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2025](https://help.autodesk.com/view/MOBPRO/2025/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2026](https://help.autodesk.com/view/MOBPRO/2026/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C) | Visual Studio 2022 |
+    | [2024](https://help.autodesk.com/view/MOBPRO/2024/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2025](https://help.autodesk.com/view/MOBPRO/2025/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2026](https://help.autodesk.com/view/MOBPRO/2026/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2027](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C) | Visual Studio 2022 |
     | [2022](https://help.autodesk.com/view/MOBPRO/2022/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2023](https://help.autodesk.com/view/MOBPRO/2023/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C)| Visual Studio 2019 |
-    | [2020](https://help.autodesk.com/view/MOBPRO/2020/ENU/?guid=__files_GUID_0C6F6BA3_E9A2_40D0_87AE_F4F8CF20A66C_htm) | Visual Studio 2017 |
 
 <br>
 
-
-### Git からの Qt のビルド
-1. ターミナルを起動し、Visual Studio のビルド環境を設定
-
-    **`vcvarsall.bat`** を使用してください。デフォルトでは `C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build` にインストールされています。
-
-    ```
-    path/to/vcvarsall.bat x64 [-vcvars_ver=<version>]
-    ```
-    また、VS2019なら `-vcvars_ver=14.29`を、VS2017なら `-vcvars_ver=14.16` オプションを使用します。<br>
-    詳細は [Microsoft Document](https://learn.microsoft.com/ja-jp/cpp/build/building-on-the-command-line?view=msvc-170#vcvarsall) をご覧ください。
-
-<br>
-
-2. ソースを取得し、目的のバージョンのタグ（例: `v5.15.2`）に移動
-
-    ```
-    git clone https://github.com/qt/qt5.git
-    cd qt5
-    git checkout v<version>  # <version> を目的のバージョン番号に換えてください
-    git submodule update --init --recursive qtbase qttools
-    ```
-
-    **注意**: Qt/qt5 リポジトリには「5.12.5」ブランチはありません。
-
-<br>
-
-3. ソースの設定
-
-    ```
-    cd ..
-    mkdir build
-    cd build
-    ../qt5/configure.bat -opensource -confirm-license -release -nomake examples -nomake tests
-    ```
-
-<br>
-
-4. ビルドおよびインストール
-
-    ```
-    nmake
-    nmake install
-    ```
-
-    Qt 6.5.3 の場合:
-    ```
-    cmake --build . --parallel
-    cmake --install .
-    ```
-
-    ビルドされた Qt のソースは、デフォルトで `C:/Qt/Qt-<version>` にインストールされます。
-
-<br>
 
 ### UIのカスタマイズ
-`src/SearchDialog/SearchDialog.ui` を Qt Widgets Designer で開きます。
-```
-cd src/SearchDialog
-path/to/Qt/bin/designer.exe SearchDialog.ui
-```
+検索ダイアログと設定ダイアログの UI は、Qt Widgets Designer を使用してカスタマイズできます。編集する際は `.ui` ファイルを Designer で開いてください。   
 
 <p align = "center">
 <img src="docs/images-readme/qt_widgets_designer.png"><br>
 </p>
 <br>
 
-UIの編集を終えたら、**uic** (User Interface Compiler) を用いて `.ui` ファイルをヘッダファイル `.h` に変換します。
+UI の編集を終えたら、**uic** (User Interface Compiler) を用いて `.ui` ファイルをヘッダファイル `.h` に変換します。
 
 ```
 path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
@@ -243,10 +224,7 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
 ### プラグインのビルド
 1. **管理者権限で** ターミナルを起動
-    
-    [Git からの Qt のビルド](#git-からの-qt-のビルド) と同様に `vcvarsall.bat` を実行して、Visual Studio のビルド環境を設定してください。
 
-<br>
 
 2. このリポジトリをクローン
 
@@ -257,27 +235,69 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
 <br>
 
-3. 環境に合わせて `CMakeLists.txt` の変数の値を編集
+3.  [CMakePresets.json](./CMakePresets.json) のユーザー固有の変数の値を編集
 
-    ```CMake
-    # === Environment-specific user configuration ===
-    set(PRODUCT_VERSION 2026)
-    set(MOBU_ROOT "C:/Program Files/Autodesk/MotionBuilder ${PRODUCT_VERSION}")
-    set(QT_SOURCE_SEARCH_PATH "C:/Qt/6.5.3/msvc2019_64")
-    set(DETOURS_ROOT "C:/Detours")
+    環境に合わせて、例えば以下の変数の値を設定してください。
+    - `generator`: 使用する CMake generator
+    - `MOBU_ROOT`: MotionBuilder のインストールパス
+    - `QT_SOURCE_SEARCH_PATH`: Qt ソースのインストールパス
+
+    <br>
+
+    ```json
+    {
+      "version": 6,
+      "configurePresets": [
+        {
+          "name": "base",
+          "hidden": true,
+          "architecture": {
+            "strategy": "set",
+            "value": "x64"
+          },
+          "binaryDir": "${sourceDir}/build/${presetName}",
+          "generator": "Visual Studio 18 2026",
+          "toolset": {
+              "strategy": "set"
+          },
+          "cacheVariables": {
+              "CMAKE_AUTOMOC": "ON",
+              "CMAKE_AUTOUIC": "ON",
+              "CMAKE_CXX_STANDARD": "17",
+              "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+
+          ...
+
+      {
+        "name": "MotionBuilder2027",
+        "inherits": [
+          "base"
+        ],
+        "toolset": {
+          "value": "v143"
+        },
+        "cacheVariables": {
+          "MOBU_ROOT": "C:/Program Files/Autodesk/MotionBuilder 2027",
+          "PRODUCT_VERSION": "2027",
+          "QT_SOURCE_SEARCH_PATH": "C:/Qt/6.8.3/msvc2022_64"
+        }
+      },
     ```
 
 <br>
 
-4. プラグインのビルド
+4. プラグインのビルドおよびインストール
 
     ```
-    cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
-    cmake --build build
+    cmake --preset MotionBuilder2027 --fresh
+    cmake --build --preset 2027-RelWithDebInfo --clean-first
+    cmake --install build/MotionBuilder2027 --config RelWithDebInfo
     ```
 
 
-    このコマンドにより、ビルドされたプラグインが既定のフォルダ `MotionBuilder <version>/bin/x64/plugins` にコピーされます。
+    ビルドされたプラグイン `.dll` ファイルと `RelationConstraintDialogConfig.ini` ファイルが既定のフォルダ `MotionBuilder <version>/bin/x64/plugins` にコピーされます。
+
+    <br>**注意**: Visual Studio Code を使用している場合は、Tasks を使用してこれらのコマンドを実行できます。[tasks.json](./.vscode/tasks.json) を参照してください。
 
 
 <br>
