@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <filesystem>
 #include <mutex>
 #include <unordered_map>
 
@@ -9,13 +10,6 @@
 #include <QtWidgets/QDockWidget>
 
 #include <fbsdk/fbsdk.h>
-
-#if PRODUCT_VERSION == 2020
-// Since Mobu SDK sets the C4946 warning as an error,
-// "error C4946: reinterpret_cast used between related classes: 'QMapNodeBase' and 'QMapNode<Key, T>'"
-// will be triggered when we use Qt 5.12.5 and MSVC 2017. So we disable this warning here.
-#pragma warning(disable : 4946)
-#endif
 
 /**
  * @class RelationDialogManager
@@ -29,6 +23,8 @@ class RelationDialogManager : public FBCustomManager
 public:
     /**
      * @brief FBComponent creation function
+     * @details Initializes the singleton instance, finds the configuration file path, reads the configuration,
+     *          and applies it to the SuggestionProvider.
      * @return true if creation is successful
      * @note The instance of FBCustomManager will be created by FBRegisterCustomManager macro.
      */
@@ -134,6 +130,12 @@ public:
      */
     void setRelationViewState(QPoint topLeftPos, double scaleFactor);
 
+    /**
+     * @brief Get the file path of the configuration file
+     * @return std::filesystem::path representing the configuration file path
+     */
+    std::filesystem::path getConfigFilePath() const { return mConfigFilePath; }
+
 private:
     /// @cond
     RelationDialogManager(const RelationDialogManager &) = delete;
@@ -167,4 +169,6 @@ private:
 
     /// Map to store the view state (position and scale) for each relation constraint
     std::unordered_map<FBConstraintRelation *, RelationViewState> mRelationViewStates;
+
+    std::filesystem::path mConfigFilePath; //!< Path to the configuration file
 };

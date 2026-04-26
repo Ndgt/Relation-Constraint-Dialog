@@ -11,7 +11,9 @@ This MotionBuilder plugin provides a convenient search dialog for quickly creati
 <br>
 
 ## Platform
-- **MotionBuilder: 2020 ~ 2026**
+- **MotionBuilder: 2022 ~ 2027**
+
+    **Note**: MotionBuilder 2020 is no longer supported since v3.0.
 
 - **OS: Windows**
 
@@ -42,9 +44,9 @@ Instead, please use this plugin only for:
 
 3. Identify the product version of your software
 
-   (e.g., use `...-MB2026.dll` if you're using MotionBuilder 2026)
+   (e.g., use `...-MB2027.dll` if you're using MotionBuilder 2027)
 
-4. Copy the corresponding `.dll` file into the default plugin folder:
+4. Copy the corresponding `.dll` file and `RelationConstraintDialogConfig.ini` into the default plugin folder:
    `MotionBuilder <version>/bin/x64/plugins`
 
     (**Note**: You may need administrator privileges to copy files to the `plugins` folder.)
@@ -55,31 +57,33 @@ Instead, please use this plugin only for:
 
 See the DeepWiki page for detailed documentation: [DeepWiki](https://deepwiki.com/Ndgt/Relation-Constraint-Dialog)
 
-You can build the documentation locally using [Doxygen](https://www.doxygen.nl/) if you have it installed. Run `doxygen` in the [docs/Doxygen](/docs/Doxygen/) folder, and refer to the generated `index.html` in the `html` folder.
+You can build the documentation locally using [Doxygen](https://www.doxygen.nl/) if you have it installed. Run `doxygen <path/to/docs/Doxygen/Doxyfile>`, and refer to the generated `index.html` in the `html` folder.
 
 
 <br>
 
 ## Usage
 
+### Dialog Controls
+
 - **Tab** – Open search dialog / Toggle "Find Option"
 
     (**Note**: This control only works if **the mouse pointer is hovering over the relation view**.)
 
     <p align = "center">
-    <img src="docs/images-readme/usage_show.gif" width=80%><br>
+    <img src="docs/images-readme/usage_show.gif"><br>
     </p>
 
 - **Up/Down** – Navigate the suggest list
 
     <p align = "center">
-    <img src="docs/images-readme/usage_select.gif" width=80%><br>
+    <img src="docs/images-readme/usage_select.gif"><br>
     </p>
 
 - **Enter / Click** – Confirm selection and create object
 
     <p align = "center">
-    <img src="docs/images-readme/usage_finalize.gif" width=80%><br>
+    <img src="docs/images-readme/usage_finalize.gif"><br>
     </p>
 
 - **Esc / Click outside** – Cancel and close dialog
@@ -92,6 +96,59 @@ You can build the documentation locally using [Doxygen](https://www.doxygen.nl/)
 
 <br>
 
+### Dialog Settings
+Since v3.0, settings button ( `...` ) has been added to the search dialog, allowing you to customize the behavior of the search dialog and open the online help page.
+
+- **Preferences**
+
+    Push the settings button and select "Preferences..." to open the preferences dialog.
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences.png"><br>
+    </p>
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences_dialog.png"><br>
+    </p>
+    <br>
+
+
+    In the preferences dialog, you can customize the following settings:
+
+    - **Show Hit Operator First** (default) / **Show Hit Category First**
+
+        Whether to search by operator name first or category name first. <br>If "Show Hit Category First" is enabled and you type `q`, the search results will prioritize categories that start with `q` (e.g., "Quaternion"), while if "Show Hit Operator First" is enabled, the search results will prioritize operators that start with `q` (e.g., "Converters - 
+Quaternion To Axis Angle").
+
+
+    - **Do not search in namespaces** (default: OFF)
+
+        Whether to ignore namespaces when searching for models. If enabled, only the model name will be considered for searching, and the namespace name will be ignored.
+
+    - **Model Search Filter** (default: All filters enabled)
+
+        You can choose which types of models to include in the search results. For example, if you disable "Skeletons", `FBModelSkeleton` models will be excluded from the search results.
+
+<br>
+
+> [!NOTE]
+> These settings are saved in the `RelationConstraintDialogConfig.ini` file located in the same directory as the plugin `.dll` file. You can also edit this file manually to change the settings.
+
+<br>
+
+- **Online Help**
+
+    The following online resources are available:
+
+    - Relations Reference: [Official Help](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601) of relation operators
+    - GitHub Repository: This repository
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_online_help.png"><br>
+    </p>
+
+<br>
+
 ## Development
 
 ### Requirements
@@ -99,42 +156,31 @@ You can build the documentation locally using [Doxygen](https://www.doxygen.nl/)
 
     - MSVC v143 - VS 2022 C++ x64/x86 build tool : MotionBuilder 2024 ~
     - MSVC v142 - VS 2019 C++ x64/x86 build tool : MotionBuilder 2022, 2023
-    - MSVC v141 - VS 2017 C++ x64/x86 build tool : MotionBuilder 2020
 
 <br>
 
 2. **Qt - qtbase(Required)**, **qttools**(Optional)
 
     This plugin depends on **qtbase** (specifically QtCore, QtGui, and QtWidgets modules), and utilizes the **qttools** module to design the UI using [Qt Widgets Designer](https://doc.qt.io/qt-6/qtdesigner-manual.html).
-    - Qt 6.5.3:  MotionBuilder 2025, 2026
-    - Qt 5.15.2 : MotionBuilder 2022 ~ 2024
-    - Qt 5.12.5 : MotionBuilder 2020
+    - Qt 6.8.3: MotionBuilder 2027 
+    - Qt 6.5.3: MotionBuilder 2025, 2026
+    - Qt 5.15.2: MotionBuilder 2022 ~ 2024
 
-
-    **Perl** is required for configuring the Qt source. Install with the following command:
-
-    ```
-    winget install StrawberryPerl.StrawberryPerl
-    ```
-
-<br>
-
-3. **Detours**
-
-    This project uses [Microsoft Detours](https://github.com/microsoft/Detours) to hook OpenGL functions.
+    <br>First, create Qt Account on the [Qt Group website](https://www.qt.io/), and download the Qt Maintenance Tool, then install the required Qt components (Open Source version) with the Maintenance Tool. 
     
-    Set environment variable with `vcvarsall.bat` (see [Building Qt from Git](#building-qt-from-git) step 1), then clone and build Detours:
-
-    ```
-    git clone https://github.com/microsoft/Detours.git
-    cd Detours/src
-    git checkout v4.0.1
-    nmake
-    ```
-    Header files will be located in `Detours/include`, and the library files will be in `Detours/lib.X64`. 
 
 <br>
 
+3. **vcpkg**
+
+    This project uses vcpkg for project configuration and dependency management. Set up vcpkg with the following command:
+
+    ```
+    git clone https://github.com/microsoft/vcpkg.git
+    cd vcpkg; .\bootstrap-vcpkg.bat
+    ```
+
+<br>
 
 ### Recommended Build Configurations
 
@@ -144,9 +190,9 @@ Click version number to see the official resources.
 
     | Qt Version  | Visual Studio Version |
     |-------------|-----------------------|
-    | Qt [6.5.3](https://doc.qt.io/qt-6.5/supported-platforms.html) | Visual Studio 2019 or 2022| 
+    |  Qt [6.8.3](https://doc.qt.io/qt-6.8/supported-platforms.html) | Visual Studio 2022 |
+    | Qt [6.5.3](https://doc.qt.io/qt-6.5/supported-platforms.html) | Visual Studio 2019 or 2022 | 
     |  Qt [5.15.2](https://doc-snapshots.qt.io/qt5-5.15/supported-platforms.html) | Visual Studio 2019 |
-    | Qt [5.12.5](https://wiki.qt.io/Qt_5.12_Tools_and_Versions) | Visual Studio 2017 | 
 
 <br>
 
@@ -154,77 +200,15 @@ Click version number to see the official resources.
 
     | MotionBuilder Version | Visual Studio Version |
     |-----------------------|-----------------------|
-    | [2024](https://help.autodesk.com/view/MOBPRO/2024/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2025](https://help.autodesk.com/view/MOBPRO/2025/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2026](https://help.autodesk.com/view/MOBPRO/2026/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C) | Visual Studio 2022 |
+    | [2024](https://help.autodesk.com/view/MOBPRO/2024/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2025](https://help.autodesk.com/view/MOBPRO/2025/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2026](https://help.autodesk.com/view/MOBPRO/2026/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2027](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C) | Visual Studio 2022 |
     | [2022](https://help.autodesk.com/view/MOBPRO/2022/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C), [2023](https://help.autodesk.com/view/MOBPRO/2023/ENU/?guid=GUID-0C6F6BA3-E9A2-40D0-87AE-F4F8CF20A66C)| Visual Studio 2019 |
-    | [2020](https://help.autodesk.com/view/MOBPRO/2020/ENU/?guid=__files_GUID_0C6F6BA3_E9A2_40D0_87AE_F4F8CF20A66C_htm) | Visual Studio 2017 |
-
-<br>
-
-### Building Qt from Git
-1. Open a terminal and set the Visual Studio environment variables
-
-    Use **`vcvarsall.bat`**, which is installed by default at  
-    `C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Auxiliary/Build`.
-
-    ```
-    path/to/vcvarsall.bat x64 [-vcvars_ver=<version>]
-    ```
-
-    Use the option `-vcvars_ver=14.29` for VS2019, or `-vcvars_ver=14.16` for VS2017.  
-    See the [Microsoft documentation](https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170#vcvarsall) for more details.
-
-
-<br>
-
-2. Get Source and checkout to the target tag (e.g. `v5.15.2`)
-
-    ```
-    git clone https://github.com/qt/qt5.git
-    cd qt5
-    git checkout v<version>  # Replace <version> with your target version
-    git submodule update --init --recursive qtbase qttools
-    ```
-
-    **Note**: There is no "branch" `5.12.5` in the Qt/qt5 repository.
-
-<br>
-
-3. Configure Source
-
-    ```
-    cd ..
-    mkdir build
-    cd build
-    ../qt5/configure.bat -opensource -confirm-license -release -nomake examples -nomake tests
-    ```
-
-<br>
-
-4. Build and Install
-
-    ```
-    nmake
-    nmake install
-    ```
-
-    In case Qt 6.5.3:
-    ```
-    cmake --build . --parallel
-    cmake --install .
-    ```
-
-    By default, the built Qt source will be installed to: `C:/Qt/Qt-<version>`
 
 <br>
 
 ### Customizing UI
-Open `src/SearchDialog/SearchDialog.ui` with Qt Widgets Designer.
+You can customize the UI of the search dialog and preferences dialog using the Qt Widgets Designer. Open the `.ui` files with the designer to edit the UI visually.
 
-```
-cd src/SearchDialog
-path/to/Qt/bin/designer.exe SearchDialog.ui
-```
-
+<br>
 <p align = "center">
 <img src="docs/images-readme/qt_widgets_designer.png"><br>
 </p>
@@ -244,11 +228,8 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 ### Building Plugin
 1. Open the terminal **as an administrator**.
 
-    See [Building Qt from Git](#building-qt-from-git) step 1 to set the Visual Studio environment variables.
 
-<br>
-
-2. Clone this repository
+2. Clone this repository.
 
     ```
     git clone https://github.com/Ndgt/Relation-Constraint-Dialog.git
@@ -257,26 +238,70 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
 
 <br>
 
-3. Edit the user-specific variables in `CMakeLists.txt` according to your environment
+3. Edit the user-specific variables in [CMakePresets.json](./CMakePresets.json) according to your environment.
 
-    ```CMake
-    # === Environment-specific user configuration ===
-    set(PRODUCT_VERSION 2026)
-    set(MOBU_ROOT "C:/Program Files/Autodesk/MotionBuilder ${PRODUCT_VERSION}")
-    set(QT_SOURCE_SEARCH_PATH "C:/Qt/6.5.3/msvc2019_64")
-    set(DETOURS_ROOT "C:/Detours")
+    You might need to change the following variables:
+    - `generator`: The CMake generator to use
+    - `MOBU_ROOT`: The installation path of MotionBuilder
+    - `QT_SOURCE_SEARCH_PATH`: The installation path of the Qt source
+
+    <br>
+
+    ```json
+    {
+      "version": 6,
+      "configurePresets": [
+        {
+          "name": "base",
+          "hidden": true,
+          "architecture": {
+            "strategy": "set",
+            "value": "x64"
+          },
+          "binaryDir": "${sourceDir}/build/${presetName}",
+          "generator": "Visual Studio 18 2026",
+          "toolset": {
+              "strategy": "set"
+          },
+          "cacheVariables": {
+              "CMAKE_AUTOMOC": "ON",
+              "CMAKE_AUTOUIC": "ON",
+              "CMAKE_CXX_STANDARD": "17",
+              "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+
+          ...
+
+      {
+        "name": "MotionBuilder2027",
+        "inherits": [
+          "base"
+        ],
+        "toolset": {
+          "value": "v143"
+        },
+        "cacheVariables": {
+          "MOBU_ROOT": "C:/Program Files/Autodesk/MotionBuilder 2027",
+          "PRODUCT_VERSION": "2027",
+          "QT_SOURCE_SEARCH_PATH": "C:/Qt/6.8.3/msvc2022_64"
+        }
+      },
     ```
+
+
 
 <br>
 
-4. Build plugin
+4. Build and install plugin
 
     ```
-    cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
-    cmake --build build
+    cmake --preset MotionBuilder2027 --fresh
+    cmake --build --preset 2027-RelWithDebInfo --clean-first
+    cmake --install build/MotionBuilder2027 --config RelWithDebInfo
     ```
 
-    The built plugin `.dll` file will be copied to the default folder `MotionBuilder <version>/bin/x64/plugins`.
+    <br>The built plugin `.dll` file and `RelationConstraintDialogConfig.ini` file will be copied to the default folder `MotionBuilder <version>/bin/x64/plugins`.
+
+    <br>**Note**: If you are using Visual Studio Code, you can use Tasks to run these commands. See [tasks.json](./.vscode/tasks.json) for reference.
 
 <br>
 <br>

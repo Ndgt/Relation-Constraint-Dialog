@@ -1,0 +1,339 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build & Install for 2027 - RelWithDebInfo",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2027",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2027-RelWithDebInfo",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2027",
+        "--config",
+        "RelWithDebInfo"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true // Run with 'Ctrl + Shift + B'
+      }
+    },
+    {
+      "label": "Build & Install for 2027 - Release",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2027",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2027-Release",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2027",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "label": "Build & Install for 2026 - RelWithDebInfo",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2026",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2026-RelWithDebInfo",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2026",
+        "--config",
+        "RelWithDebInfo"
+      ]
+    },
+    {
+      "label": "Build & Install for 2026 - Release",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2026",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2026-Release",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2026",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "label": "Build & Install for 2025 - RelWithDebInfo",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2025",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2025-RelWithDebInfo",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2025",
+        "--config",
+        "RelWithDebInfo"
+      ]
+    },
+    {
+      "label": "Build & Install for 2025 - Release",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2025",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2025-Release",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2025",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "label": "Build & Install for 2024 - RelWithDebInfo",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2024",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2024-RelWithDebInfo",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2024",
+        "--config",
+        "RelWithDebInfo"
+      ]
+    },
+    {
+      "label": "Build & Install for 2024 - Release",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2024",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2024-Release",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2024",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "label": "Build & Install for 2023 - RelWithDebInfo",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2023",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2023-RelWithDebInfo",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2023",
+        "--config",
+        "RelWithDebInfo"
+      ]
+    },
+    {
+      "label": "Build & Install for 2023 - Release",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2023",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2023-Release",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2023",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "label": "Build & Install for 2022 - RelWithDebInfo",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2022",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2022-RelWithDebInfo",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2022",
+        "--config",
+        "RelWithDebInfo"
+      ]
+    },
+    {
+      "label": "Build & Install for 2022 - Release",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "--preset",
+        "MotionBuilder2022",
+        "--fresh",
+        "&",
+        "cmake",
+        "--build",
+        "--preset",
+        "2022-Release",
+        "--clean-first",
+        "&",
+        "cmake",
+        "--install",
+        "build/MotionBuilder2022",
+        "--config",
+        "Release"
+      ]
+    },
+    {
+      "label": "Debug with Mobu 2027",
+      "type": "shell",
+      "command": "motionbuilder.exe",
+      "options": {
+        "cwd": "C:/Program Files/Autodesk/MotionBuilder 2027/bin/x64"
+      },
+      "args": [
+        "-console"
+      ]
+    },
+    {
+      "label": "Debug with Mobu 2026",
+      "type": "shell",
+      "command": "motionbuilder.exe",
+      "options": {
+        "cwd": "C:/Program Files/Autodesk/MotionBuilder 2026/bin/x64"
+      },
+      "args": [
+        "-console"
+      ]
+    },
+    {
+      "label": "Debug with Mobu 2025",
+      "type": "shell",
+      "command": "motionbuilder.exe",
+      "options": {
+        "cwd": "C:/Program Files/Autodesk/MotionBuilder 2025/bin/x64"
+      },
+      "args": [
+        "-console"
+      ]
+    },
+    {
+      "label": "Debug with Mobu 2024",
+      "type": "shell",
+      "command": "motionbuilder.exe",
+      "options": {
+        "cwd": "C:/Program Files/Autodesk/MotionBuilder 2024/bin/x64"
+      },
+      "args": [
+        "-console"
+      ]
+    },
+    {
+      "label": "Debug with Mobu 2023",
+      "type": "shell",
+      "command": "motionbuilder.exe",
+      "options": {
+        "cwd": "C:/Program Files/Autodesk/MotionBuilder 2023/bin/x64"
+      },
+      "args": [
+        "-console"
+      ]
+    },
+    {
+      "label": "Debug with Mobu 2022",
+      "type": "shell",
+      "command": "motionbuilder.exe",
+      "options": {
+        "cwd": "C:/Program Files/Autodesk/MotionBuilder 2022/bin/x64"
+      },
+      "args": [
+        "-console"
+      ]
+    }
+  ]
+}

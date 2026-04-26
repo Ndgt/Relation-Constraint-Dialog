@@ -8,13 +8,6 @@
 
 #include <fbsdk/fbsdk.h>
 
-#if PRODUCT_VERSION == 2020
-// Since Mobu SDK sets the C4946 warning as an error,
-// "error C4946: reinterpret_cast used between related classes: 'QMapNodeBase' and 'QMapNode<Key, T>'"
-// will be triggered when we use Qt 5.12.5 and MSVC 2017. So we disable this warning here.
-#pragma warning(disable : 4946)
-#endif
-
 /**
  * @def DIALOG_DEBUG_START
  * @brief Macro to log the start of the setup process
@@ -65,13 +58,6 @@ QList<QDockWidget *> getDockedConstraintNavigators(QMainWindow *mainwindow = nul
  * @return List of pointers to floating QDockWidgets if found, otherwise an empty list
  */
 QList<QDockWidget *> getFloatingConstraintNavigators();
-
-/**
- * @brief Retrieves the main QMainWindow instance of the application
- * @return Pointer to the main QMainWindow, or nullptr if not found
- * @note This function is a workaround for MotionBuilder 2020, as 'FBGetMainWindow' is available only from MotionBuilder 2022 onwards.
- */
-QMainWindow *getMobuMainWindow();
 
 /**
  * @brief Finds a FBConstraintRelation by its name in the current scene

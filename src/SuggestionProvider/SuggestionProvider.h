@@ -1,17 +1,11 @@
 #pragma once
 
-#include <QtCore/QSet>
+#include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QtCore/QStringView>
 
-#include <fbsdk/fbsdk.h>
-
-#if PRODUCT_VERSION == 2020
-// Since Mobu SDK sets the C4946 warning as an error,
-// "error C4946: reinterpret_cast used between related classes: 'QMapNodeBase' and 'QMapNode<Key, T>'"
-// will be triggered when we use Qt 5.12.5 and MSVC 2017. So we disable this warning here.
-#pragma warning(disable : 4946)
-#endif
+#include "RelationDialogConfig.h"
 
 /**
  * @class SuggestionProvider
@@ -21,18 +15,37 @@ class SuggestionProvider
 {
 public:
     /**
-     * @brief Get collected model LongNames in the scene
-     * @return List of LongName suggestions
-     * @note The list is sorted as ascending, case-insensitive.
+     * @brief Get operator suggestions based on the query string
+     * @details This function is called by SearchDialog to retrieve operator suggestions matching the user's query.
+     *          It combines default operators and "My Macros" operators, applies the search priority and filtering
+     *          based on the query, and returns a list of formatted suggestion strings.
+     * @param queryView The query string to filter operator suggestions
+     * @return A list of operator suggestions matching the query, formatted as "Category - Operator"
      */
-    QStringList getModelSuggestions();
+    QStringList getOperatorSuggestions(QStringView queryView) const;
 
     /**
-     * @brief Get collected operator names
-     * @param relation Pointer to the FBConstraintRelation which is target of the SearchDialog
-     * @return List of operator name suggestions
+     * @brief Get model suggestions based on the query string and search filters
+     * @details This function is called by SearchDialog to retrieve model suggestions matching the user's query.
+     *          It applies the search filters and returns a list of formatted suggestion strings.
+     * @param queryView The query string to filter model suggestions
+     * @return A list of model suggestions matching the query and search filters, formatted as "Namespace:Name"
+     *         or "Name" if namespace is empty
      */
-    QStringList getOperatorSuggestions(FBConstraintRelation *relation);
+    QStringList getModelSuggestions(QStringView queryView) const;
+
+    /**
+     * @brief Initialize model suggestions by collecting all scene models
+     * @note This function is called when the dialog is opened to ensure that the model suggestions are up-to-date
+     *       with the current scene content.
+     */
+    void initializeModelSuggestions();
+
+    /**
+     * @brief Apply the given configuration to the SuggestionProvider
+     * @param config The RelationDialogConfig struct containing the settings to be applied to the SuggestionProvider
+     */
+    void applyConfig(const RelationDialogConfig &config);
 
     /**
      * @brief Get the singleton instance of SuggestionProvider
@@ -46,10 +59,31 @@ public:
 
 private:
     /**
+     * @struct OperatorEntry
+     * @brief Struct to hold operator entry data for suggestions
+     */
+    struct OperatorEntry
+    {
+        QString categoryName; //!< Category name for the operator (e.g., "Boolean", "Converters")
+        QString operatorName; //!< Name of the operator
+    };
+
+    /**
+     * @struct ModelEntry
+     * @brief Struct to hold model entry data for suggestions
+     */
+    struct ModelEntry
+    {
+        QString nameSpace; //!< Namespace of the model
+        QString name;      //!< Name of the model
+        int typeId = -1;   //!< FBComponent::GetTypeId() value
+    };
+
+    /**
      * @brief Singleton constructor
      * @details Collects operator names for display upon initialization.
      */
-    SuggestionProvider() { collectDefaultOperatorNamesForDisplay(); }
+    SuggestionProvider() { collectDefaultOperatorEntry(); }
 
     /// @cond
     SuggestionProvider(const SuggestionProvider &) = delete;
@@ -57,26 +91,38 @@ private:
     /// @endcond
 
     /**
-     * @brief Helper function recursively collect model LongNames starting from the given model
-     * @param model Pointer to the starting FBModel
-     * @param nameSet Set to store unique model LongNames
+     * @brief Create operator suggestion string and add it to the suggestions list
+     * @details Combines category and operator name as "Category - Operator" for display in SearchDialog
+     *          and append it to the specified suggestions list.
+     * @param suggestions List of suggestion strings to add to
+     * @param entry OperatorEntry containing category and operator name
      */
-    void collectModelLongNamesRecursive(FBModel *model, QSet<QString> &nameSet);
+    void addOperatorSuggestion(QStringList &suggestions, const OperatorEntry &entry) const;
 
     /**
-     * @brief Collect all default relation operator names for display
-     * @details The names are formatted as "<Operator Type> - <Operator Name>".
-     * @note The built-in operator and user's plugin operators are collected, and macro relations are excluded.
+     * @brief Collect default operators as OperatorEntry for suggestions
+     * @details Collects system operators grouped under "Boxes/Functions/" and categorizes them based on their category name.
+     * @note This function only collects system operators and does not include "My Macros" operators.
      */
-    void collectDefaultOperatorNamesForDisplay();
+    void collectDefaultOperatorEntry();
 
     /**
-     * @brief Collect user-defined macros and add them to the operator suggestions list
-     * @param relation Pointer to the FBConstraintRelation which will use the macro relations
-     * @return List of macro relation names for display
+     * @brief Collect "My Macros" operators as OperatorEntry for suggestions
+     * @details Collects macro relation operators based on the currently existing relation constraint in the scene.
      */
-    QStringList collectMyMacrosForDisplay(FBConstraintRelation *relation);
+    void collectMyMacrosEntry(QList<OperatorEntry> &entries) const;
+
+    /**
+     * @brief Collect all scene models as ModelEntry for suggestions
+     */
+    void collectModelEntry();
 
 private:
-    QStringList mDefaultOperatorSuggestions; //!< List of default operator name suggestions
+    QList<OperatorEntry> mDefaultOperatorEntriesBeforeMacro; //!< Operator entries that are always shown before macro operators
+    QList<OperatorEntry> mDefaultOperatorEntriesAfterMacro;  //!< Operator entries that are always shown after macro operators
+    QList<ModelEntry> mModelEntries;                         //!< Model entries collected from the scene
+
+    OperatorSearchPriority mOperatorSearchPriority = OperatorSearchPriority::OperatorFirst; //!< Search priority for operators in SearchDialog
+    ModelSearchFilters mModelSearchFilters = ModelSearchFilter::None;                       //!< Search filters for models in SearchDialog
+    bool mIsModelNamespaceSearchDisabled = false;                                           //!< Flag to indicate whether model namespace search is disabled in SearchDialog
 };

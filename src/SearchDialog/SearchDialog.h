@@ -4,19 +4,19 @@
 
 #include <QtCore/QPoint>
 #include <QtCore/QString>
+#include <QtGui/QPaintEvent>
 #include <QtGui/QShowEvent>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QWidget>
 
-#include <fbsdk/fbsdk.h>
-
-#if PRODUCT_VERSION == 2020
-// Since Mobu SDK sets the C4946 warning as an error,
-// "error C4946: reinterpret_cast used between related classes: 'QMapNodeBase' and 'QMapNode<Key, T>'"
-// will be triggered when we use Qt 5.12.5 and MSVC 2017. So we disable this warning here.
-#pragma warning(disable : 4946)
+#if QT_VERSION_MAJOR >= 6
+#include <QtGui/QAction>
+#else
+#include <QtWidgets/QAction>
 #endif
+
+#include <fbsdk/fbsdk.h>
 
 /**
  * @class SearchDialog
@@ -43,6 +43,12 @@ public:
     ~SearchDialog() { delete ui; }
 
 protected:
+    /**
+     * @brief Custom paint event to draw the dialog with rounded corners
+     * @param event The paint event
+     */
+    void paintEvent(QPaintEvent *event) override;
+
     /**
      * @brief Initialize suggestion list and reposition dialog
      * @details This function also set the topmost item in the suggestion list as the current item.
@@ -99,9 +105,34 @@ private slots:
      */
     void onTextChanged(const QString &text);
 
+    /**
+     * @brief Handle settings button clicked event
+     * @details This slot shows a menu with options to open the config file, open the help pages.
+     * @param checked The new checked state of the button (not used)
+     */
+    void onSettingsButtonClicked(bool checked = false);
+
+    /**
+     * @brief Handle settings action triggered event
+     * @details This slot executes the corresponding action based on the triggered action,
+     *          such as opening the config file or help pages in the default web browser.
+     * @param action The triggered action
+     */
+    void onSettingsActionTriggered(QAction *action);
+
+private:
+    /**
+     * @brief Initialize the menu actions for the settings button
+     */
+    void initializeActions();
+
 private:
     Ui::Dialog *ui;                                              //!< Pointer to the Widget Container class generated from the .ui file
     QPoint mCursorPosition;                                      //!< The cursor position where the dialog should appear
     QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
     HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currently selected constraint object
+
+    QAction *mSettingsActionPreferences;   //!< Action to open the preferences dialog
+    QAction *mSettingsActionHelpReference; //!< Action to open the reference help page
+    QAction *mSettingsActionHelpGitHub;    //!< Action to open the GitHub repository page
 };

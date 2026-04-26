@@ -1,21 +1,31 @@
-#include "CustomLineEdit.h"
-#include "RelationDialogManager.h"
 #include "SearchDialog.h"
-#include "SuggestionProvider.h"
-#include "Utility.h"
 
 #include <QtCore/QRect>
 #include <QtCore/QStringList>
 #include <QtCore/QtConfig>
 #include <QtCore/QTimer>
+#include <QtCore/QUrl>
+#include <QtCore/QUrlQuery>
+#include <QtGui/QPainter>
 #include <QtGui/QPalette>
+#include <QtGui/QDesktopServices>
 #include <QtWidgets/QMenu>
 
 #if QT_VERSION_MAJOR >= 6
-#include <QtGui/QAction>
+#include <QtGui/QActionGroup>
 #else
-#include <QtWidgets/QAction>
+#include <QtWidgets/QActionGroup>
 #endif
+
+#include "CustomLineEdit.h"
+#include "PreferencesDialog.h"
+#include "SuggestionProvider.h"
+#include "Utility.h"
+
+const QString MOBU_HELP_FALLBACK_URL = "https://help.autodesk.com/view/MOBPRO/2027/ENU/";
+const QString MOBU_HELP_LANGUAGE = "ENU";
+const QString HELP_RELATIONS_REFERENCE_GUID = "GUID-C50152F9-5607-4779-A964-186B4E1A0601";
+const QString GITHUB_REPOSITORY_URL = "https://github.com/Ndgt/Relation-Constraint-Dialog";
 
 SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationPosition, FBConstraintRelation *selectedConstraint)
     : QDialog(nullptr), ui(new Ui::Dialog), mCursorPosition(cursorPosition), mRelationPosition(relationPosition), mSelectedConstraint(selectedConstraint)
@@ -34,9 +44,21 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     // Populate UI elements from ui_SearchDialog.h - generated from .ui file
     ui->setupUi(this);
 
+    Qt::WindowFlags flags;
+
     // Set the dialog style to be a popup and delete automatically on close
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(Qt::Popup);
+    flags |= Qt::Popup;
+
+    // Set addtinal attributes and styles so that the overridden paintEvent will work
+    // and the dialog will have rounded corners
+    setAttribute(Qt::WA_TranslucentBackground);
+    flags |= Qt::FramelessWindowHint;
+
+    setWindowFlags(flags);
+
+    // Initialize actions for the settings menu and connect their signals to the corresponding slots
+    initializeActions();
 
     // Connect Singals & Slots
     connect(ui->lineEdit, &CustomLineEdit::keyReturnPressed, this, &SearchDialog::onLineEditKeyReturnPressed);
@@ -44,6 +66,7 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     connect(ui->lineEdit, &CustomLineEdit::keyUpDownPressed, this, &SearchDialog::onLineEditKeyUpDownPressed);
     connect(ui->lineEdit, &CustomLineEdit::textChanged, this, &SearchDialog::onTextChanged);
     connect(ui->listWidget, &QListWidget::itemClicked, this, &SearchDialog::onItemClicked);
+    connect(ui->buttonSettings, &QPushButton::clicked, this, &SearchDialog::onSettingsButtonClicked);
 
     // QButtonGroup::buttonToggled signal is overloaded in Qt5
 #if QT_VERSION_MAJOR >= 6
@@ -58,6 +81,34 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     palette.setColor(QPalette::ColorRole::PlaceholderText, QColor("#c8c8c8"));
     ui->lineEdit->setPalette(palette);
 #endif
+
+    // Let the SuggestionProvider collect current scene model long names for suggestions
+    SuggestionProvider::getInstance().initializeModelSuggestions();
+}
+
+void SearchDialog::initializeActions()
+{
+    QActionGroup *settingsActionGroup = new QActionGroup(this);
+
+    mSettingsActionPreferences = new QAction("Preferences...", this);
+    settingsActionGroup->addAction(mSettingsActionPreferences);
+
+    mSettingsActionHelpReference = new QAction("Relations Reference", this);
+    settingsActionGroup->addAction(mSettingsActionHelpReference);
+
+    mSettingsActionHelpGitHub = new QAction("GitHub Repository", this);
+    settingsActionGroup->addAction(mSettingsActionHelpGitHub);
+
+    settingsActionGroup->setExclusive(false);
+    connect(settingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionTriggered);
+}
+
+void SearchDialog::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(palette().window());
+    painter.drawRoundedRect(rect(), ui->frame->property("BorderRadius").toUInt(), ui->frame->property("BorderRadius").toUInt());
 }
 
 void SearchDialog::showEvent(QShowEvent *event)
@@ -70,7 +121,7 @@ void SearchDialog::showEvent(QShowEvent *event)
     move(openPosition);
 
     // Populate list with operator suggestions
-    QStringList allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(mSelectedConstraint);
+    QStringList allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(QString());
     ui->listWidget->addItems(allSuggestions);
 
     // Set the topmost item as the current item
@@ -242,19 +293,81 @@ void SearchDialog::onTextChanged(const QString &text)
 
     // Get suggestion name list
     if (ui->radioButtonOperator->isChecked())
-        allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(mSelectedConstraint);
+        allSuggestions = SuggestionProvider::getInstance().getOperatorSuggestions(text);
     else
-        allSuggestions = SuggestionProvider::getInstance().getModelSuggestions();
+        allSuggestions = SuggestionProvider::getInstance().getModelSuggestions(text);
 
-    // Update dialog list with matching items
-    for (const QString &suggestName : allSuggestions)
-    {
-        // Not consider by case-sensitive
-        if (suggestName.contains(text, Qt::CaseInsensitive))
-            ui->listWidget->addItem(suggestName);
-    }
+    ui->listWidget->addItems(allSuggestions);
 
     // Set current row on the top of list
     if (ui->listWidget->count() > 0)
         ui->listWidget->setCurrentRow(0);
+}
+
+void SearchDialog::onSettingsButtonClicked(bool checked)
+{
+    Q_UNUSED(checked);
+
+    QMenu menu = QMenu(this);
+
+    menu.addAction(mSettingsActionPreferences);
+    QMenu *onlineHelpMenu = menu.addMenu("Online Help");
+    onlineHelpMenu->addAction(mSettingsActionHelpReference);
+    onlineHelpMenu->addAction(mSettingsActionHelpGitHub);
+
+    menu.exec(ui->buttonSettings->mapToGlobal(ui->buttonSettings->rect().topRight()));
+}
+
+void SearchDialog::onSettingsActionTriggered(QAction *action)
+{
+    if (!action)
+        return;
+
+    if (action == mSettingsActionPreferences)
+    {
+        // Get main window
+        QWidget *mainWindow = FBGetMainWindow();
+        if (!mainWindow)
+            return;
+
+        // Open Preferences Dialog
+        PreferencesDialog *preferencesDialog = new PreferencesDialog(mainWindow);
+        preferencesDialog->show();
+    }
+    else
+    {
+        QUrl helpUrl;
+
+        if (action == mSettingsActionHelpReference)
+        {
+            // Get product version
+#if defined(PRODUCT_VERSION)
+            int version = PRODUCT_VERSION;
+#else
+            // FBSystem::Version returns a value in the "xx000" format for version 20xx.
+            int version = 2000 + (FBSystem::TheOne().Version.AsInt() / 1000);
+#endif
+
+            // Construct help URL with the version and language
+            helpUrl.setScheme("https");
+            helpUrl.setHost("help.autodesk.com");
+            helpUrl.setPath(QString("/view/MOBPRO/%1/%2/").arg(version).arg(MOBU_HELP_LANGUAGE));
+
+            // Set query parameter
+            QUrlQuery query;
+            query.addQueryItem("guid", HELP_RELATIONS_REFERENCE_GUID);
+            helpUrl.setQuery(query);
+
+            // Check if the help URL is valid, if not, fallback to a top-level help page
+            if (!helpUrl.isValid())
+                helpUrl = QUrl(MOBU_HELP_FALLBACK_URL);
+        }
+        else if (action == mSettingsActionHelpGitHub)
+        {
+            // Set the GitHub repository URL
+            helpUrl = QUrl(GITHUB_REPOSITORY_URL);
+        }
+
+        QDesktopServices::openUrl(helpUrl);
+    }
 }

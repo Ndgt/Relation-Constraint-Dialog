@@ -32,7 +32,7 @@ QList<QDockWidget *> getDockedConstraintNavigators(QMainWindow *mainwindow)
     QList<QDockWidget *> foundNavigators;
 
     if (!mainwindow)
-        mainwindow = getMobuMainWindow();
+        mainwindow = FBGetMainWindow();
 
     if (mainwindow)
     {
@@ -47,26 +47,6 @@ QList<QDockWidget *> getDockedConstraintNavigators(QMainWindow *mainwindow)
     }
 
     return foundNavigators;
-}
-
-QMainWindow *getMobuMainWindow()
-{
-    // Obtain the QApplication instance
-    QApplication *app = qobject_cast<QApplication *>(QApplication::instance());
-    if (!app)
-        return nullptr;
-
-    // Iterate over top-level widgets to detect mainwindow
-    for (QWidget *widget : app->topLevelWidgets())
-    {
-        // Check if the widget is a QMainWindow
-        QMainWindow *mainwindow = qobject_cast<QMainWindow *>(widget);
-        if (mainwindow)
-            return mainwindow;
-    }
-
-    // Return nullptr if no QMainWindow is found
-    return nullptr;
 }
 
 FBConstraintRelation *getConstraintRelationFromName(std::string name)
