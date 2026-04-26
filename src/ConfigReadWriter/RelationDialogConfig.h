@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtCore/QFlags>
-#include <QtCore/QtTypes>
+#include <QtCore/QtGlobal>
 
 /**
  * @enum OperatorSearchPriority
