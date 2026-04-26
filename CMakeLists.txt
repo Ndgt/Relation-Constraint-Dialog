@@ -45,10 +45,10 @@ add_library(${PROJECT_NAME} SHARED
     src/RelationConstraintDialogRegister.cpp
     src/CustomEventFilters/CustomEventFilters.cpp
     src/GLHooks/GLHooks.cpp
-    src/PreferencesDialog/PreferencesDialog.cpp
     src/RelationDialogManager/RelationDialogManager.cpp
     src/SearchDialog/SearchDialog.cpp
     src/SearchDialog/CustomWidgets/CustomLineEdit.cpp
+    src/SearchDialog/PreferencesDialog/PreferencesDialog.cpp
     src/SuggestionProvider/SuggestionProvider.cpp
     src/Utility/Utility.cpp
 )
@@ -71,10 +71,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "${MOBU_ROOT}/OpenRealitySDK/include"
     src/CustomEventFilters
     src/GLHooks
-    src/PreferencesDialog
     src/RelationDialogManager
     src/SearchDialog
     src/SearchDialog/CustomWidgets
+    src/SearchDialog/PreferencesDialog
     src/SuggestionProvider
     src/Utility
 )
