@@ -105,10 +105,25 @@ private slots:
      */
     void onTextChanged(const QString &text);
 
+    /**
+     * @brief Handle settings button clicked event
+     * @details This slot shows a menu with options to open the config file, open the help pages.
+     * @param checked The new checked state of the button (not used)
+     */
     void onSettingsButtonClicked(bool checked = false);
+
+    /**
+     * @brief Handle settings action triggered event
+     * @details This slot executes the corresponding action based on the triggered action,
+     *          such as opening the config file or help pages in the default web browser.
+     * @param action The triggered action
+     */
     void onSettingsActionTriggered(QAction *action);
 
 private:
+    /**
+     * @brief Initialize the menu actions for the settings button
+     */
     void initializeActions();
 
 private:
@@ -117,7 +132,7 @@ private:
     QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
     HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currently selected constraint object
 
-    QAction *mSettingsActionPreferences;
-    QAction *mSettingsActionHelpReference;
-    QAction *mSettingsActionHelpGitHub;
+    QAction *mSettingsActionPreferences;   //!< Action to open the preferences dialog
+    QAction *mSettingsActionHelpReference; //!< Action to open the reference help page
+    QAction *mSettingsActionHelpGitHub;    //!< Action to open the GitHub repository page
 };

@@ -32,13 +32,9 @@ void PreferencesDialog::readConfig()
 
     ModelSearchFilters modelFilters;
 
-    auto readModelFilter = [&](const char *key,
-                               ModelSearchFilter flag,
-                               const char *defaultValue)
+    auto readModelFilter = [&](const char *key, ModelSearchFilter flag, const char *defaultValue)
     {
-        const std::string value =
-            configFile.Get("Model Search Filter", key, defaultValue);
-
+        const std::string value = configFile.Get("Model Search Filter", key, defaultValue);
         modelFilters.setFlag(flag, value == "Yes");
     };
 
@@ -103,10 +99,7 @@ void PreferencesDialog::writeConfig()
 
     auto writeModelFilter = [&](const char *key, ModelSearchFilter flag)
     {
-        configFile.Set(
-            "Model Search Filter",
-            key,
-            modelFilters.testFlag(flag) ? "Yes" : "No");
+        configFile.Set("Model Search Filter", key, modelFilters.testFlag(flag) ? "Yes" : "No");
     };
 
     writeModelFilter("FBModel Objects", ModelSearchFilter::FBModelObjects);

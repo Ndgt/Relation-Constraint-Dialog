@@ -1,9 +1,4 @@
-#include "CustomLineEdit.h"
-#include "RelationDialogManager.h"
-#include "PreferencesDialog.h"
 #include "SearchDialog.h"
-#include "SuggestionProvider.h"
-#include "Utility.h"
 
 #include <QtCore/QRect>
 #include <QtCore/QStringList>
@@ -11,18 +6,22 @@
 #include <QtCore/QTimer>
 #include <QtCore/QUrl>
 #include <QtCore/QUrlQuery>
-#include <QtGui/QPalette>
 #include <QtGui/QPainter>
-#include <QtWidgets/QMenu>
+#include <QtGui/QPalette>
 #include <QtGui/QDesktopServices>
+#include <QtWidgets/QMenu>
 
 #if QT_VERSION_MAJOR >= 6
-#include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #else
-#include <QtWidgets/QAction>
 #include <QtWidgets/QActionGroup>
 #endif
+
+#include "CustomLineEdit.h"
+#include "PreferencesDialog.h"
+#include "RelationDialogManager.h"
+#include "SuggestionProvider.h"
+#include "Utility.h"
 
 const QString MOBU_HELP_FALLBACK_URL = "https://help.autodesk.com/view/MOBPRO/2027/ENU/";
 const QString MOBU_HELP_LANGUAGE = "ENU";
