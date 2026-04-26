@@ -64,24 +64,26 @@ You can build the documentation locally using [Doxygen](https://www.doxygen.nl/)
 
 ## Usage
 
+### Dialog Controls
+
 - **Tab** – Open search dialog / Toggle "Find Option"
 
     (**Note**: This control only works if **the mouse pointer is hovering over the relation view**.)
 
     <p align = "center">
-    <img src="docs/images-readme/usage_show.gif" width=80%><br>
+    <img src="docs/images-readme/usage_show.gif"><br>
     </p>
 
 - **Up/Down** – Navigate the suggest list
 
     <p align = "center">
-    <img src="docs/images-readme/usage_select.gif" width=80%><br>
+    <img src="docs/images-readme/usage_select.gif"><br>
     </p>
 
 - **Enter / Click** – Confirm selection and create object
 
     <p align = "center">
-    <img src="docs/images-readme/usage_finalize.gif" width=80%><br>
+    <img src="docs/images-readme/usage_finalize.gif"><br>
     </p>
 
 - **Esc / Click outside** – Cancel and close dialog
@@ -91,6 +93,59 @@ You can build the documentation locally using [Doxygen](https://www.doxygen.nl/)
 > [!TIP]
 > **Press A while hovering over the relation view** if the relation object is not created at the expected position (at the mouse cursor). <br>
 > Since this plugin monitors mouse interaction with the relation view to determine where to create the object, the calculation will result in an incorrect position if the view is "frozen" (i.e., dragged with the mouse but the view was not moved).
+
+<br>
+
+### Dialog Settings
+Since v3.0, settings button ( `...` ) has been added to the search dialog, allowing you to customize the behavior of the search dialog and open the online help page.
+
+- **Preferences**
+
+    Push the settings button and select "Preferences..." to open the preferences dialog.
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences.png"><br>
+    </p>
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences_dialog.png"><br>
+    </p>
+    <br>
+
+
+    In the preferences dialog, you can customize the following settings:
+
+    - **Show Hit Operator First** (default) / **Show Hit Category First**
+
+        Whether to search by operator name first or category name first. <br>If "Show Hit Category First" is enabled and you type `q`, the search results will prioritize categories that start with `q` (e.g., "Quaternion"), while if "Show Hit Operator First" is enabled, the search results will prioritize operators that start with `q` (e.g., "Converters - 
+Quaternion To Axis Angle").
+
+
+    - **Do not search in namespaces** (default: OFF)
+
+        Whether to ignore namespaces when searching for models. If enabled, only the model name will be considered for searching, and the namespace name will be ignored.
+
+    - **Model Search Filter** (default: All filters enabled)
+
+        You can choose which types of models to include in the search results. For example, if you disable "Skeletons", `FBModelSkeleton` models will be excluded from the search results.
+
+<br>
+
+> [!NOTE]
+> These settings are saved in the `RelationConstraintDialogConfig.ini` file located in the same directory as the plugin `.dll` file. You can also edit this file manually to change the settings.
+
+<br>
+
+- **Online Help**
+
+    The following online resources are available:
+
+    - Relations Reference: [Official Help](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601) of relation operators
+    - GitHub Repository: This repository
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_online_help.png"><br>
+    </p>
 
 <br>
 

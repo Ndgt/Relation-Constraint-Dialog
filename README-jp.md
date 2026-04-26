@@ -36,9 +36,6 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 念のため、**本番環境ではインストールしたプラグインを `plugins`フォルダから除去してください**。
 
-
-
-
 <br>
 <br>
 
@@ -68,6 +65,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 <br>
 
 ## 使い方
+### ダイアログ操作
 - **Tab キー** - 検索ダイアログの表示 / 検索オプションの切り替え
 
     （**注意**: **Relation View 上にマウスカーソルがある**場合のみ表示されます）
@@ -97,6 +95,54 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 > このプラグインは Relation View 上のマウス操作を監視し、オブジェクトを作成する位置を計算します。そのため、View が「フリーズ」していた場合（マウスでドラッグしたがビューが動かなかった場合）、誤った位置に計算されることがあります。
 
 <br>
+
+### ダイアログ設定
+
+v3.0 から、検索ダイアログに設定ボタン（ `...` ）が追加され、検索ダイアログの動作のカスタマイズやオンラインヘルプの表示ができるようになりました。
+
+- **Preferences**
+
+    設定ボタンを押し、『Preferences...』を選択すると Preferences ダイアログが開きます。
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences.png"><br>
+    </p>
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_preferences_dialog.png"><br>
+    </p>
+
+    Preferences ダイアログでは、以下の設定を編集できます。
+
+    - **Show Hit Operator First**（デフォルト） / **Show Hit Category First**
+
+        Operator 名を優先して検索するか、Category 名を優先して検索するかを設定します。<br>
+        『Show Hit Category First』を有効にして「q」と入力した場合、検索結果では「q」で始まる Category（例: "Quaternion"）が検索結果の上位に表示されます。一方『"Show Hit Operator First』を有効にしている場合は「q」で始まる Operator（例: "Converters - Quaternion To Axis Angle"）が上位に表示されます。
+
+    - **Do not search in namespaces**（デフォルト: OFF）
+
+        モデル検索時に namespace を無視するかどうかを設定します。有効にした場合、検索にはモデル名のみが使用され、namespace 名は無視されます。
+
+    - **Model Search Filter**（デフォルト: すべてのフィルタが有効）
+
+        検索結果に含めるモデルの種類を選択できます。たとえば "Skeletons" を無効にすると、`FBModelSkeleton`型のモデルは検索結果から除外されます。
+
+<br>
+
+> [!NOTE]
+> これらの設定は、プラグインの `.dll` ファイルと同じディレクトリにある `RelationConstraintDialogConfig.ini` ファイルに保存されます。このファイルを手動で編集して設定を変更することもできます。
+
+<br>
+
+- **Online Help**
+
+    - Relations Reference: Relation Operator の [Official Help](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601)
+    - GitHub Repository: このリポジトリ
+
+    <p align = "center">
+    <img src="docs/images-readme/usage_online_help.png"><br>
+    </p>
+
 <br>
 
 ## 開発
