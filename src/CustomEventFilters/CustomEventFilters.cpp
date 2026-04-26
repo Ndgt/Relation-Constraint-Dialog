@@ -10,13 +10,16 @@
 #include <QtCore/QTimer>
 #include <QtGui/QCursor>
 #include <QtGui/QKeyEvent>
-#include <QtGui/qopenglext.h> // GL_DRAW_FRAMEBUFFER_BINDING
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QMainWindow>
 
 #include <windows.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
+
+#ifndef GL_DRAW_FRAMEBUFFER_BINDING
+#define GL_DRAW_FRAMEBUFFER_BINDING 0x8CA6
+#endif
 
 /**
  * @brief The spacing between grid lines in the relation view
