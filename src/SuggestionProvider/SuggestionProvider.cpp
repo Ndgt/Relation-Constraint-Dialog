@@ -2,9 +2,11 @@
 
 #include <string>
 
+#include <fbsdk/fbsdk.h>
+
 #include "RelationDialogManager.h"
 
-inline ModelSearchFilter modelSearchFilterForTypeId(int typeId)
+static ModelSearchFilter modelSearchFilterForTypeId(int typeId)
 {
     if (typeId == FBModel::TypeInfo)
         return ModelSearchFilter::FBModelObjects;
@@ -44,11 +46,11 @@ QStringList SuggestionProvider::getOperatorSuggestions(QStringView queryView) co
     collectMyMacrosEntry(operatorEntries);
     operatorEntries.append(mDefaultOperatorEntriesAfterMacro);
 
+    QStringList out;
+
     // If the query is empty, return all entries without any prioritization.
     if (query.isEmpty())
     {
-        QStringList out;
-
         for (const auto &entry : operatorEntries)
         {
             addOperatorSuggestion(out, entry);
@@ -90,8 +92,6 @@ QStringList SuggestionProvider::getOperatorSuggestions(QStringView queryView) co
         }
     }
 
-    QStringList out;
-
     for (const auto &entry : entryCategoryStarts + entryCategoryContains + entryOperatorStarts + entryOperatorContains)
     {
         addOperatorSuggestion(out, *entry);
@@ -120,10 +120,8 @@ QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
             continue;
 
         // Then we check if the model type is included in the search filters
-        if (!mModelSearchFilters.testFlag(modelTypeFilter))
-            continue;
-
-        out.push_back(longName);
+        if (mModelSearchFilters.testFlag(modelTypeFilter))
+            out.push_back(longName);
     }
 
     return out;
