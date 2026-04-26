@@ -90,83 +90,19 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
 
 void SearchDialog::initializeActions()
 {
-    QActionGroup *operatorSettingsActionGroup = new QActionGroup(this);
-
-    mSettingsActionOperatorCategory = new QAction("Show hit Category first", this);
-    operatorSettingsActionGroup->addAction(mSettingsActionOperatorCategory);
-    mSettingsActionOperatorCategory->setCheckable(true);
-    mSettingsActionOperatorOperator = new QAction("Show hit Operator first", this);
-    operatorSettingsActionGroup->addAction(mSettingsActionOperatorOperator);
-    mSettingsActionOperatorOperator->setCheckable(true);
-
-    QActionGroup *modelSettingsActionGroup = new QActionGroup(this);
-
-    mSettingsActionModelAll = new QAction("Search all models", this);
-    mSettingsActionModelAll->setCheckable(true);
-    modelSettingsActionGroup->addAction(mSettingsActionModelAll);
-    mSettingsActionModelSkeleton = new QAction("Search only skeleton models", this);
-    mSettingsActionModelSkeleton->setCheckable(true);
-    modelSettingsActionGroup->addAction(mSettingsActionModelSkeleton);
-
-    // Restore search options from SuggestionProvider
-    OperatorSearchPriority currentSearchPriority = SuggestionProvider::getInstance().getOperatorSearchPriority();
-    if (currentSearchPriority == OperatorSearchPriority::CategoryFirst)
-        mSettingsActionOperatorCategory->setChecked(true);
-    else
-        mSettingsActionOperatorOperator->setChecked(true);
-
-    ModelSearchFilter currentModelSearchFilter = SuggestionProvider::getInstance().getModelSearchFilter();
-    if (currentModelSearchFilter == ModelSearchFilter::All)
-        mSettingsActionModelAll->setChecked(true);
-    else
-        mSettingsActionModelSkeleton->setChecked(true);
-
-    QActionGroup *helpSettingsActionGroup = new QActionGroup(this);
-
-    mSettingsActionHelpReference = new QAction("Relations Reference", this);
-    helpSettingsActionGroup->addAction(mSettingsActionHelpReference);
-    mSettingsActionHelpGitHub = new QAction("GitHub Repository", this);
-    helpSettingsActionGroup->addAction(mSettingsActionHelpGitHub);
-
-    helpSettingsActionGroup->setExclusive(false);
+    QActionGroup *settingsActionGroup = new QActionGroup(this);
 
     mSettingsActionPreferences = new QAction("Preferences...", this);
+    settingsActionGroup->addAction(mSettingsActionPreferences);
 
-    connect(operatorSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionOperatorTriggered);
-    connect(modelSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionModelTriggered);
-    connect(helpSettingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionHelpTriggered);
-    connect(mSettingsActionPreferences, &QAction::triggered, this, &SearchDialog::onSettingsActionPreferencesTriggered);
+    mSettingsActionHelpReference = new QAction("Relations Reference", this);
+    settingsActionGroup->addAction(mSettingsActionHelpReference);
 
-    // QMenu items for exclusive actions use radio button icons by default.
-    // We manually implement the exclusivity here to preserve checkmark icons.
+    mSettingsActionHelpGitHub = new QAction("GitHub Repository", this);
+    settingsActionGroup->addAction(mSettingsActionHelpGitHub);
 
-    operatorSettingsActionGroup->setExclusive(false);
-    connect(operatorSettingsActionGroup, &QActionGroup::triggered, [operatorSettingsActionGroup, this](QAction *action)
-            {
-                for (QAction* otherAction : operatorSettingsActionGroup->actions())
-                {
-                    if (otherAction != action)
-                        otherAction->setChecked(false);
-                    else
-                    {
-                        // Fallback when checked action is clicked again
-                        action->setChecked(true);
-                    }
-                } });
-
-    modelSettingsActionGroup->setExclusive(false);
-    connect(modelSettingsActionGroup, &QActionGroup::triggered, [modelSettingsActionGroup, this](QAction *action)
-            {
-                for (QAction* otherAction : modelSettingsActionGroup->actions())
-                {
-                    if (otherAction != action)
-                        otherAction->setChecked(false);
-                    else
-                    {
-                        // Fallback when checked action is clicked again
-                        action->setChecked(true);
-                    }
-                } });
+    settingsActionGroup->setExclusive(false);
+    connect(settingsActionGroup, &QActionGroup::triggered, this, &SearchDialog::onSettingsActionTriggered);
 }
 
 void SearchDialog::paintEvent(QPaintEvent *event)
@@ -375,112 +311,65 @@ void SearchDialog::onSettingsButtonClicked(bool checked)
     Q_UNUSED(checked);
 
     QMenu *menu = new QMenu(this);
-    QMenu *operatorOptionMenu = menu->addMenu("Operators");
-    QMenu *modelOptionMenu = menu->addMenu("Models");
-    menu->addSeparator();
-    QMenu *onlineHelpMenu = menu->addMenu("Online Help");
-    menu->addAction(mSettingsActionPreferences);
 
-    operatorOptionMenu->addAction(mSettingsActionOperatorOperator);
-    operatorOptionMenu->addAction(mSettingsActionOperatorCategory);
-    modelOptionMenu->addAction(mSettingsActionModelAll);
-    modelOptionMenu->addAction(mSettingsActionModelSkeleton);
+    menu->addAction(mSettingsActionPreferences);
+    QMenu *onlineHelpMenu = menu->addMenu("Online Help");
     onlineHelpMenu->addAction(mSettingsActionHelpReference);
     onlineHelpMenu->addAction(mSettingsActionHelpGitHub);
 
     menu->exec(ui->buttonSettings->mapToGlobal(ui->buttonSettings->rect().topRight()));
 }
 
-void SearchDialog::onSettingsActionOperatorTriggered(QAction *action)
-{
-    if (action == mSettingsActionOperatorOperator)
-    {
-        SuggestionProvider::getInstance().setOperatorSearchPriority(OperatorSearchPriority::OperatorFirst);
-
-        // MEMO: This should be modified
-        // Refresh suggestions to apply the new search priority
-        onTextChanged(ui->lineEdit->text());
-    }
-    else if (action == mSettingsActionOperatorCategory)
-    {
-        SuggestionProvider::getInstance().setOperatorSearchPriority(OperatorSearchPriority::CategoryFirst);
-
-        // MEMO: This should be modified
-        // Refresh suggestions to apply the new search priority
-        onTextChanged(ui->lineEdit->text());
-    }
-}
-
-void SearchDialog::onSettingsActionModelTriggered(QAction *action)
-{
-    if (action == mSettingsActionModelAll)
-    {
-        SuggestionProvider::getInstance().setModelSearchFilter(ModelSearchFilter::All);
-
-        // MEMO: This should be modified
-        // Refresh suggestions to apply the new search filter
-        onTextChanged(ui->lineEdit->text());
-    }
-    else if (action == mSettingsActionModelSkeleton)
-    {
-        SuggestionProvider::getInstance().setModelSearchFilter(ModelSearchFilter::SkeletonOnly);
-
-        // MEMO: This should be modified
-        // Refresh suggestions to apply the new search filter
-        onTextChanged(ui->lineEdit->text());
-    }
-}
-
-void SearchDialog::onSettingsActionHelpTriggered(QAction *action)
+void SearchDialog::onSettingsActionTriggered(QAction *action)
 {
     if (!action)
         return;
 
-    QUrl helpUrl;
-
-    if (action == mSettingsActionHelpReference)
+    if (action == mSettingsActionPreferences)
     {
-        // Get product version
+        // Get main window
+        QWidget *mainWindow = FBGetMainWindow();
+        if (!mainWindow)
+            return;
+
+        // Open Preferences Dialog
+        PreferencesDialog *preferencesDialog = new PreferencesDialog(mainWindow);
+        preferencesDialog->show();
+    }
+    else
+    {
+        QUrl helpUrl;
+
+        if (action == mSettingsActionHelpReference)
+        {
+            // Get product version
 #if defined(PRODUCT_VERSION)
-        int version = PRODUCT_VERSION;
+            int version = PRODUCT_VERSION;
 #else
-        // FBSystem::Version returns a value in the "xx000" format for version 20xx.
-        int version = 2000 + (FBSystem::TheOne().Version.AsInt() / 1000);
+            // FBSystem::Version returns a value in the "xx000" format for version 20xx.
+            int version = 2000 + (FBSystem::TheOne().Version.AsInt() / 1000);
 #endif
 
-        // Construct help URL with the version and language
-        helpUrl.setScheme("https");
-        helpUrl.setHost("help.autodesk.com");
-        helpUrl.setPath(QString("/view/MOBPRO/%1/%2/").arg(version).arg(MOBU_HELP_LANGUAGE));
+            // Construct help URL with the version and language
+            helpUrl.setScheme("https");
+            helpUrl.setHost("help.autodesk.com");
+            helpUrl.setPath(QString("/view/MOBPRO/%1/%2/").arg(version).arg(MOBU_HELP_LANGUAGE));
 
-        // Set query parameter
-        QUrlQuery query;
-        query.addQueryItem("guid", HELP_RELATIONS_REFERENCE_GUID);
-        helpUrl.setQuery(query);
+            // Set query parameter
+            QUrlQuery query;
+            query.addQueryItem("guid", HELP_RELATIONS_REFERENCE_GUID);
+            helpUrl.setQuery(query);
 
-        // Check if the help URL is valid, if not, fallback to a top-level help page
-        if (!helpUrl.isValid())
-            helpUrl = QUrl(MOBU_HELP_FALLBACK_URL);
+            // Check if the help URL is valid, if not, fallback to a top-level help page
+            if (!helpUrl.isValid())
+                helpUrl = QUrl(MOBU_HELP_FALLBACK_URL);
+        }
+        else if (action == mSettingsActionHelpGitHub)
+        {
+            // Set the GitHub repository URL
+            helpUrl = QUrl(GITHUB_REPOSITORY_URL);
+        }
+
+        QDesktopServices::openUrl(helpUrl);
     }
-    else if (action == mSettingsActionHelpGitHub)
-    {
-        // Set the GitHub repository URL
-        helpUrl = QUrl(GITHUB_REPOSITORY_URL);
-    }
-
-    QDesktopServices::openUrl(helpUrl);
-}
-
-void SearchDialog::onSettingsActionPreferencesTriggered(bool checked)
-{
-    Q_UNUSED(checked);
-
-    // Get main window
-    QWidget *mainWindow = FBGetMainWindow();
-    if (!mainWindow)
-        return;
-
-    // Open Preferences Dialog
-    PreferencesDialog *preferencesDialog = new PreferencesDialog(mainWindow);
-    preferencesDialog->show();
 }

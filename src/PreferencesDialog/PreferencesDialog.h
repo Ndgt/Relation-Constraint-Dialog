@@ -21,5 +21,4 @@ private:
 
 private:
     Ui::PreferencesDialog *ui; //!< Pointer to the Widget Container class generated from the .ui file
-    bool mSaveToConfigFile = false;
 };

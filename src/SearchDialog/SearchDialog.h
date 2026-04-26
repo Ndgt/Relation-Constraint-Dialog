@@ -106,11 +106,7 @@ private slots:
     void onTextChanged(const QString &text);
 
     void onSettingsButtonClicked(bool checked = false);
-
-    void onSettingsActionOperatorTriggered(QAction *action);
-    void onSettingsActionModelTriggered(QAction *action);
-    void onSettingsActionHelpTriggered(QAction *action);
-    void onSettingsActionPreferencesTriggered(bool checked = false);
+    void onSettingsActionTriggered(QAction *action);
 
 private:
     void initializeActions();
@@ -121,11 +117,7 @@ private:
     QPoint mRelationPosition;                                    //!< The position where the new relation object should be created
     HdlFBPlugTemplate<FBConstraintRelation> mSelectedConstraint; //!< The handle to the currently selected constraint object
 
-    QAction *mSettingsActionOperatorOperator;
-    QAction *mSettingsActionOperatorCategory;
-    QAction *mSettingsActionModelAll;
-    QAction *mSettingsActionModelSkeleton;
+    QAction *mSettingsActionPreferences;
     QAction *mSettingsActionHelpReference;
     QAction *mSettingsActionHelpGitHub;
-    QAction *mSettingsActionPreferences;
 };

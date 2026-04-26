@@ -4,6 +4,36 @@
 
 #include "RelationDialogManager.h"
 
+inline ModelSearchFilter modelSearchFilterForTypeId(int typeId)
+{
+    if (typeId == FBModel::TypeInfo)
+        return ModelSearchFilter::FBModelObjects;
+    if (typeId == FBCamera::TypeInfo)
+        return ModelSearchFilter::Cameras;
+    if (typeId == FBCameraSwitcher::TypeInfo)
+        return ModelSearchFilter::CameraSwitchers;
+    if (typeId == FBModelCube::TypeInfo)
+        return ModelSearchFilter::Cubes;
+    if (typeId == FBLight::TypeInfo)
+        return ModelSearchFilter::Lights;
+    if (typeId == FBModelMarker::TypeInfo)
+        return ModelSearchFilter::Markers;
+    if (typeId == FBModelNull::TypeInfo)
+        return ModelSearchFilter::Nulls;
+    if (typeId == FBModelOptical::TypeInfo)
+        return ModelSearchFilter::Opticals;
+    if (typeId == FBModelPath3D::TypeInfo)
+        return ModelSearchFilter::Path3Ds;
+    if (typeId == FBModelPlane::TypeInfo)
+        return ModelSearchFilter::Planes;
+    if (typeId == FBModelRoot::TypeInfo)
+        return ModelSearchFilter::Roots;
+    if (typeId == FBModelSkeleton::TypeInfo)
+        return ModelSearchFilter::Skeletons;
+
+    return ModelSearchFilter::None;
+}
+
 QStringList SuggestionProvider::getOperatorSuggestions(QStringView queryView) const
 {
     const QString query = queryView.toString().trimmed();
@@ -85,16 +115,15 @@ QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
         if (!query.isEmpty() && !longName.contains(query, Qt::CaseInsensitive))
             continue;
 
-        // MEMO: Then, apply model search filter here
-        if (mModelSearchFilter == ModelSearchFilter::All)
-        {
-            out.push_back(longName);
-        }
-        else if (mModelSearchFilter == ModelSearchFilter::SkeletonOnly)
-        {
-            if (entry.typeId == FBModelSkeleton::TypeInfo)
-                out.push_back(longName);
-        }
+        const ModelSearchFilter modelTypeFilter = modelSearchFilterForTypeId(entry.typeId);
+        if (modelTypeFilter == ModelSearchFilter::None)
+            continue;
+
+        // Then we check if the model type is included in the search filters
+        if (!mModelSearchFilters.testFlag(modelTypeFilter))
+            continue;
+
+        out.push_back(longName);
     }
 
     return out;

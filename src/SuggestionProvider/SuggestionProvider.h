@@ -1,10 +1,12 @@
 #pragma once
 
+#include <QtCore/QFlags>
 #include <QtCore/QList>
 #include <QtCore/QSet>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QStringView>
+#include <QtCore/QtTypes>
 
 #include <fbsdk/fbsdk.h>
 
@@ -14,11 +16,25 @@ enum class OperatorSearchPriority
     OperatorFirst
 };
 
-enum class ModelSearchFilter
+enum class ModelSearchFilter : quint32
 {
-    All,
-    SkeletonOnly
+    None = 0x0000,
+    FBModelObjects = 0x0001,
+    Cameras = 0x0002,
+    CameraSwitchers = 0x0004,
+    Cubes = 0x0008,
+    Lights = 0x0010,
+    Markers = 0x0020,
+    Nulls = 0x0040,
+    Opticals = 0x0080,
+    Path3Ds = 0x0100,
+    Planes = 0x0200,
+    Roots = 0x0400,
+    Skeletons = 0x0800
 };
+
+Q_DECLARE_FLAGS(ModelSearchFilters, ModelSearchFilter)
+Q_DECLARE_OPERATORS_FOR_FLAGS(ModelSearchFilters)
 
 /**
  * @class SuggestionProvider
@@ -57,14 +73,14 @@ public:
         mOperatorSearchPriority = priority;
     }
 
-    ModelSearchFilter getModelSearchFilter() const
+    ModelSearchFilters getModelSearchFilters() const
     {
-        return mModelSearchFilter;
+        return mModelSearchFilters;
     }
 
-    void setModelSearchFilter(ModelSearchFilter filter)
+    void setModelSearchFilters(ModelSearchFilters filters)
     {
-        mModelSearchFilter = filter;
+        mModelSearchFilters = filters;
     }
 
 private:
@@ -106,5 +122,5 @@ private:
     QList<ModelEntry> mModelEntries;
 
     OperatorSearchPriority mOperatorSearchPriority = OperatorSearchPriority::OperatorFirst;
-    ModelSearchFilter mModelSearchFilter = ModelSearchFilter::All;
+    ModelSearchFilters mModelSearchFilters = ModelSearchFilter::None;
 };
