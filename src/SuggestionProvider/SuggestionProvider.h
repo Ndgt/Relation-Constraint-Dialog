@@ -104,6 +104,18 @@ public:
     void setModelSearchFilters(ModelSearchFilters filters) { mModelSearchFilters = filters; }
 
     /**
+     * @brief Check if model namespace search is disabled
+     * @return True if model namespace search is disabled, false otherwise
+     */
+    bool isModelNamespaceSearchDisabled() const { return mIsModelNamespaceSearchDisabled; }
+
+    /**
+     * @brief Set the model namespace search disabled flag
+     * @param disabled The flag value to set
+     */
+    void setModelNamespaceSearchDisabled(bool disabled) { mIsModelNamespaceSearchDisabled = disabled; }
+
+    /**
      * @brief Get the singleton instance of SuggestionProvider
      * @return Reference to the singleton instance
      */
@@ -180,4 +192,5 @@ private:
 
     OperatorSearchPriority mOperatorSearchPriority = OperatorSearchPriority::OperatorFirst; //!< Search priority for operators in SearchDialog
     ModelSearchFilters mModelSearchFilters = ModelSearchFilter::None;                       //!< Search filters for models in SearchDialog
+    bool mIsModelNamespaceSearchDisabled = false;                                           //!< Flag to indicate whether model namespace search is disabled in SearchDialog
 };

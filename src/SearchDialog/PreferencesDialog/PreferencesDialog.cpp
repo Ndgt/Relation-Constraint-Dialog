@@ -68,8 +68,7 @@ void PreferencesDialog::readConfig()
     suggestionProvider.setOperatorSearchPriority(
         ui->radioButtonOperator->isChecked() ? OperatorSearchPriority::OperatorFirst : OperatorSearchPriority::CategoryFirst);
 
-    // MEMO: set "not search in namespaces" option to SuggestionProvider
-    //
+    suggestionProvider.setModelNamespaceSearchDisabled(ui->checkBoxNotSearchInNamespaces->isChecked());
 
     suggestionProvider.setModelSearchFilters(modelFilters);
 }
@@ -119,8 +118,7 @@ void PreferencesDialog::writeConfig()
     suggestionProvider.setOperatorSearchPriority(
         ui->radioButtonOperator->isChecked() ? OperatorSearchPriority::OperatorFirst : OperatorSearchPriority::CategoryFirst);
 
-    // MEMO: set "not search in namespaces" option to SuggestionProvider
-    //
+    suggestionProvider.setModelNamespaceSearchDisabled(ui->checkBoxNotSearchInNamespaces->isChecked());
 
     suggestionProvider.setModelSearchFilters(modelFilters);
 }

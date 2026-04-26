@@ -110,10 +110,23 @@ QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
     {
         // Create long name list for display and filtering
         const QString longName = entry.nameSpace.isEmpty() ? entry.name : entry.nameSpace + ":" + entry.name;
+        FBTrace("Checking model entry '%s' with long name '%s' against query '%s'\n", entry.name.toUtf8().constData(), longName.toUtf8().constData(), query.toUtf8().constData());
 
-        // First we check if the query is contained in the long name
-        if (!query.isEmpty() && !longName.contains(query, Qt::CaseInsensitive))
-            continue;
+        // First we check if the query is contained in the name
+        // Note: if the query is empty, all entries will be included
+        if (!query.isEmpty())
+        {
+            if (mIsModelNamespaceSearchDisabled)
+            {
+                if (!entry.name.contains(query, Qt::CaseInsensitive))
+                    continue;
+            }
+            else
+            {
+                if (!longName.contains(query, Qt::CaseInsensitive))
+                    continue;
+            }
+        }
 
         const ModelSearchFilter modelTypeFilter = modelSearchFilterForTypeId(entry.typeId);
         if (modelTypeFilter == ModelSearchFilter::None)
