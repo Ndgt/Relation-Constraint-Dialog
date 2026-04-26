@@ -19,7 +19,6 @@
 
 #include "CustomLineEdit.h"
 #include "PreferencesDialog.h"
-#include "RelationDialogManager.h"
 #include "SuggestionProvider.h"
 #include "Utility.h"
 
@@ -309,14 +308,14 @@ void SearchDialog::onSettingsButtonClicked(bool checked)
 {
     Q_UNUSED(checked);
 
-    QMenu *menu = new QMenu(this);
+    QMenu menu = QMenu(this);
 
-    menu->addAction(mSettingsActionPreferences);
-    QMenu *onlineHelpMenu = menu->addMenu("Online Help");
+    menu.addAction(mSettingsActionPreferences);
+    QMenu *onlineHelpMenu = menu.addMenu("Online Help");
     onlineHelpMenu->addAction(mSettingsActionHelpReference);
     onlineHelpMenu->addAction(mSettingsActionHelpGitHub);
 
-    menu->exec(ui->buttonSettings->mapToGlobal(ui->buttonSettings->rect().topRight()));
+    menu.exec(ui->buttonSettings->mapToGlobal(ui->buttonSettings->rect().topRight()));
 }
 
 void SearchDialog::onSettingsActionTriggered(QAction *action)

@@ -140,6 +140,19 @@ QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
     return out;
 }
 
+void SuggestionProvider::initializeModelSuggestions()
+{
+    mModelEntries.clear();
+    collectModelEntry();
+}
+
+void SuggestionProvider::applyConfig(const RelationDialogConfig &config)
+{
+    mOperatorSearchPriority = config.operatorSearchPriority;
+    mIsModelNamespaceSearchDisabled = config.modelNamespaceSearchDisabled;
+    mModelSearchFilters = config.modelSearchFilters;
+}
+
 void SuggestionProvider::addOperatorSuggestion(QStringList &suggestions, const OperatorEntry &entry) const
 {
     suggestions.push_back(entry.categoryName + QStringLiteral(" - ") + entry.operatorName);

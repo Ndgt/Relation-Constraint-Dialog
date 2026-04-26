@@ -1,55 +1,28 @@
 #include "PreferencesDialog.h"
+
+#include "ConfigReadWriter.h"
 #include "RelationDialogManager.h"
 #include "SuggestionProvider.h"
-#include <fbsdk/fbsdk.h>
 
 PreferencesDialog::PreferencesDialog(QWidget *parent) : QDialog(parent), ui(new Ui::PreferencesDialog)
 {
     ui->setupUi(this);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &PreferencesDialog::onAccepted);
 
-    readConfig();
+    const std::filesystem::path configFilePath = RelationDialogManager::getInstance().getConfigFilePath();
+    RelationDialogConfig config = ConfigReadWriter::readConfig(configFilePath);
+    updateUIFromConfig(config);
 }
 
-void PreferencesDialog::readConfig()
+void PreferencesDialog::updateUIFromConfig(const RelationDialogConfig &config)
 {
-    std::filesystem::path configFilePath = RelationDialogManager::getInstance().getConfigFilePath();
-    if (!std::filesystem::exists(configFilePath))
-        return;
+    ui->radioButtonOperator->setChecked(config.operatorSearchPriority == OperatorSearchPriority::OperatorFirst);
+    ui->radioButtonCategory->setChecked(config.operatorSearchPriority == OperatorSearchPriority::CategoryFirst);
+    ui->checkBoxNotSearchInNamespaces->setChecked(config.modelNamespaceSearchDisabled);
 
-    FBConfigFile configFile = FBConfigFile(configFilePath.string().c_str());
-
-    std::string showHitOperatorFirst = configFile.Get("Operator Search Options", "Show Hit Operator First", "Yes");
-
-    if (showHitOperatorFirst == "Yes")
-        ui->radioButtonOperator->setChecked(true);
-    else
-        ui->radioButtonCategory->setChecked(true);
-
-    std::string doNotSearchInNamespaces = configFile.Get("Model Search Options", "Do Not Search In Namespaces", "No");
-    ui->checkBoxNotSearchInNamespaces->setChecked(doNotSearchInNamespaces == "Yes");
-
-    ModelSearchFilters modelFilters;
-
-    auto readModelFilter = [&](const char *key, ModelSearchFilter flag, const char *defaultValue)
-    {
-        const std::string value = configFile.Get("Model Search Filter", key, defaultValue);
-        modelFilters.setFlag(flag, value == "Yes");
-    };
-
-    readModelFilter("FBModel Objects", ModelSearchFilter::FBModelObjects, "Yes");
-    readModelFilter("Cameras", ModelSearchFilter::Cameras, "Yes");
-    readModelFilter("Camera Switchers", ModelSearchFilter::CameraSwitchers, "Yes");
-    readModelFilter("Cubes", ModelSearchFilter::Cubes, "Yes");
-    readModelFilter("Lights", ModelSearchFilter::Lights, "Yes");
-    readModelFilter("Markers", ModelSearchFilter::Markers, "Yes");
-    readModelFilter("Nulls", ModelSearchFilter::Nulls, "Yes");
-    readModelFilter("Opticals", ModelSearchFilter::Opticals, "Yes");
-    readModelFilter("Path3Ds", ModelSearchFilter::Path3Ds, "Yes");
-    readModelFilter("Planes", ModelSearchFilter::Planes, "Yes");
-    readModelFilter("Roots", ModelSearchFilter::Roots, "Yes");
-    readModelFilter("Skeletons", ModelSearchFilter::Skeletons, "Yes");
+    const ModelSearchFilters &modelFilters = config.modelSearchFilters;
 
     ui->checkBoxFBModelObjetcs->setChecked(modelFilters.testFlag(ModelSearchFilter::FBModelObjects));
     ui->checkBoxCameras->setChecked(modelFilters.testFlag(ModelSearchFilter::Cameras));
@@ -63,25 +36,16 @@ void PreferencesDialog::readConfig()
     ui->checkBoxPlanes->setChecked(modelFilters.testFlag(ModelSearchFilter::Planes));
     ui->checkBoxRoots->setChecked(modelFilters.testFlag(ModelSearchFilter::Roots));
     ui->checkBoxSkeletons->setChecked(modelFilters.testFlag(ModelSearchFilter::Skeletons));
-
-    SuggestionProvider &suggestionProvider = SuggestionProvider::getInstance();
-    suggestionProvider.setOperatorSearchPriority(
-        ui->radioButtonOperator->isChecked() ? OperatorSearchPriority::OperatorFirst : OperatorSearchPriority::CategoryFirst);
-
-    suggestionProvider.setModelNamespaceSearchDisabled(ui->checkBoxNotSearchInNamespaces->isChecked());
-
-    suggestionProvider.setModelSearchFilters(modelFilters);
 }
 
-void PreferencesDialog::writeConfig()
+RelationDialogConfig PreferencesDialog::gatherConfigFromUI() const
 {
-    std::filesystem::path configFilePath = RelationDialogManager::getInstance().getConfigFilePath();
-    FBConfigFile configFile = FBConfigFile(configFilePath.string().c_str());
+    RelationDialogConfig config;
 
-    configFile.Set("Operator Search Options", "Show Hit Operator First", ui->radioButtonOperator->isChecked() ? "Yes" : "No");
-    configFile.Set("Model Search Options", "Do Not Search In Namespaces", ui->checkBoxNotSearchInNamespaces->isChecked() ? "Yes" : "No");
+    config.operatorSearchPriority = ui->radioButtonOperator->isChecked() ? OperatorSearchPriority::OperatorFirst : OperatorSearchPriority::CategoryFirst;
+    config.modelNamespaceSearchDisabled = ui->checkBoxNotSearchInNamespaces->isChecked();
 
-    ModelSearchFilters modelFilters;
+    ModelSearchFilters &modelFilters = config.modelSearchFilters;
 
     modelFilters.setFlag(ModelSearchFilter::FBModelObjects, ui->checkBoxFBModelObjetcs->isChecked());
     modelFilters.setFlag(ModelSearchFilter::Cameras, ui->checkBoxCameras->isChecked());
@@ -96,29 +60,16 @@ void PreferencesDialog::writeConfig()
     modelFilters.setFlag(ModelSearchFilter::Roots, ui->checkBoxRoots->isChecked());
     modelFilters.setFlag(ModelSearchFilter::Skeletons, ui->checkBoxSkeletons->isChecked());
 
-    auto writeModelFilter = [&](const char *key, ModelSearchFilter flag)
-    {
-        configFile.Set("Model Search Filter", key, modelFilters.testFlag(flag) ? "Yes" : "No");
-    };
+    return config;
+}
 
-    writeModelFilter("FBModel Objects", ModelSearchFilter::FBModelObjects);
-    writeModelFilter("Cameras", ModelSearchFilter::Cameras);
-    writeModelFilter("Camera Switchers", ModelSearchFilter::CameraSwitchers);
-    writeModelFilter("Cubes", ModelSearchFilter::Cubes);
-    writeModelFilter("Lights", ModelSearchFilter::Lights);
-    writeModelFilter("Markers", ModelSearchFilter::Markers);
-    writeModelFilter("Nulls", ModelSearchFilter::Nulls);
-    writeModelFilter("Opticals", ModelSearchFilter::Opticals);
-    writeModelFilter("Path3Ds", ModelSearchFilter::Path3Ds);
-    writeModelFilter("Planes", ModelSearchFilter::Planes);
-    writeModelFilter("Roots", ModelSearchFilter::Roots);
-    writeModelFilter("Skeletons", ModelSearchFilter::Skeletons);
+void PreferencesDialog::onAccepted()
+{
+    RelationDialogConfig config = gatherConfigFromUI();
 
-    SuggestionProvider &suggestionProvider = SuggestionProvider::getInstance();
-    suggestionProvider.setOperatorSearchPriority(
-        ui->radioButtonOperator->isChecked() ? OperatorSearchPriority::OperatorFirst : OperatorSearchPriority::CategoryFirst);
+    // Update the suggestion provider with the new configuration
+    SuggestionProvider::getInstance().applyConfig(config);
 
-    suggestionProvider.setModelNamespaceSearchDisabled(ui->checkBoxNotSearchInNamespaces->isChecked());
-
-    suggestionProvider.setModelSearchFilters(modelFilters);
+    const std::filesystem::path configFilePath = RelationDialogManager::getInstance().getConfigFilePath();
+    ConfigReadWriter::writeConfig(configFilePath, config);
 }

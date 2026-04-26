@@ -1,45 +1,11 @@
 #pragma once
 
-#include <QtCore/QFlags>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QStringView>
-#include <QtCore/QtTypes>
 
-/**
- * @enum OperatorSearchPriority
- * @brief Enum to specify the search priority for operators in SearchDialog
- */
-enum class OperatorSearchPriority
-{
-    CategoryFirst,
-    OperatorFirst
-};
-
-/**
- * @enum ModelSearchFilter
- * @brief Enum to specify the search filter for models in SearchDialog
- */
-enum class ModelSearchFilter : quint32
-{
-    None = 0x0000,
-    FBModelObjects = 0x0001,
-    Cameras = 0x0002,
-    CameraSwitchers = 0x0004,
-    Cubes = 0x0008,
-    Lights = 0x0010,
-    Markers = 0x0020,
-    Nulls = 0x0040,
-    Opticals = 0x0080,
-    Path3Ds = 0x0100,
-    Planes = 0x0200,
-    Roots = 0x0400,
-    Skeletons = 0x0800
-};
-
-Q_DECLARE_FLAGS(ModelSearchFilters, ModelSearchFilter)
-Q_DECLARE_OPERATORS_FOR_FLAGS(ModelSearchFilters)
+#include "RelationDialogConfig.h"
 
 /**
  * @class SuggestionProvider
@@ -73,47 +39,13 @@ public:
      * @note This function is called when the dialog is opened to ensure that the model suggestions are up-to-date
      *       with the current scene content.
      */
-    void initializeModelSuggestions()
-    {
-        mModelEntries.clear();
-        collectModelEntry();
-    }
+    void initializeModelSuggestions();
 
     /**
-     * @brief Get the current operator search priority
-     * @return The current OperatorSearchPriority value
+     * @brief Apply the given configuration to the SuggestionProvider
+     * @param config The RelationDialogConfig struct containing the settings to be applied to the SuggestionProvider
      */
-    OperatorSearchPriority getOperatorSearchPriority() const { return mOperatorSearchPriority; }
-
-    /**
-     * @brief Set the operator search priority
-     * @param priority The OperatorSearchPriority value to set
-     */
-    void setOperatorSearchPriority(OperatorSearchPriority priority) { mOperatorSearchPriority = priority; }
-
-    /**
-     * @brief Get the current model search filters
-     * @return The current ModelSearchFilters value
-     */
-    ModelSearchFilters getModelSearchFilters() const { return mModelSearchFilters; }
-
-    /**
-     * @brief Set the model search filters
-     * @param filters The ModelSearchFilters value to set
-     */
-    void setModelSearchFilters(ModelSearchFilters filters) { mModelSearchFilters = filters; }
-
-    /**
-     * @brief Check if model namespace search is disabled
-     * @return True if model namespace search is disabled, false otherwise
-     */
-    bool isModelNamespaceSearchDisabled() const { return mIsModelNamespaceSearchDisabled; }
-
-    /**
-     * @brief Set the model namespace search disabled flag
-     * @param disabled The flag value to set
-     */
-    void setModelNamespaceSearchDisabled(bool disabled) { mIsModelNamespaceSearchDisabled = disabled; }
+    void applyConfig(const RelationDialogConfig &config);
 
     /**
      * @brief Get the singleton instance of SuggestionProvider

@@ -5,6 +5,8 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QWidget>
 
+#include "RelationDialogConfig.h"
+
 /**
  * @class PreferencesDialog
  * @brief Dialog for setting user preferences for the Relation Constraint Dialog
@@ -33,18 +35,20 @@ private slots:
      * @details This slot is called when the dialog is accepted, and it writes the current settings
      *          to the config file.
      */
-    void onAccepted() { writeConfig(); }
+    void onAccepted();
 
 private:
     /**
-     * @brief Read the current configuration from the config file
+     * @brief Update the widgets to reflect the given configuration
+     * @param config The configuration to update the UI with
      */
-    void readConfig();
+    void updateUIFromConfig(const RelationDialogConfig &config);
 
     /**
-     * @brief Write the current settings to the config file
+     * @brief Gather the current configuration from the widgets
+     * @return The configuration gathered from the UI
      */
-    void writeConfig();
+    RelationDialogConfig gatherConfigFromUI() const;
 
 private:
     Ui::PreferencesDialog *ui; //!< Pointer to the Widget Container class generated from the .ui file

@@ -1,6 +1,4 @@
-#include "CustomEventFilters.h"
 #include "RelationDialogManager.h"
-#include "Utility.h"
 
 #include <QtCore/QSet>
 #include <QtCore/QtConfig>
@@ -14,8 +12,15 @@
 
 #include <Windows.h>
 
+#include "ConfigReadWriter.h"
+#include "CustomEventFilters.h"
+#include "SuggestionProvider.h"
+#include "Utility.h"
+
 FBRegisterCustomManager(RelationDialogManager);
 FBCustomManagerImplementation(RelationDialogManager);
+
+const static std::string CONFIG_FILE_NAME = "RelationConstraintDialogConfig.ini";
 
 static std::string getDLLPath()
 {
@@ -36,15 +41,12 @@ bool RelationDialogManager::FBCreate()
 {
     mInstance = this;
 
-    std::string configFileName = "RelationConstraintDialogConfig.ini";
-
     std::string dllPath = getDLLPath();
     std::filesystem::path path(dllPath);
 
     if (std::filesystem::exists(path))
     {
-        mConfigFilePath = path.parent_path() / configFileName;
-        return true;
+        mConfigFilePath = path.parent_path() / CONFIG_FILE_NAME;
     }
     else
     {
@@ -65,15 +67,22 @@ bool RelationDialogManager::FBCreate()
                 if (entry.path().filename().string().find(dllPrefix) == std::string::npos)
                     continue;
 
-                mConfigFilePath = entry.path().parent_path() / configFileName;
-                return true;
+                mConfigFilePath = entry.path().parent_path() / CONFIG_FILE_NAME;
+                break;
             }
         }
     }
 
-    // Fall back to the config file directory if the DLL path cannot be found
-    std::filesystem::path systemConfigPath(FBSystem::TheOne().ConfigPath.AsString());
-    mConfigFilePath = systemConfigPath / configFileName;
+    if (mConfigFilePath.empty())
+    {
+        // Fall back to the config file directory if the DLL path cannot be found
+        std::filesystem::path systemConfigPath(FBSystem::TheOne().ConfigPath.AsString());
+        mConfigFilePath = systemConfigPath / CONFIG_FILE_NAME;
+    }
+
+    // Initialize the SuggestionProvider with the configuration from the config file
+    RelationDialogConfig config = ConfigReadWriter::readConfig(mConfigFilePath);
+    SuggestionProvider::getInstance().applyConfig(config);
 
     return true;
 }

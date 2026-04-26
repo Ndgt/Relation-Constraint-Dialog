@@ -23,6 +23,8 @@ class RelationDialogManager : public FBCustomManager
 public:
     /**
      * @brief FBComponent creation function
+     * @details Initializes the singleton instance, finds the configuration file path, reads the configuration,
+     *          and applies it to the SuggestionProvider.
      * @return true if creation is successful
      * @note The instance of FBCustomManager will be created by FBRegisterCustomManager macro.
      */

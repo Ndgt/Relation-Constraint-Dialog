@@ -43,6 +43,7 @@ set_target_properties(Detours PROPERTIES
 # === Sources ===
 add_library(${PROJECT_NAME} SHARED
     src/RelationConstraintDialogRegister.cpp
+    src/ConfigReadWriter/ConfigReadWriter.cpp
     src/CustomEventFilters/CustomEventFilters.cpp
     src/GLHooks/GLHooks.cpp
     src/RelationDialogManager/RelationDialogManager.cpp
@@ -69,6 +70,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE /utf-8)
 # === Include Paths ===
 target_include_directories(${PROJECT_NAME} PRIVATE
     "${MOBU_ROOT}/OpenRealitySDK/include"
+    src/ConfigReadWriter
     src/CustomEventFilters
     src/GLHooks
     src/RelationDialogManager
@@ -98,6 +100,7 @@ endif()
 install(FILES
     $<TARGET_FILE:${PROJECT_NAME}>
     $<TARGET_PDB_FILE:${PROJECT_NAME}>
+    src/RelationConstraintDialogConfig.ini
     DESTINATION "${MOBU_ROOT}/bin/x64/plugins"
     OPTIONAL # for Release builds where a PDB file might not be generated
 )
