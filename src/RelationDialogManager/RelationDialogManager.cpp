@@ -17,19 +17,19 @@
 FBRegisterCustomManager(RelationDialogManager);
 FBCustomManagerImplementation(RelationDialogManager);
 
-FBString GetDLLFullPath()
+static std::string getDLLPath()
 {
-    char lPath[MAX_PATH] = {0};
+    char lpFilename[MAX_PATH] = {0};
     HMODULE hModule = NULL;
 
     GetModuleHandleExA(
         GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-        (LPCSTR)&GetDLLFullPath, &hModule);
+        (LPCSTR)&getDLLPath, &hModule);
 
     if (hModule != NULL)
-        GetModuleFileNameA(hModule, lPath, MAX_PATH);
+        GetModuleFileNameA(hModule, lpFilename, MAX_PATH);
 
-    return FBString(lPath);
+    return std::string(lpFilename);
 }
 
 bool RelationDialogManager::FBCreate()
@@ -38,8 +38,8 @@ bool RelationDialogManager::FBCreate()
 
     std::string configFileName = "RelationConstraintDialogConfig.ini";
 
-    FBString dllPath = GetDLLFullPath();
-    std::filesystem::path path(dllPath.operator const char *());
+    std::string dllPath = getDLLPath();
+    std::filesystem::path path(dllPath);
 
     if (std::filesystem::exists(path))
     {
@@ -48,6 +48,9 @@ bool RelationDialogManager::FBCreate()
     }
     else
     {
+        // If the DLL path cannot be found, attempt to find the config file,
+        // in the registered plugin paths
+
         const FBStringList &pluginPathList = FBSystem::TheOne().GetPluginPath();
         for (int i = 0; i < pluginPathList.GetCount(); ++i)
         {
@@ -59,16 +62,16 @@ bool RelationDialogManager::FBCreate()
 
                 std::string dllPrefix = "RelationConstraintDialog";
 
-                if (entry.path().filename().string().find(dllPrefix) == 0)
-                {
-                    mConfigFilePath = entry.path().parent_path() / configFileName;
-                    return true;
-                }
+                if (entry.path().filename().string().find(dllPrefix) == std::string::npos)
+                    continue;
+
+                mConfigFilePath = entry.path().parent_path() / configFileName;
+                return true;
             }
         }
     }
 
-    // fall back to the config file directory if the DLL path cannot be found
+    // Fall back to the config file directory if the DLL path cannot be found
     std::filesystem::path systemConfigPath(FBSystem::TheOne().ConfigPath.AsString());
     mConfigFilePath = systemConfigPath / configFileName;
 

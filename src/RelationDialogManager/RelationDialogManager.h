@@ -128,6 +128,10 @@ public:
      */
     void setRelationViewState(QPoint topLeftPos, double scaleFactor);
 
+    /**
+     * @brief Get the file path of the configuration file
+     * @return std::filesystem::path representing the configuration file path
+     */
     std::filesystem::path getConfigFilePath() const { return mConfigFilePath; }
 
 private:
@@ -164,5 +168,5 @@ private:
     /// Map to store the view state (position and scale) for each relation constraint
     std::unordered_map<FBConstraintRelation *, RelationViewState> mRelationViewStates;
 
-    std::filesystem::path mConfigFilePath;
+    std::filesystem::path mConfigFilePath; //!< Path to the configuration file
 };
