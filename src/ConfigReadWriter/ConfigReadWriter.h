@@ -12,16 +12,27 @@ class ConfigReadWriter
 {
 public:
     /**
+     * @brief Get the defined path to the config file
+     * @return The path where the config file is expected to be located
+     */
+    static std::filesystem::path configFilePath();
+
+    /**
+     * @brief Check if the config file exists in the expected location
+     * @return True if the config file exists, false otherwise
+     */
+    static bool configFileExists();
+
+    /**
      * @brief Read the configuration from the config file
-     * @param configFilePath The path to the config file
      * @return The RelationDialogConfig struct populated with the settings from the config file
      */
-    static RelationDialogConfig readConfig(const std::filesystem::path &configFilePath);
+    static RelationDialogConfig readConfig();
 
     /**
      * @brief Write the given configuration to the config file
-     * @param configFilePath The path to the config file
      * @param config The RelationDialogConfig struct containing the settings to be written to the config file
+     * @return True if the configuration was written successfully, false otherwise
      */
-    static void writeConfig(const std::filesystem::path &configFilePath, const RelationDialogConfig &config);
+    static bool writeConfig(const RelationDialogConfig &config);
 };
