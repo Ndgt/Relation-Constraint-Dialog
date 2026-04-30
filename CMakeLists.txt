@@ -48,7 +48,7 @@ add_library(${PROJECT_NAME} SHARED
     src/GLHooks/GLHooks.cpp
     src/RelationDialogManager/RelationDialogManager.cpp
     src/SearchDialog/SearchDialog.cpp
-    src/SearchDialog/CustomWidgets/CustomLineEdit.cpp
+    src/SearchDialog/CustomWidgets/SearchBoxLineEdit.cpp
     src/SearchDialog/PreferencesDialog/PreferencesDialog.cpp
     src/SuggestionProvider/SuggestionProvider.cpp
     src/Utility/Utility.cpp

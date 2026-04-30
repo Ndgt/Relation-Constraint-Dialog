@@ -7,7 +7,6 @@
 #include <QtCore/QUrl>
 #include <QtCore/QUrlQuery>
 #include <QtGui/QPainter>
-#include <QtGui/QPalette>
 #include <QtGui/QDesktopServices>
 #include <QtWidgets/QMenu>
 
@@ -17,7 +16,7 @@
 #include <QtWidgets/QActionGroup>
 #endif
 
-#include "CustomLineEdit.h"
+#include "SearchBoxLineEdit.h"
 #include "PreferencesDialog.h"
 #include "SuggestionProvider.h"
 #include "Utility.h"
@@ -61,10 +60,10 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     initializeActions();
 
     // Connect Singals & Slots
-    connect(ui->lineEdit, &CustomLineEdit::keyReturnPressed, this, &SearchDialog::onLineEditKeyReturnPressed);
-    connect(ui->lineEdit, &CustomLineEdit::keyTabPressed, this, &SearchDialog::onLineEditKeyTabPressed);
-    connect(ui->lineEdit, &CustomLineEdit::keyUpDownPressed, this, &SearchDialog::onLineEditKeyUpDownPressed);
-    connect(ui->lineEdit, &CustomLineEdit::textChanged, this, &SearchDialog::onTextChanged);
+    connect(ui->lineEdit, &SearchBoxLineEdit::keyReturnPressed, this, &SearchDialog::onLineEditKeyReturnPressed);
+    connect(ui->lineEdit, &SearchBoxLineEdit::keyTabPressed, this, &SearchDialog::onLineEditKeyTabPressed);
+    connect(ui->lineEdit, &SearchBoxLineEdit::keyUpDownPressed, this, &SearchDialog::onLineEditKeyUpDownPressed);
+    connect(ui->lineEdit, &SearchBoxLineEdit::textChanged, this, &SearchDialog::onTextChanged);
     connect(ui->listWidget, &QListWidget::itemClicked, this, &SearchDialog::onItemClicked);
     connect(ui->buttonSettings, &QPushButton::clicked, this, &SearchDialog::onSettingsButtonClicked);
 
@@ -73,13 +72,6 @@ SearchDialog::SearchDialog(const QPoint &cursorPosition, const QPoint &relationP
     connect(ui->buttonGroup, &QButtonGroup::buttonToggled, this, &SearchDialog::onRadioButtonGroupToggled);
 #else
     connect(ui->buttonGroup, QOverload<QAbstractButton *, bool>::of(&QButtonGroup::buttonToggled), this, &SearchDialog::onRadioButtonGroupToggled);
-#endif
-
-    // Fix default placeholder text color (Qt6 issue)
-#if QT_VERSION_MAJOR == 6
-    QPalette palette = ui->lineEdit->palette();
-    palette.setColor(QPalette::ColorRole::PlaceholderText, QColor("#c8c8c8"));
-    ui->lineEdit->setPalette(palette);
 #endif
 
     // Let the SuggestionProvider collect current scene model long names for suggestions
