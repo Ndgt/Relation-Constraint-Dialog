@@ -49,7 +49,7 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
    （例：MotionBuilder 2027 を使用している場合は `...-MB2027.dll` ）
 
-4. 対応する `.dll` ファイルと `RelationConstraintDialogConfig.ini` を既定のプラグインフォルダ（`MotionBuilder <version>/bin/x64/plugins`）にコピー
+4. 対応する `.dll` ファイルを既定のプラグインフォルダ（`MotionBuilder <version>/bin/x64/plugins`）にコピー
 
     （**注意**: `plugins` フォルダへのコピーの際、管理者権限が必要になる場合があります。）
 
@@ -100,50 +100,57 @@ MotionBuilder の Relation Constraint において手軽にオブジェクト配
 
 v3.0 から、検索ダイアログに設定ボタン（ `...` ）が追加され、検索ダイアログの動作のカスタマイズやオンラインヘルプの表示ができるようになりました。
 
-- **Preferences**
+#### 1. Preferences
 
-    設定ボタンを押し、『Preferences...』を選択すると Preferences ダイアログが開きます。
+設定ボタンを押し、『Preferences...』を選択すると Preferences ダイアログが開きます。
 
-    <p align = "center">
-    <img src="docs/images-readme/usage_preferences.png"><br>
-    </p>
+<p align = "center">
+<img src="docs/images-readme/usage_preferences.png"><br>
+</p>
 
-    <p align = "center">
-    <img src="docs/images-readme/usage_preferences_dialog.png"><br>
-    </p>
+<p align = "center">
+<img src="docs/images-readme/usage_preferences_dialog.png"><br>
+</p>
+<br>
 
-    Preferences ダイアログでは、以下の設定を編集できます。
+ダイアログ上部にある LineEdit には設定ファイルのパスが表示されます。LineEdit を右クリックするとコンテキストメニューが開き、パスをクリップボードにコピーしたり、設定ファイルが保存されているフォルダを開いたりできます。
 
-    - **Show Hit Operator First**（デフォルト） / **Show Hit Category First**
+<p align = "center">
+<img src="docs/images-readme/usage_config_path.png"><br>
+</p>
 
-        Operator 名を優先して検索するか、Category 名を優先して検索するかを設定します。<br>
-        『Show Hit Category First』を有効にして「q」と入力した場合、検索結果では「q」で始まる Category（例: "Quaternion"）が検索結果の上位に表示されます。一方『"Show Hit Operator First』を有効にしている場合は「q」で始まる Operator（例: "Converters - Quaternion To Axis Angle"）が上位に表示されます。
+<br>Preferences ダイアログでは、以下の設定を編集できます。
 
-    - **Do not search in namespaces**（デフォルト: OFF）
+- **Show Hit Operator First**（デフォルト） / **Show Hit Category First**
 
-        モデル検索時に namespace を無視するかどうかを設定します。有効にした場合、検索にはモデル名のみが使用され、namespace 名は無視されます。
+    Operator 名を優先して検索するか、Category 名を優先して検索するかを設定します。<br>
+    『Show Hit Category First』を有効にして「q」と入力した場合、検索結果では「q」で始まる Category（例: "Quaternion"）が検索結果の上位に表示されます。一方『"Show Hit Operator First』を有効にしている場合は「q」で始まる Operator（例: "Converters - Quaternion To Axis Angle"）が上位に表示されます。
 
-    - **Model Search Filter**（デフォルト: すべてのフィルタが有効）
+- **Do not search in namespaces**（デフォルト: OFF）
 
-        検索結果に含めるモデルの種類を選択できます。たとえば "Skeletons" を無効にすると、`FBModelSkeleton`型のモデルは検索結果から除外されます。
+    モデル検索時に namespace を無視するかどうかを設定します。有効にした場合、検索にはモデル名のみが使用され、namespace 名は無視されます。
+
+- **Model Search Filter**（デフォルト: すべてのフィルタが有効）
+
+    検索結果に含めるモデルの種類を選択できます。たとえば "Skeletons" を無効にすると、`FBModelSkeleton`型のモデルは検索結果から除外されます。
 
 <br>
 
 > [!NOTE]
-> これらの設定は、プラグインの `.dll` ファイルと同じディレクトリにある `RelationConstraintDialogConfig.ini` ファイルに保存されます。このファイルを手動で編集して設定を変更することもできます。
+> これらの設定は、`%USERPROFILE%\Documents\MB\<version>\config` ディレクトリに生成される `RelationConstraintDialogConfig.ini` ファイルに保存されます。このファイルを手動で編集して設定を変更することもできます。
 
 <br>
 
-- **Online Help**
+#### 2. Online Help
 
-    以下のオンラインリソースが利用可能です。
+以下のオンラインリソースが利用可能です。
 
-    - Relations Reference: Relation Operator の [公式ヘルプ](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601)
-    - GitHub Repository: このリポジトリ
+- Relations Reference: Relation Operator の [公式ヘルプ](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601)
+- GitHub Repository: このリポジトリ
 
-    <p align = "center">
-    <img src="docs/images-readme/usage_online_help.png"><br>
-    </p>
+<p align = "center">
+<img src="docs/images-readme/usage_online_help.png"><br>
+</p>
 
 <br>
 
@@ -295,7 +302,7 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
     ```
 
 
-    ビルドされたプラグイン `.dll` ファイルと `RelationConstraintDialogConfig.ini` ファイルが既定のフォルダ `MotionBuilder <version>/bin/x64/plugins` にコピーされます。
+    ビルドされたプラグイン `.dll` ファイルが既定のフォルダ `MotionBuilder <version>/bin/x64/plugins` にコピーされます。
 
     <br>**注意**: Visual Studio Code を使用している場合は、Tasks を使用してこれらのコマンドを実行できます。[tasks.json](./.vscode/tasks.json) を参照してください。
 
