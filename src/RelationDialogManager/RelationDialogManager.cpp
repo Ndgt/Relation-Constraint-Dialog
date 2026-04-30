@@ -2,15 +2,12 @@
 
 #include <QtCore/QSet>
 #include <QtCore/QtConfig>
-#include <QtWidgets/QMainWindow>
 
 #if QT_VERSION_MAJOR >= 6
 #include <QtOpenGLWidgets/QOpenGLWidget>
 #else
 #include <QtWidgets/QOpenGLWidget>
 #endif
-
-#include <Windows.h>
 
 #include "ConfigReadWriter.h"
 #include "CustomEventFilters.h"
@@ -20,68 +17,25 @@
 FBRegisterCustomManager(RelationDialogManager);
 FBCustomManagerImplementation(RelationDialogManager);
 
-const static std::string CONFIG_FILE_NAME = "RelationConstraintDialogConfig.ini";
-
-static std::string getDLLPath()
-{
-    char lpFilename[MAX_PATH] = {0};
-    HMODULE hModule = NULL;
-
-    GetModuleHandleExA(
-        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-        (LPCSTR)&getDLLPath, &hModule);
-
-    if (hModule != NULL)
-        GetModuleFileNameA(hModule, lpFilename, MAX_PATH);
-
-    return std::string(lpFilename);
-}
-
 bool RelationDialogManager::FBCreate()
 {
     mInstance = this;
 
-    std::string dllPath = getDLLPath();
-    std::filesystem::path path(dllPath);
+    // Create configuration struct with default values
+    RelationDialogConfig config;
 
-    if (std::filesystem::exists(path))
+    if (ConfigReadWriter::configFileExists())
     {
-        mConfigFilePath = path.parent_path() / CONFIG_FILE_NAME;
+        // If config file exists, update config struct with the values from the config file
+        config = ConfigReadWriter::readConfig();
     }
     else
     {
-        // If the DLL path cannot be found, attempt to find the config file,
-        // in the registered plugin paths
-
-        const FBStringList &pluginPathList = FBSystem::TheOne().GetPluginPath();
-        for (int i = 0; i < pluginPathList.GetCount(); ++i)
-        {
-            const char *pluginDirPath = pluginPathList.GetAt(i);
-            for (const auto &entry : std::filesystem::directory_iterator(pluginDirPath))
-            {
-                if (entry.path().extension() != ".dll")
-                    continue;
-
-                std::string dllPrefix = "RelationConstraintDialog";
-
-                if (entry.path().filename().string().find(dllPrefix) == std::string::npos)
-                    continue;
-
-                mConfigFilePath = entry.path().parent_path() / CONFIG_FILE_NAME;
-                break;
-            }
-        }
+        // If no config file exists, create one with default configuration values
+        ConfigReadWriter::writeConfig(config);
     }
 
-    if (mConfigFilePath.empty())
-    {
-        // Fall back to the config file directory if the DLL path cannot be found
-        std::filesystem::path systemConfigPath(FBSystem::TheOne().ConfigPath.AsString());
-        mConfigFilePath = systemConfigPath / CONFIG_FILE_NAME;
-    }
-
-    // Initialize the SuggestionProvider with the configuration from the config file
-    RelationDialogConfig config = ConfigReadWriter::readConfig(mConfigFilePath);
+    // Initialize the SuggestionProvider with the configuration
     SuggestionProvider::getInstance().applyConfig(config);
 
     return true;

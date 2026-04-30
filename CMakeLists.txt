@@ -99,7 +99,6 @@ endif()
 install(FILES
     $<TARGET_FILE:${PROJECT_NAME}>
     $<TARGET_PDB_FILE:${PROJECT_NAME}>
-    src/RelationConstraintDialogConfig.ini
     DESTINATION "${MOBU_ROOT}/bin/x64/plugins"
     OPTIONAL # for Release builds where a PDB file might not be generated
 )

@@ -1,7 +1,8 @@
 #include "PreferencesDialog.h"
 
+#include <fbsdk/fbsdk.h>
+
 #include "ConfigReadWriter.h"
-#include "RelationDialogManager.h"
 #include "SuggestionProvider.h"
 
 PreferencesDialog::PreferencesDialog(QWidget *parent) : QDialog(parent), ui(new Ui::PreferencesDialog)
@@ -11,9 +12,8 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) : QDialog(parent), ui(new 
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &PreferencesDialog::onAccepted);
 
-    const std::filesystem::path configFilePath = RelationDialogManager::getInstance().getConfigFilePath();
-    RelationDialogConfig config = ConfigReadWriter::readConfig(configFilePath);
-    updateUIFromConfig(config);
+    // Read the current configuration and update the UI to reflect it
+    updateUIFromConfig(ConfigReadWriter::readConfig());
 }
 
 void PreferencesDialog::updateUIFromConfig(const RelationDialogConfig &config)
@@ -70,6 +70,11 @@ void PreferencesDialog::onAccepted()
     // Update the suggestion provider with the new configuration
     SuggestionProvider::getInstance().applyConfig(config);
 
-    const std::filesystem::path configFilePath = RelationDialogManager::getInstance().getConfigFilePath();
-    ConfigReadWriter::writeConfig(configFilePath, config);
+    // Save the new configuration to the config file
+    if (!ConfigReadWriter::writeConfig(config))
+    {
+        FBMessageBox("Relation Constraint Dialog",
+                     "[Error] One or more settings failed to save to the config file.",
+                     "OK");
+    }
 }
