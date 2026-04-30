@@ -12,6 +12,12 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) : QDialog(parent), ui(new 
 
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &PreferencesDialog::onAccepted);
 
+    if (ConfigReadWriter::configFileExists())
+    {
+        ui->lineEditConfigFilePath->setPathText(
+            QString::fromStdString(ConfigReadWriter::configFilePath().string()));
+    }
+
     // Read the current configuration and update the UI to reflect it
     updateUIFromConfig(ConfigReadWriter::readConfig());
 }
