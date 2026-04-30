@@ -47,9 +47,10 @@ add_library(${PROJECT_NAME} SHARED
     src/CustomEventFilters/CustomEventFilters.cpp
     src/GLHooks/GLHooks.cpp
     src/RelationDialogManager/RelationDialogManager.cpp
-    src/SearchDialog/SearchDialog.cpp
-    src/SearchDialog/CustomWidgets/CustomLineEdit.cpp
-    src/SearchDialog/PreferencesDialog/PreferencesDialog.cpp
+    src/Dialogs/PreferencesDialog.cpp
+    src/Dialogs/SearchDialog.cpp
+    src/Dialogs/CustomWidgets/ConfigPathLineEdit.cpp
+    src/Dialogs/CustomWidgets/SearchBoxLineEdit.cpp
     src/SuggestionProvider/SuggestionProvider.cpp
     src/Utility/Utility.cpp
 )
@@ -74,9 +75,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/CustomEventFilters
     src/GLHooks
     src/RelationDialogManager
-    src/SearchDialog
-    src/SearchDialog/CustomWidgets
-    src/SearchDialog/PreferencesDialog
+    src/Dialogs
+    src/Dialogs/CustomWidgets
     src/SuggestionProvider
     src/Utility
 )
@@ -100,7 +100,6 @@ endif()
 install(FILES
     $<TARGET_FILE:${PROJECT_NAME}>
     $<TARGET_PDB_FILE:${PROJECT_NAME}>
-    src/RelationConstraintDialogConfig.ini
     DESTINATION "${MOBU_ROOT}/bin/x64/plugins"
     OPTIONAL # for Release builds where a PDB file might not be generated
 )

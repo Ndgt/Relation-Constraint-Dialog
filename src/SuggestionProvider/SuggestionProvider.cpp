@@ -137,6 +137,9 @@ QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
             out.push_back(longName);
     }
 
+    // Sort model suggestions alphabetically, ignoring case
+    out.sort(Qt::CaseInsensitive);
+
     return out;
 }
 

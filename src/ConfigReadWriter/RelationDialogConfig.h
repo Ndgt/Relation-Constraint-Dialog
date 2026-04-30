@@ -31,7 +31,11 @@ enum class ModelSearchFilter : quint32
     Path3Ds = 0x0100,         //!< FBModelPath3D Class objects
     Planes = 0x0200,          //!< FBModelPlane Class objects
     Roots = 0x0400,           //!< FBModelRoot Class objects
-    Skeletons = 0x0800        //!< FBModelSkeleton Class objects
+    Skeletons = 0x0800,       //!< FBModelSkeleton Class objects
+
+    /// All FBModel and derived class objects
+    All = FBModelObjects | Cameras | CameraSwitchers | Cubes | Lights |
+          Markers | Nulls | Opticals | Path3Ds | Planes | Roots | Skeletons
 };
 
 Q_DECLARE_FLAGS(ModelSearchFilters, ModelSearchFilter)
@@ -50,5 +54,5 @@ struct RelationDialogConfig
     bool modelNamespaceSearchDisabled = false;
 
     /// The search filters for models in the SearchDialog
-    ModelSearchFilters modelSearchFilters = ModelSearchFilter::None;
+    ModelSearchFilters modelSearchFilters = ModelSearchFilter::All;
 };

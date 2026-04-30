@@ -46,7 +46,7 @@ Instead, please use this plugin only for:
 
    (e.g., use `...-MB2027.dll` if you're using MotionBuilder 2027)
 
-4. Copy the corresponding `.dll` file and `RelationConstraintDialogConfig.ini` into the default plugin folder:
+4. Copy the corresponding `.dll` file  into the default plugin folder:
    `MotionBuilder <version>/bin/x64/plugins`
 
     (**Note**: You may need administrator privileges to copy files to the `plugins` folder.)
@@ -99,53 +99,58 @@ You can build the documentation locally using [Doxygen](https://www.doxygen.nl/)
 ### Dialog Settings
 Since v3.0, settings button ( `...` ) has been added to the search dialog, allowing you to customize the behavior of the search dialog and open the online help page.
 
-- **Preferences**
+#### 1. Preferences
 
-    Push the settings button and select "Preferences..." to open the preferences dialog.
+Push the settings button and select "Preferences..." to open the preferences dialog.
 
-    <p align = "center">
-    <img src="docs/images-readme/usage_preferences.png"><br>
-    </p>
+<p align = "center">
+<img src="docs/images-readme/usage_preferences.png"><br>
+</p>
 
-    <p align = "center">
-    <img src="docs/images-readme/usage_preferences_dialog.png"><br>
-    </p>
-    <br>
+<p align = "center">
+<img src="docs/images-readme/usage_preferences_dialog.png"><br>
+</p>
+<br>
 
+The LineEdit on the top of the preferences dialog displays the path of the configuration file. Right click the LineEdit will open the context menu, where you can copy the path to clipboard or open the folder containing the configuration file.
 
-    In the preferences dialog, you can customize the following settings:
+<p align = "center">
+<img src="docs/images-readme/usage_config_path.png"><br>
+</p>
 
-    - **Show Hit Operator First** (default) / **Show Hit Category First**
+<br>In the preferences dialog, you can customize the following settings:
 
-        Whether to search by operator name first or category name first. <br>If "Show Hit Category First" is enabled and you type `q`, the search results will prioritize categories that start with `q` (e.g., "Quaternion"), while if "Show Hit Operator First" is enabled, the search results will prioritize operators that start with `q` (e.g., "Converters - 
+- **Show Hit Operator First** (default) / **Show Hit Category First**
+
+    Whether to search by operator name first or category name first. <br>If "Show Hit Category First" is enabled and you type `q`, the search results will prioritize categories that start with `q` (e.g., "Quaternion"), while if "Show Hit Operator First" is enabled, the search results will prioritize operators that start with `q` (e.g., "Converters - 
 Quaternion To Axis Angle").
 
 
-    - **Do not search in namespaces** (default: OFF)
+- **Do not search in namespaces** (default: OFF)
 
-        Whether to ignore namespaces when searching for models. If enabled, only the model name will be considered for searching, and the namespace name will be ignored.
+    Whether to ignore namespaces when searching for models. If enabled, only the model name will be considered for searching, and the namespace name will be ignored.
 
-    - **Model Search Filter** (default: All filters enabled)
+- **Model Search Filter** (default: All filters enabled)
 
-        You can choose which types of models to include in the search results. For example, if you disable "Skeletons", `FBModelSkeleton` models will be excluded from the search results.
+    You can choose which types of models to include in the search results. For example, if you disable "Skeletons", `FBModelSkeleton` models will be excluded from the search results.
 
 <br>
 
 > [!NOTE]
-> These settings are saved in the `RelationConstraintDialogConfig.ini` file located in the same directory as the plugin `.dll` file. You can also edit this file manually to change the settings.
+> These settings are saved in the `RelationConstraintDialogConfig.ini` file generated in the `%USERPROFILE%\Documents\MB\<version>\config` directory. You can also edit this file manually to change the settings.
 
 <br>
 
-- **Online Help**
+#### 2. Online Help
 
-    The following online resources are available:
+The following online resources are available:
 
-    - Relations Reference: [Official Help](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601) of relation operators
-    - GitHub Repository: This repository
+- Relations Reference: [Official Help](https://help.autodesk.com/view/MOBPRO/2027/ENU/?guid=GUID-C50152F9-5607-4779-A964-186B4E1A0601) of relation operators
+- GitHub Repository: This repository
 
-    <p align = "center">
-    <img src="docs/images-readme/usage_online_help.png"><br>
-    </p>
+<p align = "center">
+<img src="docs/images-readme/usage_online_help.png"><br>
+</p>
 
 <br>
 
@@ -299,7 +304,7 @@ path/to/Qt/bin/uic.exe SearchDialog.ui -o ui_SearchDialog.h
     cmake --install build/MotionBuilder2027 --config RelWithDebInfo
     ```
 
-    <br>The built plugin `.dll` file and `RelationConstraintDialogConfig.ini` file will be copied to the default folder `MotionBuilder <version>/bin/x64/plugins`.
+    <br>The built plugin `.dll` file will be copied to the default folder `MotionBuilder <version>/bin/x64/plugins`.
 
     <br>**Note**: If you are using Visual Studio Code, you can use Tasks to run these commands. See [tasks.json](./.vscode/tasks.json) for reference.
 

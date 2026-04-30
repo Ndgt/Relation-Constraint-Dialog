@@ -5,19 +5,20 @@
 #include <QtWidgets/QWidget>
 
 /**
- * @class CustomLineEdit
- * @brief Custom QLineEdit that emits signals for specific key presses
+ * @class SearchBoxLineEdit
+ * @brief Custom QLineEdit for search box in the SearchDialog
+ * @details This custom line edit class emits custom signals for specific key presses
  */
-class CustomLineEdit : public QLineEdit
+class SearchBoxLineEdit : public QLineEdit
 {
     Q_OBJECT
 
 public:
     /**
-     * @brief Constructor for CustomLineEdit
+     * @brief Constructor for SearchBoxLineEdit
      * @param parent The parent widget
      */
-    explicit CustomLineEdit(QWidget *parent = nullptr) : QLineEdit(parent) {}
+    explicit SearchBoxLineEdit(QWidget *parent = nullptr);
 
 protected:
     /**
