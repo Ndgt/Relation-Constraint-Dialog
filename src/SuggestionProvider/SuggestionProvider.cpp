@@ -143,6 +143,13 @@ QStringList SuggestionProvider::getModelSuggestions(QStringView queryView) const
     return out;
 }
 
+void SuggestionProvider::initializeOperatorSuggestions()
+{
+    mDefaultOperatorEntriesBeforeMacro.clear();
+    mDefaultOperatorEntriesAfterMacro.clear();
+    collectDefaultOperatorEntry();
+}
+
 void SuggestionProvider::initializeModelSuggestions()
 {
     mModelEntries.clear();
@@ -163,8 +170,11 @@ void SuggestionProvider::addOperatorSuggestion(QStringList &suggestions, const O
 
 void SuggestionProvider::collectDefaultOperatorEntry()
 {
-    mDefaultOperatorEntriesBeforeMacro.clear();
-    mDefaultOperatorEntriesAfterMacro.clear();
+    if (!mDefaultOperatorEntriesBeforeMacro.isEmpty() || !mDefaultOperatorEntriesAfterMacro.isEmpty())
+    {
+        mDefaultOperatorEntriesBeforeMacro.clear();
+        mDefaultOperatorEntriesAfterMacro.clear();
+    }
 
     // Operator functions are grouped under "Boxes/Functions/"
     // e.g., "Boxes/Functions/Vector"
