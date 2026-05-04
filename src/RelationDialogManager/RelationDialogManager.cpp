@@ -41,6 +41,14 @@ bool RelationDialogManager::FBCreate()
     return true;
 }
 
+bool RelationDialogManager::Open()
+{
+    // Let SuggestionProvider collect all operators including those from plugins
+    SuggestionProvider::getInstance().initializeOperatorSuggestions();
+
+    return true;
+}
+
 bool RelationDialogManager::Clear()
 {
     std::lock_guard<std::mutex> lock(mRelationMutex);
