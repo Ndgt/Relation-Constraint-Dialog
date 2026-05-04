@@ -30,6 +30,13 @@ public:
     virtual bool FBCreate() override;
 
     /**
+     * @brief Let SuggestionProvider collect all operators including those from plugins
+     * @note This is called when all the basic initialization is done, when we can be sure
+     *       that all custom box plugins have been loaded and their operators are registered.
+     */
+    virtual bool Open() override;
+
+    /**
      * @brief Clear the internal data - mLastSelectedRelationConstraint and mRelationViewStates
      * @details This is called when the scene is cleared(new file being loaded, File->New, or the application shutdown).
      * @return true (always)

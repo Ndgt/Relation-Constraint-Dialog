@@ -35,6 +35,13 @@ public:
     QStringList getModelSuggestions(QStringView queryView) const;
 
     /**
+     * @brief Initialize operator suggestions by collecting all system and plugin operators
+     * @note This function is called by RelationDialogManager when all the basic initialization is done
+     *       to collect all operators including those from plugins.
+     */
+    void initializeOperatorSuggestions();
+
+    /**
      * @brief Initialize model suggestions by collecting all scene models
      * @note This function is called when the dialog is opened to ensure that the model suggestions are up-to-date
      *       with the current scene content.
@@ -81,9 +88,8 @@ private:
 
     /**
      * @brief Singleton constructor
-     * @details Collects operator names for display upon initialization.
      */
-    SuggestionProvider() { collectDefaultOperatorEntry(); }
+    SuggestionProvider() = default;
 
     /// @cond
     SuggestionProvider(const SuggestionProvider &) = delete;
